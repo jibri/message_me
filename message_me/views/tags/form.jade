@@ -1,7 +1,7 @@
 //- Form tag
 //- attributes are given to the form element
 mixin form(nameId, action, method)
-  form(id=nameId, action=action, method=method || 'POST', attributes)
+  form(id=nameId, action=action, method=method || 'POST', class=attributes.class)
     table.form-table
       block
       
@@ -9,7 +9,7 @@ mixin form(nameId, action, method)
 //- New line tag. Only add a <tr> tag
 //- attributes are given to the tr element
 mixin formLine()
-  tr(attributes)
+  tr(class=attributes.class)
     block
 
 
@@ -29,24 +29,24 @@ mixin input(type, name, required)
   td.field
     div.form-input-wrapper
       div.validation-error-message(class=name)
-      input.form-input(type=type, id=name, name=name, attributes)
+      input.form-input(type=type, id=name, name=name, class=attributes.class)
     
 
 //- input text tag
 //- attributes are given to the input element
 mixin inputText(name, required)
-  +input('text', name, required)(attributes)
+  +input('text', name, required)(class=attributes.class)
   
 //- Button container
 mixin buttons()
   tr
     td(colspan=42)
-      div.buttons(attributes)
+      div.buttons(class=attributes.class)
         block
         div.clear
         
 //- button with spécial css.
 mixin majorbutton()
-  div.major-button(attributes)
+  div.major-button(rel=attributes.rel, title=attributes.title, class=attributes.class)
     span.text
       block
