@@ -217,44 +217,77 @@ function closeAllPopup() {
  **********************************************************************************************************************/
 function bubbleLayout(parentClass) {
 
-  var WIDTH_ADD = 20;
+  var WIDTH_ADDING_OFFSET = 20;
   var MIN_WIDTH = 130;
   var MAX_WIDTH = 300;
+  // Must be smaller than MAX_WITH
+  var MIN_DOUBLE_WIDTH = 200;
   // Must be greater than this.bulle-test left margin+border+padding
   var FIRST_LEFT_POS_OFFSET = 50;
   // The height of the double elements. take care of added margins paddings and borders
-  var DOUBLE_HEIGHT = 255;
+  var DOUBLE_HEIGHT = 257;
   var DOUBLED_PUSHER_HEIGHT = 210;
   var PARENT_SELECTOR = '.' + parentClass;
 
+  // First pass to set the layout
   $('.bubble-body').each(function(i) {
 
+    // set the boby to given min width
     $(this).width(MIN_WIDTH);
-    
+
+    // the postion from the left of the parent element
     var leftPos = $(this).offset().left - $(PARENT_SELECTOR).offset().left;
-
+    // if height of this hes been doubled
     var isDoubleHeight = false;
+    
+    // while we have to scroll inside this
     while ($(this).prop('offsetHeight') < $(this).prop('scrollHeight')) {
-      $(this).width($(this).width() + WIDTH_ADD);
+      
+      // increase this width 
+      $(this).width($(this).width() + WIDTH_ADDING_OFFSET);
 
+      // get new left pos if this has gotten down (if to large)
+      leftPos = $(this).offset().left - $(PARENT_SELECTOR).offset().left;
+      
+      // TODO what if text is so big that we need three or more line
+      
+      // if this is on the very left and larger than given max width
       if (!isDoubleHeight && leftPos < FIRST_LEFT_POS_OFFSET && $(this).width() > MAX_WIDTH) {
         isDoubleHeight = true;
+        
+        // doubling this height and pusher height
         $(this).height(DOUBLE_HEIGHT);
         $('.bubble-pusher', this).height(DOUBLED_PUSHER_HEIGHT);
-        $(this).width(MIN_WIDTH);
+        
+        // back to smaller width to avoid big white spaces in the bubble
+        $(this).width(MIN_DOUBLE_WIDTH);
+        
+        // clear left to avoid this getting back up because of with reduction (MIN_DOUBLE_WIDTH)
+        $(this).parent('.bubble-wrapper').addClass('clear');
       }
     }
+  });
+  
+  // Second pass to complete rows, vertically center texts.
+  $('.bubble-body').each(function(i) {
+
+    var leftPos = $(this).offset().left - $(PARENT_SELECTOR).offset().left;
 
     if (i + 1 >= $('.bubble-body').length) {
       var isLast = true;
     }
-
-    if (!isLast && $(this).offset().top - $($('.bubble-body').get(i + 1)).offset().top < 0) {
+    // set row elements width to fit parent width
+    if (isLast || $(this).offset().top - $($('.bubble-body').get(i + 1)).offset().top < 0) {
       $(this).width($(PARENT_SELECTOR).width() - leftPos - 50);
+      //      $(this).width(Math.max($(this).width(),$(PARENT_SELECTOR).width() - leftPos - 50));
     }
+    
+    // add top padding to vertically center the text
+    var textHeight = $('.bubble-text', this).height();
+    $('.bubble-text', this).css('paddingTop', ($(this).height() - textHeight) / 2 - 10);
 
-    var textHeight = $('.bubble-text', this).height() + 20;
-    $('.bubble-text', this).css('paddingTop', ($(this).height() - textHeight) / 2);
+    // IE fix if text is over parent padding
+    $(this).css('overflow', 'visible');
   });
 
   // Tooltip

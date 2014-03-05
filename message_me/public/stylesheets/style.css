@@ -1,4 +1,3 @@
-
 /*
 COLORS
 
@@ -7,7 +6,6 @@ red : #FF0099 #FF77BC #FFAAD6
 green : #00bb00 #77cc77
 
 */
-
 
 /*
  * RESET base elements
@@ -66,40 +64,38 @@ a.block-link {
 a {
 	color: #888;
 	font-weight: bold;
-  text-decoration: none;
+	text-decoration: none;
 }
 
 a:HOVER {
-  text-decoration: underline;
+	text-decoration: underline;
 }
 
-
-
-table.inner-padding > tbody > tr > td{
+table.inner-padding>tbody>tr>td {
 	padding-left: 10px;
 	padding-right: 10px;
 }
 
-table.inner-padding > tbody > tr > td:FIRST-CHILD {
+table.inner-padding>tbody>tr>td:FIRST-CHILD {
 	padding-left: 0px;
 }
 
-table.inner-padding > tbody > tr > td:LAST-CHILD {
+table.inner-padding>tbody>tr>td:LAST-CHILD {
 	padding-right: 0px;
 }
-
 
 /*
 * HEADER
 */
 .logo-wrapper {
-  width: 323px;
-  vertical-align: middle;
+	width: 323px;
+	vertical-align: middle;
 }
+
 .logo-wrapper a {
-  height: 111px;
-  background-image: url('../images/logo_pale_50.png');
-  box-shadow: 0px 0px 2px 2px #aaa;
+	height: 111px;
+	background-image: url('../images/logo_pale_50.png');
+	box-shadow: 0px 0px 2px 2px #aaa;
 }
 
 div.my-account {
@@ -107,20 +103,20 @@ div.my-account {
 	margin-bottom: 10px;
 }
 
-div.my-account a.edit{
-  background-image: url(../images/icons/Edit16.png);
-  background-position: 7px center;
-  background-repeat: no-repeat;
-  padding-left: 25px;
+div.my-account a.edit {
+	background-image: url(../images/icons/Edit16.png);
+	background-position: 7px center;
+	background-repeat: no-repeat;
+	padding-left: 25px;
 }
 
 a.logout {
-  background-image: url(../images/icons/Login_out16.png);
-  background-position: 7px center;
-  background-repeat: no-repeat;
-  padding-left: 25px;
-  margin-left: 10px;
-  border-left: 2px solid #888;
+	background-image: url(../images/icons/Login_out16.png);
+	background-position: 7px center;
+	background-repeat: no-repeat;
+	padding-left: 25px;
+	margin-left: 10px;
+	border-left: 2px solid #888;
 }
 
 /*
@@ -162,12 +158,12 @@ div.frame-wrapper div.frame-title {
 	line-height: 30px;
 	height: 30px;
 	background-position: 7px center;
-  background-repeat: no-repeat;
-  padding-left: 40px;
+	background-repeat: no-repeat;
+	padding-left: 40px;
 }
 
 div.frame-wrapper.green {
-  border-color: #00bb00;
+	border-color: #00bb00;
 }
 
 div.frame-wrapper.green div.frame-title {
@@ -180,8 +176,8 @@ div.frame-wrapper.red {
 }
 
 div.frame-wrapper.red div.frame-title {
-  border-color: #FF0099;
-  background-color: #FF77BC;
+	border-color: #FF0099;
+	background-color: #FF77BC;
 }
 
 div.frame-wrapper div.frame-content {
@@ -214,7 +210,7 @@ div.frame-wrapper.info div.frame-title {
  * FORM tag
  */
 form {
-  padding: 10px;
+	padding: 10px;
 }
 
 form .form-input-wrapper {
@@ -250,7 +246,7 @@ form .validation-error-message.visible {
 	visibility: visible;
 }
 
-table.form-table td.label{
+table.form-table td.label {
 	width: 120px;
 }
 
@@ -273,7 +269,6 @@ label.required {
 /*
 * BUTTONS
 */
-
 div.buttons {
 	padding: 20px 0px 0px 0px;
 }
@@ -290,10 +285,9 @@ button {
 	line-height: 25px;
 	font-weight: bold;
 	cursor: pointer;
-	
 	background-position: 7px center;
-  background-repeat: no-repeat;
-  padding-left: 30px;
+	background-repeat: no-repeat;
+	padding-left: 30px;
 }
 
 button:hover {
@@ -308,7 +302,7 @@ button.submit-button {
 	background-image: url(../images/icons/Accept16.png);
 }
 
-button.add-chat, .major-button.add-chat .text {
+button.add-chat,.major-button.add-chat .text {
 	background-image: url(../images/icons/Add_Chat24.png);
 }
 
@@ -318,30 +312,30 @@ button.loading {
 }
 
 div.major-button {
-  background-image: url('../images/button/create-button.png');
-  border: 2px solid #00aa00;
-  height: 30px;
-  color: #fff;
-  font-size: 25px;
-  line-height: 30px;
-  text-align: center;
-  cursor: pointer;
-  text-shadow: 2px 2px #aaa;
-  border-radius: 4px;
+	background-image: url('../images/button/create-button.png');
+	border: 2px solid #00aa00;
+	height: 30px;
+	color: #fff;
+	font-size: 25px;
+	line-height: 30px;
+	text-align: center;
+	cursor: pointer;
+	text-shadow: 2px 2px #aaa;
+	border-radius: 4px;
 }
 
 div.major-button:hover {
-  background-position: 0px 60px;
+	background-position: 0px 60px;
 }
 
 div.major-button:ACTIVE {
-  background-position: 0px 30px;
+	background-position: 0px 30px;
 }
 
 div.major-button .text {
-  background-position: 0px center;
-  background-repeat: no-repeat;
-  padding-left: 30px;
+	background-position: 0px center;
+	background-repeat: no-repeat;
+	padding-left: 30px;
 }
 
 /*
@@ -350,7 +344,7 @@ div.major-button .text {
 div.menu-wrapper {
 	margin-top: 20px;
 }
- 
+
 table.table-menu {
 	width: 100%;
 	table-layout: fixed;
@@ -363,7 +357,6 @@ td.menu-item a {
 	font-weight: bold;
 	line-height: 30px;
 	text-align: center;
-
 	background-color: #eee;
 	border: solid 1px #ddd;
 	border-radius: 3px;
@@ -378,61 +371,128 @@ td.menu-item a:hover {
  * TOOLTIP
  */
 .ui-tooltip {
-  font: inherit;
+	font: inherit;
 }
 
 /*
  * COMIC STRIP BUBBLES
  */
-div.bubble-wrapper{
-  float: left;
-  position: relative;
-  padding: 10px;
-  margin: 5px;
-  border: 1px solid #555;
+@font-face {
+    font-family: 'tintinregular';
+    src: url('tintin-webfont.eot');
+    src: url('tintin-webfont.eot?#iefix') format('embedded-opentype'),
+         url('tintin-webfont.woff') format('woff'),
+         url('tintin-webfont.ttf') format('truetype'),
+         url('tintin-webfont.svg#tintinregular') format('svg');
 }
 
-div.bubble-wrapper div.bubble-body{
-  width: 200px;
-  height: 100px;
-  overflow: auto;
-  border: 2px solid #0099FF;
-  border-radius: 30px;
-  padding: 10px;
-  text-align: center
+div.bubble-wrapper {
+	float: left;
+	position: relative;
+	padding: 10px;
+	margin: 5px;
+	border: 2px solid #888;
 }
 
-div.bubble-wrapper .bubble-speaker{
-  background-image: url('../images/bulle_bl_blue.png');
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  bottom: 10px;
-  left: 10px;
-  position: absolute;
-  width: 100px;
-  height: 100px;
+div.bubble-wrapper .bubble-text{
+  font-family: tintinregular, "Lucida Grande", Helvetica, Arial, sans-serif;
+  text-align: justify;
 }
 
-div.bubble-wrapper .bubble-trigramme{
-  width: 50px;
-  text-align: center;
-  color: #fff;
-  bottom: 12px;
-  left: 9px;
-  position: absolute;
-  font-weight: bold;
+div.bubble-wrapper div.bubble-body {
+	width: 200px;
+	height: 100px;
+	overflow: auto;
+	border: 2px solid #0099FF;
+	border-radius: 30px;
+	padding: 10px;
 }
 
-div.bubble-body .bubble-pusher{
-  float: left;
-  height: 60px;
+div.bubble-wrapper.pos1 div.bubble-body {
+	border: 2px solid #FF0099;
 }
 
-div.bubble-body .bubble-corner-block{
-  width: 60px;
-  height: 40px;
-  float: left;
-  clear: left;
+div.bubble-wrapper.pos2 div.bubble-body {
+	border: 2px solid #00BB00;
+}
+
+div.bubble-wrapper.pos3 div.bubble-body {
+	border: 2px solid #FF9900;
+}
+
+div.bubble-wrapper .bubble-speaker {
+	background-image: url('../images/comicStrip/bulle_bl_blue.png');
+	background-repeat: no-repeat;
+	background-position: left bottom;
+	bottom: 10px;
+	position: absolute;
+	width: 100px;
+	height: 100px;
+}
+
+div.bubble-wrapper.pos1 .bubble-speaker {
+	background-image: url('../images/comicStrip/bulle_bl_pink.png');
+}
+
+div.bubble-wrapper.pos2 .bubble-speaker {
+	background-image: url('../images/comicStrip/bulle_bl_green.png');
+}
+
+div.bubble-wrapper.pos3 .bubble-speaker {
+	background-image: url('../images/comicStrip/bulle_bl_orange.png');
+}
+
+div.bubble-wrapper.bubble-right .bubble-speaker {
+	background-image: url('../images/comicStrip/bulle_br_blue.png');
+	background-position: right bottom;
+	right: 10px;
+}
+
+div.bubble-wrapper.bubble-right.pos1 .bubble-speaker {
+	background-image: url('../images/comicStrip/bulle_br_pink.png');
+}
+
+div.bubble-wrapper.bubble-right.pos2 .bubble-speaker {
+	background-image: url('../images/comicStrip/bulle_br_green.png');
+}
+
+div.bubble-wrapper.bubble-right.pos3 .bubble-speaker {
+	background-image: url('../images/comicStrip/bulle_br_orange.png');
+}
+
+div.bubble-wrapper .bubble-trigramme {
+	width: 50px;
+	text-align: center;
+	color: #fff;
+	top: 82px;
+	left: -1px;
+	position: relative;
+	font-weight: bold;
+}
+
+div.bubble-wrapper.bubble-right .bubble-trigramme {
+	left: 49px;
+}
+
+div.bubble-body .bubble-pusher {
+	float: left;
+	height: 60px;
+}
+
+div.bubble-body .bubble-corner-block {
+	width: 60px;
+	height: 40px;
+	float: left;
+	clear: left;
+}
+
+div.bubble-wrapper.bubble-right .bubble-pusher {
+	float: right;
+}
+
+div.bubble-wrapper.bubble-right .bubble-corner-block {
+	float: right;
+	clear: right;
 }
 
 /*****************************************************
@@ -446,7 +506,7 @@ div.bubble-body .bubble-corner-block{
  * TIMER
  */
 div.timer-wrapper {
-  background-image: url('../images/timer/milliSec.png');
+	background-image: url('../images/timer/milliSec.png');
 }
 
 table.timer {
@@ -497,19 +557,19 @@ div.frame-wrapper.login .form-table {
 /*
  * CONVERSATION
  */
-
-table.conversations-table td:FIRST-CHILD{
+table.conversations-table td:FIRST-CHILD {
 	width: 200px;
 }
- 
+
 div.convs-wrapper div.conv-wrapper {
-/* 	background-color: #ffe4ca; */
+	/* 	background-color: #ffe4ca; */
 	cursor: pointer;
 	padding: 5px;
 	border-bottom: solid 1px #ccc;
 }
 
-div.convs-wrapper div.conv-wrapper:hover,div.convs-wrapper div.conv-wrapper.selected {
+div.convs-wrapper div.conv-wrapper:hover,div.convs-wrapper div.conv-wrapper.selected
+	{
 	background-color: #AAD6FF;
 }
 
@@ -522,6 +582,7 @@ div.convs-wrapper div.msg-content {
  * MESSAGES
  */
 div.msgs-wrapper {
+	
 }
 
 div.msgs-wrapper div.msg-content {
