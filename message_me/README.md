@@ -6,9 +6,12 @@
 
 ## Usage
 
+ Only for private usage
 
 
 ## Developing
+
+ current version : 0.0.1
 
 
 
