@@ -389,7 +389,7 @@ div.bubble-wrapper{
   position: relative;
   padding: 10px;
   margin: 5px;
-  border: 1px solid #555;
+  border: 2px solid #888;
 }
 
 div.bubble-wrapper div.bubble-body{
@@ -402,6 +402,13 @@ div.bubble-wrapper div.bubble-body{
   text-align: center
 }
 
+div.bubble-wrapper.pos1 div.bubble-body{
+  border: 2px solid #FF0099;
+}
+div.bubble-wrapper.pos2 div.bubble-body{
+  border: 2px solid #00BB00;
+}
+
 div.bubble-wrapper .bubble-speaker{
   background-image: url('../images/bulle_bl_blue.png');
   background-repeat: no-repeat;
@@ -411,6 +418,14 @@ div.bubble-wrapper .bubble-speaker{
   position: absolute;
   width: 100px;
   height: 100px;
+}
+
+div.bubble-wrapper.pos1 .bubble-speaker{
+  background-image: url('../images/bulle_bl_blue.png');
+}
+
+div.bubble-wrapper.pos2 .bubble-speaker{
+  background-image: url('../images/bulle_bl_blue.png');
 }
 
 div.bubble-wrapper .bubble-trigramme{
