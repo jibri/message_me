@@ -110,7 +110,7 @@ function initButtons() {
 
   // Tooltip
   $('.tooltip').tooltip({ 'track' : true,
-                         'show' : { delay : 400 },
+                         'show' : { delay : 50 },
                          'hide' : false,
                          'position' : { my : "left+15 top+15",
                                        at : "left bottom",
@@ -208,4 +208,60 @@ function closeAllPopup() {
 
   $('.' + POPUP_SELECTOR).remove();
   $('.' + OVERLAY_SELECTOR).remove();
+}
+
+/***********************************************************************************************************************
+ * 
+ * COMIC STRIP MESSAGES
+ * 
+ **********************************************************************************************************************/
+function bubbleLayout(parentClass) {
+
+  var WIDTH_ADD = 20;
+  var MIN_WIDTH = 130;
+  var MAX_WIDTH = 300;
+  // Must be greater than this.bulle-test left margin+border+padding
+  var FIRST_LEFT_POS_OFFSET = 50;
+  // The height of the double elements. take care of added margins paddings and borders
+  var DOUBLE_HEIGHT = 255;
+  var DOUBLED_PUSHER_HEIGHT = 210;
+  var PARENT_SELECTOR = '.' + parentClass;
+
+  $('.bubble-body').each(function(i) {
+
+    $(this).width(MIN_WIDTH);
+    
+    var leftPos = $(this).offset().left - $(PARENT_SELECTOR).offset().left;
+
+    var isDoubleHeight = false;
+    while ($(this).prop('offsetHeight') < $(this).prop('scrollHeight')) {
+      $(this).width($(this).width() + WIDTH_ADD);
+
+      if (!isDoubleHeight && leftPos < FIRST_LEFT_POS_OFFSET && $(this).width() > MAX_WIDTH) {
+        isDoubleHeight = true;
+        $(this).height(DOUBLE_HEIGHT);
+        $('.bubble-pusher', this).height(DOUBLED_PUSHER_HEIGHT);
+        $(this).width(MIN_WIDTH);
+      }
+    }
+
+    if (i + 1 >= $('.bubble-body').length) {
+      var isLast = true;
+    }
+
+    if (!isLast && $(this).offset().top - $($('.bubble-body').get(i + 1)).offset().top < 0) {
+      $(this).width($(PARENT_SELECTOR).width() - leftPos - 50);
+    }
+
+    var textHeight = $('.bubble-text', this).height() + 20;
+    $('.bubble-text', this).css('paddingTop', ($(this).height() - textHeight) / 2);
+  });
+
+  // Tooltip
+  $('.bubble-wrapper .tooltip').tooltip({ 'track' : true,
+                                         'show' : { delay : 50 },
+                                         'hide' : false,
+                                         'position' : { my : "left+15 top+15",
+                                                       at : "left bottom",
+                                                       collision : "flipfit" } });
 }

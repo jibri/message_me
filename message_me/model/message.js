@@ -38,7 +38,7 @@ function findFromConv(convId, userId, callback) {
   query += 'JOIN tj_conv_user tcu ON tcu.user = usr.id ';
   query += 'WHERE tcu.conversation = ' + convId + ')';
 
-  query += ' ORDER BY message.date_send DESC';
+  query += ' ORDER BY message.date_send ASC';
 
   var option = { sql : query,
                 nestTables : true };

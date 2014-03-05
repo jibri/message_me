@@ -31,6 +31,7 @@ block javascript
       }
       $.post('#{url.GET_MESSAGES}' + params, function (result){
         setFrameContent('msgs-wrapper', result);
+        bubbleLayout('msgs-wrapper');
       });
     }
 

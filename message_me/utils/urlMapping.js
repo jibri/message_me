@@ -13,6 +13,7 @@ exports.SERVER_ERROR = '/error-server.html';
 
 // App mapping (authentified access)
 var AUTH_ROOT = '/msg_me/';
+exports.AUTH_ROOT = AUTH_ROOT;
 exports.INDEX = AUTH_ROOT + 'index.html';
 exports.USERS = AUTH_ROOT + 'users.html';
 exports.IMAGES = AUTH_ROOT + 'image.html';

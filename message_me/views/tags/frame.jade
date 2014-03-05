@@ -1,6 +1,6 @@
 mixin frame(title)
 
-  div.frame-wrapper(class=attributes.class)
+  div.frame-wrapper&attributes(attributes)
     div.frame-title= title
     div.frame-content
       block
