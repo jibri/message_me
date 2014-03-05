@@ -1,0 +1,49 @@
+extends /layout/layout
+include /tags/frame
+
+block javascript
+  script(type='text/javascript').
+    var formId = 'form-test';
+
+    $(document).ready( function () {
+      $(document).on('click', '#submit-button', function() {
+        submitButtonClickHandler(this);
+        return false;
+      });
+    });
+    
+    function submitButtonClickHandler(button){
+      $("form#" + formId).ajaxSubmit({
+        success : function(result) {
+          $('body').html(result);
+        },
+        error : function(response, status, thrownError) {
+          alert(response.responseText);
+        }
+      });
+    }
+
+block content
+
+  p Utilisateurs : 
+  table
+    tr
+      th Prénom
+      th Nom
+    each user in users
+      tr
+        td=user.firstname
+        td=user.name
+  
+  +frame()
+    form#form-test(method='POST')
+      label(for='nom') Nom : 
+      input(type='text', name='name')
+      br
+      label(for='prenom') Prénom : 
+      input(type='text', name='firstName')
+      br
+      label(for='password') mot de passe : 
+      input(type='password', name='password')
+      br
+      input#submit-button(type='submit' value='Envoyer')

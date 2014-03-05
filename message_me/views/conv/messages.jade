@@ -1,0 +1,8 @@
+if messages.length === 0
+  span i18n.get('message_messages_noMsg')
+
+each msg in messages
+  div.message-wrapper
+    div
+      span= i18n.get('message_messages_envelope', [msg.user.firstname, moment(msg.message.date_send).format('LLLL')])
+    div.msg-content=msg.message.content

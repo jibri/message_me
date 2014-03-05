@@ -1,0 +1,34 @@
+extends /layout/layout
+include /tags/frame
+include /tags/form
+
+
+block javascript
+  script(type='text/javascript').
+    
+    $(document).ready( function () {
+            
+      $('.new-account').height($('.login').height());
+      $('input[name=name]').focus();
+    });
+  
+    function handleLoginFormSuccess(result){
+      location.reload();
+    }
+
+block content
+  
+  table.connexion-table.inner-padding
+    tr
+      td
+        +frame(i18n.get('login_connection_frame_title')).login
+          +form('login-form', '', 'POST')
+            +formLine
+              +inputText('name', true)
+            +formLine
+              +input('password', 'password', true)
+            +buttons()
+              button.submit-button(rel='login-form')=i18n.get('button_connection')
+              
+      td
+        +frame(i18n.get('login_newAccount_frame_title')).new-account.green

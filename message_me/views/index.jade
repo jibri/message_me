@@ -1,0 +1,102 @@
+extends /layout/layout
+
+block javascript
+  script(type='text/javascript').
+    $(document).ready( function () {
+      $('.bulle-test').each(function(i){
+        
+        var leftPos = $(this).offset().left - $('.page-content').offset().left;
+        
+        while($(this).prop('offsetHeight') < $(this).prop('scrollHeight')){
+          $(this).width($(this).width() + 20);
+
+
+          if(leftPos < 50 && $(this).width() > 400){
+            $(this).height(255);
+            $('.pusher', this).height(210);
+            $(this).width(200);
+          }
+        }
+
+        if (leftPos < 50){
+          if (i != 0){
+            var prevLeftPos = $($('.bulle-test').get(i-1)).offset().left - $('.page-content').offset().left + 50;
+            $($('.bulle-test').get(i-1)).width($('.page-content').width() - prevLeftPos);
+          }
+        }
+        
+        var textHeight = $('.text', this).height() + 20;
+        $('.text', this).css('paddingTop', ($(this).height() - textHeight)/2);
+
+        
+        
+      });
+    });
+
+block content
+   
+  p!= i18n.get('index_greating_message') + firstname
+  
+  div.bulle-wrapper
+    div.bulle-test
+      div.pusher
+      div.hash
+      div.text
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+    div.body
+  
+  div.bulle-wrapper
+    div.bulle-test
+      div.pusher
+      div.hash
+      div.text
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+    div.body
+    
+  div.bulle-wrapper
+    div.bulle-test
+      div.pusher
+      div.hash
+      div.text
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+    div.body
+    
+  div.bulle-wrapper
+    div.bulle-test
+      div.pusher
+      div.hash
+      div.text
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+    div.body
+    
+  div.bulle-wrapper
+    div.bulle-test
+      div.pusher
+      div.hash
+      div.text
+        |   GreenPepper
+    div.body
+    
+  div.bulle-wrapper
+    div.bulle-test
+      div.pusher
+      div.hash
+      div.text
+        | GreenPepper is a collaboration platform 
+    div.body
+    
+  div.bulle-wrapper
+    div.bulle-test
+      div.pusher
+      div.hash
+      div.text
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+        | GreenPepper is a collaboration platform to help business experts and developers create executable specificatons in order to build the right software 
+    div.body
+    
+  div.clear

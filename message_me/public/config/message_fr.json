@@ -1,0 +1,41 @@
+{
+  "server_not_allowed" : "Vous n'êtes pas autorisé à accéder à cette ressource.",
+  "server_generic_error" : "Une erreur s'est produite. Veuillez réessayer plus tard, ou bien contacter un administrateur.",
+  
+  
+  "button_connection" : "Connexion",
+  "button_create" : "Créer",
+  "button_close_popup" : "Fermer",
+  
+  
+  "validation_generic" : "Certains champs du formulaire ne sont pas renseignés correctement.",
+  "validation_required" : "Doit être renseigné.",
+
+  
+  "header_index_tooltip" : "Retour à l'accueil",
+  "header_my_account" : "Bienvenue {0}",
+  "header_my_account_tootip" : "Modifier mes informations",
+  "header_didyouknow" : "Le saviez-vous ?",
+  "header_logout" : "Déconnexion",
+  
+  
+  "login_connection_frame_title" : "Connexion",
+  "login_newAccount_frame_title" : "Demander un nouveau compte",
+  "login_name_label" : "Identifiant",
+  "login_password_label" : "Mot de passe",
+  "login_connexion_failed" : "Les informations saisies n'ont pas permi de vous identifier. Vérifiez vos identifiants de connexion et réessayez.",
+    
+    
+  "index_greating_message" : "Bienvenue dans l'application <b>Msg_Me</b> ",
+    
+  
+  "message_conversations_frame_title" : "Mes conversations",
+  "message_conversations_envelope" : "Conversation du {0}",
+  "message_conversations_chatters" : "Participants : ",
+  "message_conversations_create_tootip" : "Créer une nouvelle conversation",
+    
+  "message_messages_frame_title" : "Messages",
+  "message_messages_noMsg" : "Aucun message à afficher.",
+  "message_messages_envelope" : "Par {0} le {1}"
+    
+}

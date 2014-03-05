@@ -1,0 +1,80 @@
+mixin timer()
+
+  script.
+    $(document).ready(function() {
+  
+      setInterval('refreshTimer()', 500);
+    });
+  
+    function refreshTimer() {
+  
+      var date = new Date();
+      var hour = date.getHours().toString(2);
+      var minute = date.getMinutes().toString(2);
+      var second = date.getSeconds().toString(2);
+      var milliSec = date.getMilliseconds().toString(2);
+      
+      hour = checkSize(hour, 5);
+      minute = checkSize(minute, 6);
+      second = checkSize(second, 6);
+      milliSec = checkSize(milliSec, 10);
+      
+      $('table.timer .timer-block.hour').each(function(i) {
+        setActive(this, hour[i]);
+      });
+      $('table.timer .timer-block.minute').each(function(i) {
+        setActive(this, minute[i]);
+      });
+      $('table.timer .timer-block.second').each(function(i) {
+        setActive(this, second[i]);
+      });
+      $('table.timer .timer-block.milliSec').each(function(i) {
+        setActive(this, milliSec[i]);
+      });
+    }
+    
+    function setActive(element, binary){
+      if (binary == '1') {
+        $(element).addClass('active');
+      } else {
+        $(element).removeClass('active');
+      }
+    }
+    
+    function checkSize(string, size){
+      while(string.length < size){
+        string = '0' + string;
+      }
+      return string;
+    }
+
+  div.timer-wrapper
+    table.timer
+      tr
+        td.timer-block.hour
+        td.timer-block.hour
+        td.timer-block.hour
+        td.timer-block.hour
+        td.timer-block.hour
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.milliSec
+        td.timer-block.minute
+        td.timer-block.minute
+        td.timer-block.minute
+        td.timer-block.minute
+        td.timer-block.minute
+        td.timer-block.minute
+        td.timer-block.second
+        td.timer-block.second
+        td.timer-block.second
+        td.timer-block.second
+        td.timer-block.second
+        td.timer-block.second

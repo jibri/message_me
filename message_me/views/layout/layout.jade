@@ -1,0 +1,27 @@
+include /tags/timer
+
+doctype 5
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/jquery-ui/vader/jquery-ui-1.10.4.custom.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(type='text/javascript', src='/js/jquery/jquery-1.10.2.js')
+    script(type='text/javascript', src='/js/jquery/jquery.form-2.95.js')
+    script(type='text/javascript', src='/js/jquery/jquery-ui-1.10.4.custom.min.js')
+    script(type='text/javascript', src='/js/app-settings.js')
+    block javascript
+  body
+  
+    +timer()
+  
+    div.page
+
+      div.page-header
+        include header
+        
+      div.page-content
+        block content
+        
+      div.page-footer
+        include footer

@@ -1,0 +1,33 @@
+include /tags/frame
+
+table.inner-padding
+  tr
+    td.logo-wrapper
+        a.block-link(href=url.INDEX, title=i18n.get('header_index_tooltip')).tooltip
+    td
+      if connected
+        div.my-account
+          a.edit.tooltip(href='#', title=i18n.get('header_my_account_tootip'))=i18n.get('header_my_account', firstname)
+          a.logout(href=url.LOGOUT)= i18n.get('header_logout')
+        +frame(i18n.get('header_didyouknow')).clear.info.red
+          div.article
+            b Sodom et Gomorrhe
+            a.right En Savoir plus
+            br
+            br
+            div
+              | According to the Torah, the kingdoms of Sodom and Gomorrah were allied with the cities of Admah, Zeboim and Bela. These five cities, also known as the "cities of the plain", were situated ond sd sd aa...
+              
+      else
+        &nbsp; 
+      
+if connected
+  div.menu-wrapper
+    table.table-menu
+      tr
+        td.menu-item
+          a(href=url.INDEX) Accueil
+        td.menu-item
+          a(href=url.CONVERSATION) Messages
+        td.menu-item
+          a(href=url.LOGOUT) Déconnexion

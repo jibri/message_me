@@ -1,0 +1,13 @@
+include /tags/frame
+include /tags/form
+
++frame('Créer une nouvelle conversation')
+  +form('conversation-form')
+    +formLine()
+      +inputText('title', 'Titre de la nouvelle conversation', true)
+    +formLine()
+      +input('textArea','content', 'Message', true)
+    +buttons
+      button.close-popup Fermer
+      button.submit-button(rel='conversation-form') Créer la conversation
+      

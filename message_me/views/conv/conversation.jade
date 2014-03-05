@@ -1,0 +1,67 @@
+extends /layout/layout
+include /tags/frame
+include /tags/form
+
+block javascript
+  script(type='text/javascript').
+
+    $(document).ready( function () {
+      
+      var firstConv = $('.conv-wrapper:first')
+      getMessages(firstConv);
+      firstConv.addClass('selected');
+      
+      $('.conv-wrapper').click(function(){
+        $('.conv-wrapper.selected').removeClass('selected');
+        $(this).addClass('selected');
+        getMessages($(this));
+      });
+    });
+
+    function handleConversationFormSuccess(result){
+      alert(result);
+      location.reload();
+    }
+    
+    function getMessages(jqButton){
+      var convId = jqButton.attr('id');
+      var params = '';
+      if (convId){
+        params = '?conversation=' + convId;
+      }
+      $.post('#{url.GET_MESSAGES}' + params, function (result){
+        setFrameContent('msgs-wrapper', result);
+      });
+    }
+
+block content
+
+  table.conversations-table.inner-padding
+    tr
+      td
+        +frame(i18n.get('message_conversations_frame_title')).convs-wrapper.chats
+          each conv in conversations
+            div(id=conv.conversation.id).conv-wrapper
+              div
+                span= i18n.get('message_conversations_envelope',[moment(conv.conversation.date_ouverture).format('LLLL')])
+              div.msg-content!=conv.conversation.titre
+              div.user-wrapper= i18n.get('message_conversations_chatters')
+                each user, i in conv.user
+                  if i != 0
+                    = ', '
+                  span.username=user.firstname
+          +majorbutton()(rel=url.CONVERSATION_FORM, title=i18n.get('message_conversations_create_tootip')).open-popup.add-chat.tooltip= i18n.get('button_create')
+  
+      td
+        +frame(i18n.get('message_messages_frame_title')).msgs-wrapper.chat
+       
+    tr
+      td &nbsp;
+      
+        // td
+        // form#message-form(method='POST' action='')
+        // label(for='content') Nouveau message :
+        // br
+        // textarea(name='content')
+        // br
+        // input.submit-button(type='submit' value='Envoyer le message')

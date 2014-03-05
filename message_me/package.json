@@ -1,0 +1,16 @@
+{
+  "name": "message_me",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "3.1.0",
+    "jade": "*",
+    "credential": "0.2.5",
+    "mysql": "*",
+    "moment": "*",
+    "nodemailer": "0.6.*"
+  }
+}

@@ -1,0 +1,526 @@
+
+/*
+COLORS
+
+blue : #0099FF #77BCFF #AAD6FF
+red : #FF0099 #FF77BC #FFAAD6
+green : #00bb00 #77cc77
+
+*/
+
+
+/*
+ * RESET base elements
+ */
+body {
+	margin: 0px;
+	background-color: #F5F5F5;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0px;
+	width: 100%;
+}
+
+td {
+	padding: 0px;
+	vertical-align: top;
+}
+
+/*
+* GENERAL LAYOUT
+*/
+div.page {
+	padding: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 1024px;
+}
+
+div.page-header,div.page-content,div.page-footer {
+	background-color: #FFF;
+	box-shadow: 1px 1px 2px 2px #ccc;
+	padding: 20px;
+	margin-bottom: 20px;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+.clear {
+	clear: both;
+}
+
+a.block-link {
+	display: block;
+	height: 100%;
+}
+
+a {
+	color: #888;
+	font-weight: bold;
+  text-decoration: none;
+}
+
+a:HOVER {
+  text-decoration: underline;
+}
+
+
+
+table.inner-padding > tbody > tr > td{
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+table.inner-padding > tbody > tr > td:FIRST-CHILD {
+	padding-left: 0px;
+}
+
+table.inner-padding > tbody > tr > td:LAST-CHILD {
+	padding-right: 0px;
+}
+
+
+/*
+* HEADER
+*/
+.logo-wrapper {
+  width: 323px;
+  vertical-align: middle;
+}
+.logo-wrapper a {
+  height: 111px;
+  background-image: url('../images/logo_pale_50.png');
+  box-shadow: 0px 0px 2px 2px #aaa;
+}
+
+div.my-account {
+	float: right;
+	margin-bottom: 10px;
+}
+
+div.my-account a.edit{
+  background-image: url(../images/icons/Edit16.png);
+  background-position: 7px center;
+  background-repeat: no-repeat;
+  padding-left: 25px;
+}
+
+a.logout {
+  background-image: url(../images/icons/Login_out16.png);
+  background-position: 7px center;
+  background-repeat: no-repeat;
+  padding-left: 25px;
+  margin-left: 10px;
+  border-left: 2px solid #888;
+}
+
+/*
+* POPUP LAYOUT
+*
+* .popup-wrapper
+*   .popup-content
+*/
+div.overlay {
+	background: repeat-x scroll 50% 50% #AAAAAA;
+	opacity: 0.3;
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	left: 0;
+	top: 0;
+	z-index: 998;
+}
+
+div.popup-wrapper {
+	background-color: #fff;
+	z-index: 999;
+	position: fixed;
+}
+
+/*
+ * FRAME widget
+ */
+div.frame-wrapper {
+	border: 2px solid #0099FF;
+	border-radius: 4px 4px 0px 0px;
+}
+
+div.frame-wrapper div.frame-title {
+	border-bottom: 2px solid #0099FF;
+	background-color: #77BCFF;
+	color: #FFFFFF;
+	font-size: larger;
+	line-height: 30px;
+	height: 30px;
+	background-position: 7px center;
+  background-repeat: no-repeat;
+  padding-left: 40px;
+}
+
+div.frame-wrapper.green {
+  border-color: #00bb00;
+}
+
+div.frame-wrapper.green div.frame-title {
+	border-color: #00bb00;
+	background-color: #77cc77;
+}
+
+div.frame-wrapper.red {
+	border-color: #FF0099;
+}
+
+div.frame-wrapper.red div.frame-title {
+  border-color: #FF0099;
+  background-color: #FF77BC;
+}
+
+div.frame-wrapper div.frame-content {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* icons */
+div.frame-wrapper.login div.frame-title {
+	background-image: url(../images/icons/Login_in24.png);
+}
+
+div.frame-wrapper.new-account div.frame-title {
+	background-image: url(../images/icons/Add_user24.png);
+}
+
+div.frame-wrapper.chat div.frame-title {
+	background-image: url(../images/icons/chat24.png);
+}
+
+div.frame-wrapper.chats div.frame-title {
+	background-image: url(../images/icons/Communicate24.png);
+}
+
+div.frame-wrapper.info div.frame-title {
+	background-image: url(../images/icons/Info24.png);
+}
+
+/*
+ * FORM tag
+ */
+form {
+  padding: 10px;
+}
+
+form .form-input-wrapper {
+	position: relative;
+}
+
+form .form-input {
+	background-color: #ffffff;
+	border: solid 1px #ccc;
+	border-radius: 3px;
+	height: 20px;
+	width: 100%;
+}
+
+form .form-input.validation-error {
+	background-color: rgba(255, 0, 0, 0.1);
+	border: solid 1px #FF0000;
+}
+
+form .validation-error-message {
+	background-color: rgb(255, 200, 200);
+	border: solid 1px #FF0000;
+	padding: 0px 10px;
+	line-height: 20px;
+	position: absolute;
+	top: -20px;
+	left: 0px;
+	white-space: nowrap;
+	visibility: hidden;
+}
+
+form .validation-error-message.visible {
+	visibility: visible;
+}
+
+table.form-table td.label{
+	width: 120px;
+}
+
+table.form-table label.form-label {
+	color: #666;
+	font-weight: bold;
+}
+
+table.form-table tr {
+	line-height: 30px;
+}
+
+label.required {
+	background-image: url(../images/icons/required.png);
+	background-position: right center;
+	background-repeat: no-repeat;
+	padding-right: 20px;
+}
+
+/*
+* BUTTONS
+*/
+
+div.buttons {
+	padding: 20px 0px 0px 0px;
+}
+
+div.buttons button {
+	float: right;
+}
+
+button {
+	margin: 0px 5px;
+	background-color: #ddd;
+	border: solid 1px #aaa;
+	border-radius: 3px;
+	line-height: 25px;
+	font-weight: bold;
+	cursor: pointer;
+	
+	background-position: 7px center;
+  background-repeat: no-repeat;
+  padding-left: 30px;
+}
+
+button:hover {
+	background-color: #eee;
+}
+
+button:active {
+	background-color: #aaa;
+}
+
+button.submit-button {
+	background-image: url(../images/icons/Accept16.png);
+}
+
+button.add-chat, .major-button.add-chat .text {
+	background-image: url(../images/icons/Add_Chat24.png);
+}
+
+/* Loading must be the last class */
+button.loading {
+	background-image: url(../images/icons/loader.gif);
+}
+
+div.major-button {
+  background-image: url('../images/button/create-button.png');
+  border: 2px solid #00aa00;
+  height: 30px;
+  color: #fff;
+  font-size: 25px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+  text-shadow: 2px 2px #aaa;
+  border-radius: 4px;
+}
+
+div.major-button:hover {
+  background-position: 0px 60px;
+}
+
+div.major-button:ACTIVE {
+  background-position: 0px 30px;
+}
+
+div.major-button .text {
+  background-position: 0px center;
+  background-repeat: no-repeat;
+  padding-left: 30px;
+}
+
+/*
+ * MENU
+ */
+div.menu-wrapper {
+	margin-top: 20px;
+}
+ 
+table.table-menu {
+	width: 100%;
+	table-layout: fixed;
+}
+
+td.menu-item a {
+	display: block;
+	text-decoration: none;
+	color: #888;
+	font-weight: bold;
+	line-height: 30px;
+	text-align: center;
+
+	background-color: #eee;
+	border: solid 1px #ddd;
+	border-radius: 3px;
+}
+
+td.menu-item a:hover {
+	background-color: #888;
+	color: #eee;
+}
+
+
+/*
+ * TOOLTIP
+ */
+.ui-tooltip {
+  font: inherit;
+}
+
+/*****************************************************
+*        * *     * *      * *     * * *     * * *    *
+*      *   *   *    *   *        *         * *       *
+*     * **    * ** *   *  ***   * * *         *      *
+*    *       *    *     * *    * * * *   * * *       *
+******************************************************/
+
+/*
+ * TIMER
+ */
+div.timer-wrapper {
+  background-image: url('../images/timer/milliSec.png');
+}
+
+table.timer {
+	background-color: #F5F5F5;
+	table-layout: fixed;
+	width: 50%;
+	height: 8px;
+	margin: auto;
+	margin-bottom: 10px;
+}
+
+table.timer .timer-block {
+	opacity: 0.3;
+}
+
+table.timer .timer-block.hour {
+	background-image: url('../images/timer/hour.png');
+}
+
+table.timer .timer-block.minute {
+	background-image: url('../images/timer/minute.png');
+}
+
+table.timer .timer-block.second {
+	background-image: url('../images/timer/second.png');
+}
+
+table.timer .timer-block.milliSec {
+	background-image: url('../images/timer/milliSec.png');
+}
+
+table.timer .timer-block.active {
+	opacity: 1;
+}
+
+/*
+ * LOGIN
+ */
+table.connexion-table {
+	table-layout: fixed;
+}
+
+div.frame-wrapper.login .form-table {
+	width: 70%;
+	margin: auto;
+}
+
+/*
+ * CONVERSATION
+ */
+
+table.conversations-table td:FIRST-CHILD{
+	width: 200px;
+}
+ 
+div.convs-wrapper div.conv-wrapper {
+/* 	background-color: #ffe4ca; */
+	cursor: pointer;
+	padding: 5px;
+	border-bottom: solid 1px #ccc;
+}
+
+div.convs-wrapper div.conv-wrapper:hover,div.convs-wrapper div.conv-wrapper.selected {
+	background-color: #AAD6FF;
+}
+
+div.convs-wrapper div.msg-content {
+	padding: 10px 5px;
+	text-align: justify;
+}
+
+/*
+ * MESSAGES
+ */
+div.msgs-wrapper {
+}
+
+div.msgs-wrapper div.msg-content {
+	text-align: justify;
+	padding: 10px 5px;
+}
+
+/*
+ * ENCYCLOPEDIA
+ */
+div.article {
+	padding: 10px;
+	text-align: justify;
+}
+
+div.bulle-wrapper{
+	float: left;
+	position: relative;
+	padding: 10px;
+	margin: 5px;
+	border: 1px solid #555;
+}
+
+div.bulle-test{
+	width: 200px;
+	height: 100px;
+	overflow: auto;
+	border: 2px solid #0099FF;
+	border-radius: 30px;
+	padding: 10px;
+	text-align: center
+}
+
+div.bulle-wrapper .body{
+	background-image: url('../images/bulle_bl_blue.png');
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  top: -10px;
+  left: 10px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+div.bulle-test .pusher{
+	float: left;
+	height: 60px;
+}
+
+div.bulle-test .hash{
+	width: 60px;
+	height: 40px;
+	float: left;
+	clear: left;
+}
