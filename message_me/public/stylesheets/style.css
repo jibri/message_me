@@ -183,6 +183,7 @@ div.frame-wrapper.red div.frame-title {
 div.frame-wrapper div.frame-content {
 	margin-left: auto;
 	margin-right: auto;
+	overflow: auto;
 }
 
 /* icons */
@@ -210,7 +211,7 @@ div.frame-wrapper.info div.frame-title {
  * FORM tag
  */
 form {
-	padding: 10px;
+	padding: 20px 10px 10px 10px;
 }
 
 form .form-input-wrapper {
@@ -223,6 +224,11 @@ form .form-input {
 	border-radius: 3px;
 	height: 20px;
 	width: 100%;
+}
+
+form textarea.form-input {
+	width: 300px;
+	height: 200px;
 }
 
 form .form-input.validation-error {
@@ -302,7 +308,15 @@ button.submit-button {
 	background-image: url(../images/icons/Accept16.png);
 }
 
-button.add-chat,.major-button.add-chat .text {
+button.close-popup {
+	background-image: url(../images/icons/Close16.png);
+}
+
+button.add-chat {
+	background-image: url(../images/icons/Add_Chat16.png);
+}
+
+.major-button.add-chat .text {
 	background-image: url(../images/icons/Add_Chat24.png);
 }
 
@@ -378,12 +392,12 @@ td.menu-item a:hover {
  * COMIC STRIP BUBBLES
  */
 @font-face {
-    font-family: 'tintinregular';
-    src: url('tintin-webfont.eot');
-    src: url('tintin-webfont.eot?#iefix') format('embedded-opentype'),
-         url('tintin-webfont.woff') format('woff'),
-         url('tintin-webfont.ttf') format('truetype'),
-         url('tintin-webfont.svg#tintinregular') format('svg');
+	font-family: 'tintinregular';
+	src: url('tintin-webfont.eot');
+	src: url('tintin-webfont.eot?#iefix') format('embedded-opentype'),
+		url('tintin-webfont.woff') format('woff'), url('tintin-webfont.ttf')
+		format('truetype'), url('tintin-webfont.svg#tintinregular')
+		format('svg');
 }
 
 div.bubble-wrapper {
@@ -391,12 +405,13 @@ div.bubble-wrapper {
 	position: relative;
 	padding: 10px;
 	margin: 5px;
-	border: 2px solid #888;
+	border: 2px solid #eee;
 }
 
-div.bubble-wrapper .bubble-text{
-  font-family: tintinregular, "Lucida Grande", Helvetica, Arial, sans-serif;
-  text-align: justify;
+div.bubble-wrapper .bubble-text {
+	font-family: tintinregular, "Lucida Grande", Helvetica, Arial,
+		sans-serif;
+	text-align: justify;
 }
 
 div.bubble-wrapper div.bubble-body {
@@ -576,6 +591,12 @@ div.convs-wrapper div.conv-wrapper:hover,div.convs-wrapper div.conv-wrapper.sele
 div.convs-wrapper div.msg-content {
 	padding: 10px 5px;
 	text-align: justify;
+	font-weight: bold;
+	color: #888;
+}
+
+#conversation-form td.label {
+	width: 130px;
 }
 
 /*
@@ -583,11 +604,6 @@ div.convs-wrapper div.msg-content {
  */
 div.msgs-wrapper {
 	
-}
-
-div.msgs-wrapper div.msg-content {
-	text-align: justify;
-	padding: 10px 5px;
 }
 
 /*

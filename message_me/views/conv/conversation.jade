@@ -1,12 +1,13 @@
 extends /layout/layout
 include /tags/frame
 include /tags/form
+include /tags/jadeUtils
 
 block javascript
   script(type='text/javascript').
 
     $(document).ready( function () {
-      
+          
       var firstConv = $('.conv-wrapper:first')
       getMessages(firstConv);
       firstConv.addClass('selected');
@@ -44,13 +45,10 @@ block content
           each conv in conversations
             div(id=conv.conversation.id).conv-wrapper
               div
-                span= i18n.get('message_conversations_envelope',[moment(conv.conversation.date_ouverture).format('LLLL')])
-              div.msg-content!=conv.conversation.titre
+                span= i18n.get('message_conversations_envelope', moment(conv.conversation.date_ouverture).format('LLLL'))
+              div.msg-content= conv.conversation.titre
               div.user-wrapper= i18n.get('message_conversations_chatters')
-                each user, i in conv.user
-                  if i != 0
-                    = ', '
-                  span.username=user.firstname
+                +printArray(conv.user, ', ', ' et ', '', 'firstname')
           +majorbutton()(rel=url.CONVERSATION_FORM, title=i18n.get('message_conversations_create_tootip')).open-popup.add-chat.tooltip= i18n.get('button_create')
   
       td

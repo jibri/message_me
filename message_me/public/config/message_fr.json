@@ -31,11 +31,20 @@
   
   "message_conversations_frame_title" : "Mes conversations",
   "message_conversations_envelope" : "Conversation du {0}",
-  "message_conversations_chatters" : "Participants : ",
+  "message_conversations_chatters" : "Avec ",
   "message_conversations_create_tootip" : "Créer une nouvelle conversation",
     
+  
   "message_messages_frame_title" : "Messages",
   "message_messages_noMsg" : "Aucun message à afficher.",
-  "message_messages_envelope" : "Par {0} le {1}"
+  "message_messages_envelope" : "De {0}, {1}",
+     
+  
+  "conversation_form_frame_title" : "Créer une nouvelle conversation",
+  "conversation_form_title_label" : "Titre",
+  "conversation_form_content_label" : "Votre message",
+  "conversation_form_create" : "Créer la conversation",
     
+  
+  "end" : "end"
 }

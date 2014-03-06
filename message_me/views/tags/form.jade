@@ -29,7 +29,10 @@ mixin input(type, name, required)
   td.field
     div.form-input-wrapper
       div.validation-error-message(class=name)
-      input.form-input(type=type, id=name, name=name)&attributes(attributes)
+      if type === 'textarea'
+        textarea.form-input(id=name, name=name)&attributes(attributes)
+      else
+        input.form-input(type=type, id=name, name=name)&attributes(attributes)
     
 
 //- input text tag

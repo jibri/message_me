@@ -1,7 +1,11 @@
-mixin frame(title)
+mixin frame(title, maxHeight)
 
   div.frame-wrapper&attributes(attributes)
     div.frame-title= title
-    div.frame-content
-      block
+    if maxHeight
+      div.frame-content(style="max-height: " + maxHeight + 'px;')
+        block
+    else
+      div.frame-content
+        block
     

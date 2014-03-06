@@ -5,5 +5,5 @@ if messages.length === 0
 
 each msg, idx in messages
   - var classPos = 'pos' + idx % 4;
-  +bubble(msg.message.content,i18n.get('message_messages_envelope', [msg.user.firstname, moment(msg.message.date_send).format('LLLL')]), msg.user.firstname.substring(0,3))(class=classPos)
+  +bubble(msg.message.content,i18n.get('message_messages_envelope', [msg.user.firstname, moment(msg.message.date_send).fromNow()]), msg.user.firstname.substring(0,3))(class=classPos)
 div.clear

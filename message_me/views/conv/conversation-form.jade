@@ -1,13 +1,13 @@
 include /tags/frame
 include /tags/form
 
-+frame('Créer une nouvelle conversation')
++frame(i18n.get('conversation_form_frame_title')).chats
   +form('conversation-form')
     +formLine()
-      +inputText('title', 'Titre de la nouvelle conversation', true)
+      +inputText('title', true)(maxlength=200)
     +formLine()
-      +input('textArea','content', 'Message', true)
+      +input('textarea','content', true)(maxlength=3000)
     +buttons
       button.close-popup Fermer
-      button.submit-button(rel='conversation-form') Créer la conversation
+      button.submit-button.add-chat(rel='conversation-form')= i18n.get('conversation_form_create')
       

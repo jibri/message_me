@@ -1,0 +1,25 @@
+//- boolean value of if(x)
+//- var x;       --> false
+//- var x = ''   --> false
+//- var x = null --> false
+//- var x = undefined --> false
+//- var x = 0    --> false
+//- var x = 'a'; --> true
+//- var x = 1    --> true
+//- var x = []   --> true
+//- var x = {}   --> true
+
+mixin printArray(array, separator, lastSeparator, cssClass, eltPropertieToPrint)
+  each elt, idx in array
+    span.array-elements(class=cssClass)
+  
+      if idx != 0
+        if idx + 1 === array.length && lastSeparator
+          | #{lastSeparator}
+        else
+          | #{separator}
+  
+      if eltPropertieToPrint
+        | #{elt[eltPropertieToPrint]}
+      else
+        | #{elt}
