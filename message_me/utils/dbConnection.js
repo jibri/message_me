@@ -9,15 +9,16 @@
  */
 var db_full_config = require('../public/config/database.config');
 var db_config = db_full_config[db_full_config.env];
+var db_conString = 'postgre://' + db_config.user + ':' + db_config.password + ':' + db_config.port + '@'
+    + db_config.host + '/' + db_config.database;
 
 // pool connections
-var mysql = require('mysql');
-var pool = mysql.createPool(db_config);
+var pg = require('pg.js');
 
 /**
  * 'connection' event listener
  */
-pool.on('connection', function(connection) {
+pg.on('connection', function(connection) {
 
   // Do something
 });
@@ -36,21 +37,6 @@ exports.findAll = findAll;
  */
 function persist(tableName, model, callback) {
 
-  pool.getConnection(function(err, connection) {
-
-    if (err) {
-      console.log('Error while connexting to Database.');
-      console.log('Error : ' + err);
-      callback(err);
-      return;
-    }
-
-    if (model.id) {
-      update(tableName, model, connection, callback);
-    } else {
-      insert(tableName, model, connection, callback);
-    }
-  });
 }
 
 /**
@@ -79,19 +65,15 @@ function findAll(tableName, callback) {
 function find(tableName, args, callback) {
 
   // build query
-  var query = 'SELECT * FROM ' + tableName + ' ' + tableName.substring(tableName.indexOf('_') + 1).toLowerCase();
+  var alias = '"' + tableName.substring(tableName.indexOf('_') + 1).toLowerCase() + '"';
+  var query = 'SELECT * FROM ' + tableName + ' ' + alias;
 
   // Where clause only if args not empty
   if (typeof args == 'object' && Object.keys(args).length > 0) {
-    query += ' WHERE ? ';
-  } else {
-    args = {};
+    query += ' WHERE ' + toQueryString(args, alias);
   }
 
-  var option = { sql : query,
-                values : args };
-
-  findOptions(option, callback);
+  findOptions(query, args, callback);
 }
 
 /**
@@ -104,30 +86,30 @@ function find(tableName, args, callback) {
  */
 function insert(tableName, model, connection, callback) {
 
-  console.log('Inserting row in table : ' + tableName);
-
-  for ( var prop in model) {
-    if (model.prop === '') {
-      model.prop = null;
-    }
-  }
-
-  connection.query('INSERT INTO ' + tableName + ' SET ?', model, function(err, result) {
-
-    // release connection whatever happened.
-    connection.release();
-
-    if (err) {
-      console.log('INSERT : An error occurred while inserting row in table : ' + tableName);
-      console.log('Error : ' + err);
-      callback(err, result);
-      return;
-    }
-
-    if (callback) {
-      callback(null, result.insertId);
-    }
-  });
+  // console.log('Inserting row in table : ' + tableName);
+  //
+  // for ( var prop in model) {
+  // if (model.prop === '') {
+  // model.prop = null;
+  // }
+  // }
+  //
+  // connection.query('INSERT INTO ' + tableName + ' SET ?', model, function(err, result) {
+  //
+  // // release connection whatever happened.
+  // connection.release();
+  //
+  // if (err) {
+  // console.log('INSERT : An error occurred while inserting row in table : ' + tableName);
+  // console.log('Error : ' + err);
+  // callback(err, result);
+  // return;
+  // }
+  //
+  // if (callback) {
+  // callback(null, result.insertId);
+  // }
+  // });
 }
 
 /**
@@ -140,38 +122,35 @@ function insert(tableName, model, connection, callback) {
  */
 function update(tableName, model, connection, callback) {
 
-  console.log('updating row number ' + model.id + ' in table : ' + tableName);
-
-  connection.query('UPDATE ' + tableName + ' SET ? WHERE ID=?', [ model,
-                                                                 model.id ], function(err, result) {
-
-    // release connection whatever happened.
-    connection.release();
-
-    if (err) {
-      console.log('UPDATE : An error occurred while updating row in table : ' + tableName);
-      console.log('Error : ' + err);
-      callback(err, result);
-      return;
-    }
-
-    if (callback) {
-      callback(null, result.insertId);
-    }
-  });
+  // console.log('updating row number ' + model.id + ' in table : ' + tableName);
+  //
+  // connection.query('UPDATE ' + tableName + ' SET ? WHERE ID=?', [ model,
+  // model.id ], function(err, result) {
+  //
+  // // release connection whatever happened.
+  // connection.release();
+  //
+  // if (err) {
+  // console.log('UPDATE : An error occurred while updating row in table : ' + tableName);
+  // console.log('Error : ' + err);
+  // callback(err, result);
+  // return;
+  // }
+  //
+  // if (callback) {
+  // callback(null, result.insertId);
+  // }
+  // });
 }
 
 function findQuery(query, callback) {
 
-  var option = { sql : query,
-                nestTables : query.indexOf(' JOIN ') >= 0 };
-
-  findOptions(option, callback);
+  findOptions(query, [], callback);
 }
 
-function findOptions(options, callback) {
+function findOptions(query, paramsArray, callback) {
 
-  pool.getConnection(function(err, connection) {
+  pg.connect(db_conString, function(err, client, done) {
 
     if (err) {
       console.log('Error while connecting to Database.');
@@ -180,23 +159,53 @@ function findOptions(options, callback) {
       return;
     }
 
-    console.log('SELECT query : ' + options.sql);
+    console.log('SELECT query : ' + query);
 
-    connection.query(options, function(err, result) {
+    client.query(query, objectToArray(paramsArray), function(err, result) {
 
       // release connection whatever happened.
-      connection.release();
+      done();
 
       // err treatment.
       if (err) {
-        console.log('SELECT : An error occurred while executing query : ' + options.sql);
+        console.log('SELECT : An error occurred while executing query : ' + query);
         console.log('Error : ' + err);
         callback(err, null);
         return;
       }
 
+      console.log(result);
       // normal case.
-      callback(null, result);
+      callback(null, result.rows);
     });
   });
+}
+
+function toQueryString(args, alias) {
+
+  var queryString = '';
+
+  if (typeof args == 'object' && Object.keys(args).length > 0) {
+    var idx = 1;
+    for ( var col in args) {
+      queryString += alias + '.' + col + ' = $' + idx++;
+    }
+  }
+
+  return queryString;
+}
+
+function objectToArray(object) {
+
+  var array = [];
+
+  if (typeof object == 'object' && Object.keys(object).length > 0) {
+    for ( var col in object) {
+      array.push(object[col]);
+    }
+  } else {
+    array = object;
+  }
+
+  return array;
 }

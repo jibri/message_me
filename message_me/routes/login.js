@@ -57,7 +57,7 @@ exports.submitForm = function(req, res) {
     hash.verify(authUser.password, loginForm.password, function(err, isValid) {
 
       if (err) {
-        throw err;
+        return errors.throwServerError(req, res, err);
       }
 
       if (isValid) {

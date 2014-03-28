@@ -28,8 +28,9 @@ function find(params, callback) {
  */
 function findFromConv(convId, userId, callback) {
 
-  var query = 'SELECT * FROM ' + TABLE_NAME + ' message ';
-  query += 'JOIN ' + user.TABLE_NAME + ' user ON message.user = user.id ';
+  var query = 'SELECT message.content, message.date_send, "user".firstname user_firstname FROM ' + TABLE_NAME
+      + ' message ';
+  query += 'JOIN ' + user.TABLE_NAME + ' "user" ON message.user = "user".id ';
   query += 'WHERE message.conversation = ' + convId;
 
   // sub query to check if connected user is part of the conversation
@@ -40,8 +41,5 @@ function findFromConv(convId, userId, callback) {
 
   query += ' ORDER BY message.date_send ASC';
 
-  var option = { sql : query,
-                nestTables : true };
-
-  mysql.findOptions(option, callback);
+  mysql.findQuery(query, callback);
 }

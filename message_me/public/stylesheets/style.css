@@ -253,7 +253,7 @@ form .validation-error-message.visible {
 }
 
 table.form-table td.label {
-	width: 120px;
+	width: 150px;
 }
 
 table.form-table label.form-label {
@@ -419,24 +419,28 @@ div.bubble-wrapper div.bubble-body {
 	height: 100px;
 	overflow: auto;
 	border: 2px solid #0099FF;
+  background-color: #AAD6FF;
 	border-radius: 30px;
 	padding: 10px;
 }
 
 div.bubble-wrapper.pos1 div.bubble-body {
 	border: 2px solid #FF0099;
+	background-color: #FFAAD6;
 }
 
 div.bubble-wrapper.pos2 div.bubble-body {
 	border: 2px solid #00BB00;
+  background-color: #77cc77;
 }
 
 div.bubble-wrapper.pos3 div.bubble-body {
 	border: 2px solid #FF9900;
+  background-color: #FFD6AA;
 }
 
 div.bubble-wrapper .bubble-speaker {
-	background-image: url('../images/comicStrip/bulle_bl_blue.png');
+	background-image: url('../images/comicStrip/transp/bulle_bl_blue.png');
 	background-repeat: no-repeat;
 	background-position: left bottom;
 	bottom: 10px;
@@ -593,10 +597,6 @@ div.convs-wrapper div.msg-content {
 	text-align: justify;
 	font-weight: bold;
 	color: #888;
-}
-
-#conversation-form td.label {
-	width: 130px;
 }
 
 /*

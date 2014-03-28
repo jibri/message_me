@@ -43,12 +43,12 @@ block content
       td
         +frame(i18n.get('message_conversations_frame_title')).convs-wrapper.chats
           each conv in conversations
-            div(id=conv.conversation.id).conv-wrapper
+            div(id=conv.id).conv-wrapper
               div
-                span= i18n.get('message_conversations_envelope', moment(conv.conversation.date_ouverture).format('LLLL'))
-              div.msg-content= conv.conversation.titre
+                span= i18n.get('message_conversations_envelope', moment(conv.date_ouverture).format('LLLL'))
+              div.msg-content= conv.titre
               div.user-wrapper= i18n.get('message_conversations_chatters')
-                +printArray(conv.user, ', ', ' et ', '', 'firstname')
+                +printArray(conv.users, ', ', ' et ')
           +majorbutton()(rel=url.CONVERSATION_FORM, title=i18n.get('message_conversations_create_tootip')).open-popup.add-chat.tooltip= i18n.get('button_create')
   
       td

@@ -29,10 +29,11 @@ function find(params, callback) {
  */
 function findWithUser(userId, callback) {
 
-  var query = 'SELECT * FROM ' + TABLE_NAME + ' conversation ';
+  var query = 'SELECT conversation.id, conversation.titre, conversation.date_ouverture FROM ' + TABLE_NAME
+      + ' conversation ';
   query += 'JOIN ' + JOIN_CONV_USER + ' jcu ON conversation.id = jcu.conversation ';
-  query += 'JOIN ' + user.TABLE_NAME + ' user ON jcu.user = user.id ';
-  query += 'WHERE user.id = ' + userId;
+  query += 'JOIN ' + user.TABLE_NAME + ' "user" ON jcu.user = "user".id ';
+  query += 'WHERE "user".id = ' + userId;
   query += ' ORDER BY conversation.date_ouverture DESC';
 
   mysql.findQuery(query, function(err, result) {
@@ -46,12 +47,13 @@ function findWithUser(userId, callback) {
       if (i !== 0) {
         inArray += ', ';
       }
-      inArray += result[i].conversation.id;
+      inArray += result[i].id;
     }
     inArray += ')';
 
-    var innerQuery = 'SELECT * FROM ' + JOIN_CONV_USER + ' jcu ';
-    innerQuery += 'JOIN ' + user.TABLE_NAME + ' user ON jcu.user = user.id ';
+    var innerQuery = 'SELECT jcu.conversation conversation_id, "user".firstname user_firstname FROM ' + JOIN_CONV_USER
+        + ' jcu ';
+    innerQuery += 'JOIN ' + user.TABLE_NAME + ' "user" ON jcu.user = "user".id ';
     innerQuery += 'WHERE jcu.conversation IN ' + inArray;
 
     mysql.findQuery(innerQuery, function(err, innerResult) {
@@ -63,11 +65,11 @@ function findWithUser(userId, callback) {
       for ( var i = 0; i < result.length; i++) {
         var innerArray = [];
         for ( var j = 0; j < innerResult.length; j++) {
-          if (result[i].conversation.id == innerResult[j].jcu.conversation) {
-            innerArray.push(innerResult[j].user);
+          if (result[i].id == innerResult[j].conversation_id) {
+            innerArray.push(innerResult[j].user_firstname);
           }
         }
-        result[i].user = innerArray;
+        result[i].users = innerArray;
       }
 
       callback(null, result);
