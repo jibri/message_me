@@ -97,6 +97,7 @@ function initButtons() {
   $(document).on('click', '.' + CLOSE_POPUP_SELECTOR, function() {
 
     closeAllPopup();
+    return false;
   });
 
   // Open popup buttons
@@ -105,16 +106,22 @@ function initButtons() {
     $.get($(this).attr('rel'), function(html) {
 
       popupContent(html);
+      return false;
     });
   });
 
   // Tooltip
-  $('.tooltip').tooltip({ 'track' : true,
-                         'show' : { delay : 50 },
-                         'hide' : false,
-                         'position' : { my : "left+15 top+15",
-                                       at : "left bottom",
-                                       collision : "flipfit" } });
+  setTooltip('.tooltip');
+}
+
+function setTooltip(selector) {
+
+  $(selector).tooltip({ 'track' : true,
+                       'show' : { delay : 50 },
+                       'hide' : false,
+                       'position' : { my : "left+15 top+15",
+                                     at : "left bottom",
+                                     collision : "flipfit" } });
 }
 
 /**
@@ -297,10 +304,5 @@ function bubbleLayout(parentClass) {
   });
 
   // Tooltip
-  $('.bubble-wrapper .tooltip').tooltip({ 'track' : true,
-                                         'show' : { delay : 50 },
-                                         'hide' : false,
-                                         'position' : { my : "left+15 top+15",
-                                                       at : "left bottom",
-                                                       collision : "flipfit" } });
+  setTooltip('.bubble-wrapper .tooltip');
 }
