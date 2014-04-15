@@ -28,7 +28,7 @@ block content
             +formLine
               +input('password', 'password', true)
             +buttons()
-              button.submit-button(rel='login-form')=i18n.get('button_connection')
+              +button.submit-button(rel='login-form')=i18n.get('button_connection')
               
       td
         +frame(i18n.get('login_newAccount_frame_title')).new-account.green
