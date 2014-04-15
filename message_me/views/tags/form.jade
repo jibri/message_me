@@ -6,19 +6,20 @@ mixin form(nameId, action, method)
       block
       
 
-//- New line tag. Only add a <tr> tag
-//- attributes are given to the tr element
+// - New line tag. Only add a <tr> tag
+// - attributes are given to the tr element
 mixin formLine()
   tr&attributes(attributes)
     block
 
 
-//- Input tag
-//- attributes are given to the input element
+// - Input tag
+// - attributes are given to the input element
 mixin input(type, name, required)
 
-  //- The i18n input label is built from page filename and the input name, such as the i18n key look like : '<filename>_<inputName>_label'
-  //- i.e. : 'login_password_label' is the key for the password input label in the /login.jade page.
+  // - The i18n input label is built from page filename and the input name, such as the i18n key look like :
+  // '<filename>_<inputName>_label'
+  // - i.e. : 'login_password_label' is the key for the password input label in the /login.jade page.
   - var label = filename.substring(filename.lastIndexOf('\\') + 1, filename.lastIndexOf('.jade')).replace('-', '_') + '_' + name + '_label';
   - label = i18n.get(label);
   
@@ -35,12 +36,12 @@ mixin input(type, name, required)
         input.form-input(type=type, id=name, name=name)&attributes(attributes)
     
 
-//- input text tag
-//- attributes are given to the input element
+// - input text tag
+// - attributes are given to the input element
 mixin inputText(name, required)
   +input('text', name, required)&attributes(attributes)
   
-//- Button container
+// - Button container
 mixin buttons()
   tr
     td(colspan=42)
@@ -48,7 +49,12 @@ mixin buttons()
         block
         div.clear
         
-//- button with spécial css.
+// - clicable Button
+mixin button()
+  button(type='button')&attributes(attributes)
+    block
+        
+// - button with spécial css.
 mixin majorbutton()
   div.major-button(rel=attributes.rel, title=attributes.title)&attributes(attributes)
     span.text
