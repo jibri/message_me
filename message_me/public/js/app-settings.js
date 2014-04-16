@@ -9,6 +9,7 @@ var FRAME_TITLE_SELECTOR = 'frame-title';
 var INPUT_SELECTOR = 'form-input';
 var VALIDATION_ERROR_SELECTOR = 'validation-error';
 var VALIDATION_ERROR_MESSAGE_SELECTOR = 'validation-error-message';
+var AUTOCOMPLETE_SELECTOR = 'autocomplete-input';
 
 /**
  * APP default settings
@@ -110,10 +111,32 @@ function initButtons() {
     });
   });
 
+  // autocomplete
+  setAutocomplete('.' + AUTOCOMPLETE_SELECTOR);
   // Tooltip
   setTooltip('.tooltip');
 }
 
+/**
+ * set autocomplete inputs
+ */
+function setAutocomplete(selector, inPopup) {
+
+  $(selector).autocomplete({ appendTo : inPopup ? '.' + POPUP_SELECTOR : null,
+                            source : [ "c++",
+                                      "java",
+                                      "php",
+                                      "coldfusion",
+                                      "javascript",
+                                      "asp",
+                                      "ruby" ] });
+}
+
+/**
+ * Set the tooltip to the matching elements
+ * 
+ * @param selector
+ */
 function setTooltip(selector) {
 
   $(selector).tooltip({ 'track' : true,
@@ -209,6 +232,8 @@ function popupContent(htmlContent) {
   popup.css('left', (windowWidth - width) / 2);
 
   popup.draggable();
+
+  setAutocomplete($('.' + AUTOCOMPLETE_SELECTOR, popup), true);
 }
 
 function closeAllPopup() {
