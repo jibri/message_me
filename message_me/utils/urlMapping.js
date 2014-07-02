@@ -20,3 +20,4 @@ exports.IMAGES = AUTH_ROOT + 'image.html';
 exports.CONVERSATION = AUTH_ROOT + 'messages.html';
 exports.CONVERSATION_FORM = AUTH_ROOT + 'conversation-form.html';
 exports.GET_MESSAGES = AUTH_ROOT + 'get-messages.html';
+exports.GET_USERS_AUTOCOMPLETE = AUTH_ROOT + 'get-users-autocomplete.html';

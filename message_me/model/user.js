@@ -9,6 +9,7 @@ var TABLE_NAME = 'tb_user';
 exports.find = find;
 exports.validate = validate;
 exports.getUserId = getUserId;
+exports.findUsersLikeName = findUsersLikeName;
 exports.TABLE_NAME = TABLE_NAME;
 
 /**
@@ -46,4 +47,22 @@ function getUserId(req, res, callback) {
 
     callback(user[0].id);
   });
+}
+
+/**
+ * Find users whose name or first name contains the given 'term
+ * 
+ * @param term
+ *          The term to find
+ * @param callback
+ * 
+ */
+function findUsersLikeName(term, callback) {
+
+  var query = 'SELECT "user".id, "user".name, "user".firstname FROM ' + TABLE_NAME + ' "user" ';
+  query += 'WHERE IULIKE("user".name, \'%' + term + '%\') ';
+  query += 'OR IULIKE("user".firstname, \'%' + term + '%\') ';
+  query += ' ORDER BY "user".firstname ASC';
+
+  mysql.findQuery(query, callback);
 }

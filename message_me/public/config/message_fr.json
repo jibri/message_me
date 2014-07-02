@@ -43,6 +43,7 @@
   "conversation_form_frame_title" : "Créer une nouvelle conversation",
   "conversation_form_title_label" : "Titre",
   "conversation_form_content_label" : "Votre message",
+  "conversation_form_users_label" : "Avec",
   "conversation_form_create" : "Créer la conversation",
     
   

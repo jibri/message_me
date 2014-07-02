@@ -9,6 +9,10 @@ var JOIN_CONV_USER = 'tj_conv_user';
 exports.find = find;
 exports.findWithUser = findWithUser;
 
+function Conversation() {
+
+}
+
 function validate() {
 
   // TODO implement validation

@@ -25,7 +25,7 @@ exports.getConversation = function(req, res) {
 };
 
 /*
- * POST conversation form
+ * GET POPUP conversation form
  */
 exports.popupConversationForm = function(req, res) {
 
@@ -38,6 +38,9 @@ exports.popupConversationForm = function(req, res) {
 exports.postConversation = function(req, res) {
 
   var conversationForm = req.body;
+
+  // TODO remove this
+  console.log(conversationForm);
 
   if (!validateConversationForm(conversationForm)) {
     var json = conversationFormToJSON(conversationForm);
@@ -105,11 +108,45 @@ exports.getMessages = function(req, res) {
   });
 };
 
+/*
+ * GET Users for Autocomplete
+ */
+exports.getUsersAutocomplete = function(req, res) {
+
+  // 'term' is a jquery param usied in autocomplete widget
+  var query = req.query.term;
+
+  userModel.findUsersLikeName(query, function(err, result) {
+
+    if (err) {
+      return errors.throwServerError(req, res, err);
+    }
+
+    var values = [];
+
+    for ( var i = 0; i < result.length; i++) {
+
+      values[i] = {};
+      values[i].value = result[i];
+      values[i].label = result[i].firstname + result[i].name;
+    }
+
+    res.send(values);
+  });
+};
+
 function validateConversationForm(form) {
 
   var hasTitle = form.title && form.title.length > 0 && form.title.length <= 200;
   var hasMsg = form.content && form.content.length > 0;
-  return hasTitle && hasMsg;
+  var hasUsers = form.users && form.users.length > 0;
+  if (hasUsers) {
+    for (user in form.users) {
+      hasUsers |= user && user.id;
+    }
+  }
+
+  return hasTitle && hasMsg && hasUsers;
 }
 
 function conversationFormToJSON(form) {
@@ -120,6 +157,16 @@ function conversationFormToJSON(form) {
   }
   if (!(form.content && form.content.length)) {
     json += '"content":"' + i18n.get('validation_required') + '",';
+  }
+
+  var hasUsers = form.users && form.users.length > 0;
+  if (hasUsers) {
+    for (user in form.users) {
+      hasUsers |= user && user.id;
+    }
+  }
+  if (!hasUsers) {
+    json += '"users":"' + i18n.get('validation_required') + '",';
   }
 
   return json;
