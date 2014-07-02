@@ -94,6 +94,36 @@ function insert(tableName, model, connection, callback) {
   // }
   // }
   //
+  pg.connect(db_conString, function(err, client, done) {
+
+    // TODO
+    if (err) {
+      console.log('Error while connecting to Database.');
+      console.log('Error : ' + err);
+      callback(err);
+      return;
+    }
+
+    console.log('SELECT query : ' + query);
+
+    client.query(query, objectToArray(paramsArray), function(err, result) {
+
+      // release connection whatever happened.
+      done();
+
+      // err treatment.
+      if (err) {
+        console.log('SELECT : An error occurred while executing query : ' + query);
+        console.log('Error : ' + err);
+        callback(err, null);
+        return;
+      }
+
+      // normal case.
+      callback(null, result.rows);
+    });
+  });
+
   // connection.query('INSERT INTO ' + tableName + ' SET ?', model, function(err, result) {
   //
   // // release connection whatever happened.
@@ -174,7 +204,6 @@ function findOptions(query, paramsArray, callback) {
         return;
       }
 
-      console.log(result);
       // normal case.
       callback(null, result.rows);
     });

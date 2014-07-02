@@ -58,7 +58,7 @@ app.configure(function() {
 app.all(urlMapping.AUTH_ROOT + '*', function(req, res, next) {
 
   console.log('authenticated access ? : ' + req.session.connected);
-  
+
   if (req.session.connected) {
     next();
   } else {
@@ -73,6 +73,7 @@ app.get(urlMapping.USERS, user.form);
 app.post(urlMapping.USERS, user.submitForm);
 app.get(urlMapping.CONVERSATION, conversation.getConversation);
 app.get(urlMapping.CONVERSATION_FORM, conversation.popupConversationForm);
+app.get(urlMapping.GET_USERS_AUTOCOMPLETE, conversation.getUsersAutocomplete);
 app.post(urlMapping.CONVERSATION, conversation.postConversation);
 app.post(urlMapping.GET_MESSAGES, conversation.getMessages);
 

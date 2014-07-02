@@ -6,7 +6,9 @@ include /tags/form
     +formLine()
       +inputText('title', true)(maxlength=200)
     +formLine()
-      +input('textarea','content', true)(maxlength=3000)
+      +input('textarea','content', true)(maxlength=3000).resize-vertical
+    +formLine()
+      +autocomplete('users', true)(rel=url.GET_USERS_AUTOCOMPLETE)
     +buttons
       +button.close-popup= i18n.get('button_close_popup')
       +button.submit-button.add-chat(rel='conversation-form')= i18n.get('conversation_form_create')

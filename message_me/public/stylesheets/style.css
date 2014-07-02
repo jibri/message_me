@@ -1,11 +1,16 @@
 /*
 COLORS
-
-blue : #0099FF #77BCFF #AAD6FF
-red : #FF0099 #FF77BC #FFAAD6
-green : #00bb00 #77cc77
-
 */
+test {
+	blue1: #0099FF;
+	blue2: #77BCFF;
+	blue3: #AAD6FF;
+	red: #FF0099;
+	red: #FF77BC;
+	red: #FFAAD6;
+	green: #00bb00;
+	green: #77cc77;
+}
 
 /*
  * RESET base elements
@@ -84,6 +89,18 @@ table.inner-padding>tbody>tr>td:LAST-CHILD {
 	padding-right: 0px;
 }
 
+.resize {
+	resize: both;
+}
+
+.resize-vertical {
+	resize: vertical;
+}
+
+.resize-horizontal {
+	resize: horizontal;
+}
+
 /*
 * HEADER
 */
@@ -123,7 +140,6 @@ a.logout {
 * POPUP LAYOUT
 *
 * .popup-wrapper
-*   .popup-content
 */
 div.overlay {
 	background: repeat-x scroll 50% 50% #AAAAAA;
@@ -138,6 +154,7 @@ div.overlay {
 
 div.popup-wrapper {
 	background-color: #fff;
+	border-radius: 5px;
 	z-index: 999;
 	position: fixed;
 }
@@ -270,6 +287,24 @@ label.required {
 	background-position: right center;
 	background-repeat: no-repeat;
 	padding-right: 20px;
+}
+
+/*
+* AUTOCOMPLETE
+*/
+.autocomplete-values .autocomplete-value {
+	float: left;
+	line-height: 20px;
+	background-color: #AAD6FF;
+	border: 1px solid #77BCFF;
+	border-radius: 2px;
+	margin: 2px;
+	padding-right: 22px;
+	padding-left: 3px;
+	background-image: url(../images/icons/Close16.png);
+	background-position: right 3px center;
+	background-repeat: no-repeat;
+	cursor: pointer;
 }
 
 /*
@@ -419,7 +454,7 @@ div.bubble-wrapper div.bubble-body {
 	height: 100px;
 	overflow: auto;
 	border: 2px solid #0099FF;
-  background-color: #AAD6FF;
+	background-color: #AAD6FF;
 	border-radius: 30px;
 	padding: 10px;
 }
@@ -431,12 +466,12 @@ div.bubble-wrapper.pos1 div.bubble-body {
 
 div.bubble-wrapper.pos2 div.bubble-body {
 	border: 2px solid #00BB00;
-  background-color: #77cc77;
+	background-color: #77cc77;
 }
 
 div.bubble-wrapper.pos3 div.bubble-body {
 	border: 2px solid #FF9900;
-  background-color: #FFD6AA;
+	background-color: #FFD6AA;
 }
 
 div.bubble-wrapper .bubble-speaker {

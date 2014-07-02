@@ -9,6 +9,7 @@ var FRAME_TITLE_SELECTOR = 'frame-title';
 var INPUT_SELECTOR = 'form-input';
 var VALIDATION_ERROR_SELECTOR = 'validation-error';
 var VALIDATION_ERROR_MESSAGE_SELECTOR = 'validation-error-message';
+var AUTOCOMPLETE_SELECTOR = 'autocomplete-input';
 
 /**
  * APP default settings
@@ -103,17 +104,67 @@ function initButtons() {
   // Open popup buttons
   $(document).on('click', '.' + OPEN_POPUP_SELECTOR, function() {
 
-    $.get($(this).attr('rel'), function(html) {
+    // rel = [url<, popup width><, popup height>]
+    var rels = $(this).attr('rel').split(',');
 
-      popupContent(html);
+    $.get(rels[0], function(html) {
+
+      popupContent(html, rels[1], rels[2]);
       return false;
     });
   });
 
+  // autocomplete
+  setAutocomplete('.' + AUTOCOMPLETE_SELECTOR);
   // Tooltip
   setTooltip('.tooltip');
 }
 
+/**
+ * set autocomplete inputs
+ */
+function setAutocomplete(selector, inPopup) {
+
+  $(selector).each(function() {
+
+    var input = $(this);
+    var source = input.attr('rel');
+    var selected = [];
+    var name = input.attr('name');
+    input.attr('name', input.attr('name') + '-autocomplete');
+
+    input.autocomplete({ appendTo : inPopup ? '.' + POPUP_SELECTOR : null,
+                        source : source,
+                        select : function(event, ui) {
+
+                          var label = $('<span/>', { "class" : 'label',
+                                                    text : ui.item.label });
+                          var value = $('<input/>', { "class" : 'value',
+                                                     name : name,
+                                                     type : 'hidden',
+                                                     value : JSON.stringify(ui.item.value) });
+                          var div = $('<div/>', { "class" : 'autocomplete-value' });
+                          div.append(label);
+                          div.append(value);
+
+                          div.click(function() {
+
+                            $(this).remove();
+                          });
+
+                          $(this).next('.autocomplete-values').append(div);
+
+                          this.value = null;
+                          return false;
+                        } });
+  });
+}
+
+/**
+ * Set the tooltip to the matching elements
+ * 
+ * @param selector
+ */
 function setTooltip(selector) {
 
   $(selector).tooltip({ 'track' : true,
@@ -193,10 +244,14 @@ function setFrameTitle(frameClass, title) {
 /**
  * Creates a popup with the given content
  */
-function popupContent(htmlContent) {
+function popupContent(htmlContent, popupWidth, popupHeight) {
 
   $('body').append('<div class="' + OVERLAY_SELECTOR + '"></div>');
-  var popup = $('<div class="' + POPUP_SELECTOR + '">' + htmlContent + '</div>');
+  var content = $(htmlContent);
+  content.width(popupWidth);
+  content.height(popupHeight);
+  var popup = $('<div/>', { "class" : POPUP_SELECTOR,
+                           html : content });
 
   $('body').append(popup);
 
@@ -209,6 +264,8 @@ function popupContent(htmlContent) {
   popup.css('left', (windowWidth - width) / 2);
 
   popup.draggable();
+
+  setAutocomplete($('.' + AUTOCOMPLETE_SELECTOR, popup), true);
 }
 
 function closeAllPopup() {
