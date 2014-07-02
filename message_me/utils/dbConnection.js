@@ -37,6 +37,11 @@ exports.findAll = findAll;
  */
 function persist(tableName, model, callback) {
 
+  if (model && model.id) {
+    update(tableName, model, callback)
+  } else {
+    insert(tableName, model, callback)
+  }
 }
 
 /**
@@ -77,26 +82,34 @@ function find(tableName, args, callback) {
 }
 
 /**
- * Insert statement
+ * Insert the given model object into the given table. An then call the callback.
  * 
+ * @param tableName
+ *          The name of the table.
  * @param model
- *          The model to persist as an object (attribute must have columns names)
- * @param connection
- *          The mysql Connection
+ *          The Object containing data to insert. Properties names must correspond to DB columns names
+ * @param callback
+ *          The callback executed after the INSERt statement. It takes two parameters :
+ *          <ul>
+ *          <li>err : the error if one occured (undefined else)</li>
+ *          <li>result : the result of the query with the inserted row.</li>
+ *          </ul>
  */
-function insert(tableName, model, connection, callback) {
+function insert(tableName, model, callback) {
 
-  // console.log('Inserting row in table : ' + tableName);
-  //
+  console.log('Inserting row in table : ' + tableName);
+
   // for ( var prop in model) {
   // if (model.prop === '') {
   // model.prop = null;
   // }
   // }
-  //
+
+  // build query
+  var query = buildInsertStatement(tableName, model);
+
   pg.connect(db_conString, function(err, client, done) {
 
-    // TODO
     if (err) {
       console.log('Error while connecting to Database.');
       console.log('Error : ' + err);
@@ -104,7 +117,7 @@ function insert(tableName, model, connection, callback) {
       return;
     }
 
-    console.log('SELECT query : ' + query);
+    console.log('INSERT query : ' + query);
 
     client.query(query, objectToArray(paramsArray), function(err, result) {
 
@@ -115,7 +128,7 @@ function insert(tableName, model, connection, callback) {
       if (err) {
         console.log('SELECT : An error occurred while executing query : ' + query);
         console.log('Error : ' + err);
-        callback(err, null);
+        callback(err);
         return;
       }
 
@@ -210,6 +223,21 @@ function findOptions(query, paramsArray, callback) {
   });
 }
 
+/**
+ * Take the properties names of the given args and transform it to a parametered WHERE clause.
+ * 
+ * Exemple :<br>
+ * args = { name: 'John', firstname: 'smith'} <br>
+ * alias = person
+ * 
+ * return: 'person.name = $1 AND person.firstname = $2'
+ * 
+ * @param args
+ *          the object containing the properties to put on the query
+ * @param alias
+ *          the alias of table
+ * @returns the WHERE clause as a String
+ */
 function toQueryString(args, alias) {
 
   var queryString = '';
@@ -224,6 +252,13 @@ function toQueryString(args, alias) {
   return queryString;
 }
 
+/**
+ * Transform the given object, to an array of values
+ * 
+ * @param object
+ *          The object to transform.
+ * @returns an array of values
+ */
 function objectToArray(object) {
 
   var array = [];
@@ -237,4 +272,41 @@ function objectToArray(object) {
   }
 
   return array;
+}
+
+/**
+ * Build an insert statement with the table name and the given object. Properties names are the columns names.
+ * 
+ * @param tableName
+ *          The name of the table where to insert the object
+ * @param model
+ *          The model object to insert
+ * @returns The query as a String
+ */
+function buildInsertStatement(tableName, model) {
+
+  var query = 'INSERT INTO ' + tableName + ' SET (';
+  var values = 'VALUES (';
+
+  if (typeof model == 'object' && Object.keys(model).length > 0) {
+    var idx = 1;
+    for ( var col in model) {
+
+      if (Array.isArray(model[col])) {
+        // We assume it is for a many to many relationship
+
+        continue;
+      }
+
+      if (idx > 1) {
+        query += ', ';
+        values += ', ';
+      }
+      query += col;
+      values += model[col];
+      idx++;
+    }
+  }
+
+  return query + ') ' + values + ') ';
 }

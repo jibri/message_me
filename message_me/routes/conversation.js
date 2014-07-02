@@ -39,9 +39,6 @@ exports.postConversation = function(req, res) {
 
   var conversationForm = req.body;
 
-  // TODO remove this
-  console.log(conversationForm);
-
   if (!validateConversationForm(conversationForm)) {
     var json = conversationFormToJSON(conversationForm);
     return errors.throwInvalidForm(req, res, '', json);
@@ -49,43 +46,46 @@ exports.postConversation = function(req, res) {
 
   userModel.getUserId(req, res, function(userId) {
 
-    var conversation = {};
-    conversation.titre = conversationForm.title;
-    conversation.date_ouverture = new Date();
+    var conversation = new convModel.conversation(conversationForm);
+    conversation.users.push('{"id":' + userId + '}')
 
-    mysql.persist('tb_conversation', conversation, function(convId) {
+    // TODO remove this
+    console.log(conversation);
 
-      if (!convId) {
-        return errors.throwServerError(req, res);
-      }
-
-      var message = {};
-      message.content = conversationForm.content;
-      message.user = userId;
-      message.date_send = new Date();
-      message.conversation = convId;
-
-      mysql.persist('tb_message', message, function(msgId) {
-
-        if (!msgId) {
-          return errors.throwServerError(req, res);
-        }
-
-        var jointure = {};
-        jointure.user = userId;
-        jointure.conversation = convId;
-
-        mysql.persist('tj_conv_user', jointure, function(id) {
-
-          if (!id) {
-            return errors.throwServerError(req, res);
-          }
-
-          res.send('Conversation créée.');
-        });
-      });
-    });
+    //    mysql.persist(convModel.TABLE_NAME, conversation, function(err, convId) {
+    //
+    //      if (!err) {
+    //        return errors.throwServerError(req, res, err);
+    //      }
+    //
+    //      var message = {};
+    //      message.content = conversationForm.content;
+    //      message.user = userId;
+    //      message.date_send = new Date();
+    //      message.conversation = convId;
+    //
+    //      mysql.persist('tb_message', message, function(msgId) {
+    //
+    //        if (!msgId) {
+    //          return errors.throwServerError(req, res);
+    //        }
+    //
+    //        var jointure = {};
+    //        jointure.user = userId;
+    //        jointure.conversation = convId;
+    //
+    //        mysql.persist('tj_conv_user', jointure, function(id) {
+    //
+    //          if (!id) {
+    //            return errors.throwServerError(req, res);
+    //          }
+    //
+    //          res.send('Conversation créée.');
+    //        });
+    //      });
+    //    });
   });
+
 };
 
 /*
@@ -124,7 +124,7 @@ exports.getUsersAutocomplete = function(req, res) {
 
     var values = [];
 
-    for ( var i = 0; i < result.length; i++) {
+    for (var i = 0; i < result.length; i++) {
 
       values[i] = {};
       values[i].value = result[i];

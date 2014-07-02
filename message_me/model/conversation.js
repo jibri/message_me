@@ -8,9 +8,14 @@ var JOIN_CONV_USER = 'tj_conv_user';
 
 exports.find = find;
 exports.findWithUser = findWithUser;
+exports.conversation = Conversation;
 
-function Conversation() {
+function Conversation(form) {
 
+  this.title = form.title;
+  this.content = form.content;
+  this.date = form.date || new Date();
+  this.user = form.users;
 }
 
 function validate() {
@@ -47,7 +52,7 @@ function findWithUser(userId, callback) {
     }
 
     var inArray = '(';
-    for ( var i = 0; i < result.length; i++) {
+    for (var i = 0; i < result.length; i++) {
       if (i !== 0) {
         inArray += ', ';
       }
@@ -66,9 +71,9 @@ function findWithUser(userId, callback) {
         return callback(err);
       }
 
-      for ( var i = 0; i < result.length; i++) {
+      for (var i = 0; i < result.length; i++) {
         var innerArray = [];
-        for ( var j = 0; j < innerResult.length; j++) {
+        for (var j = 0; j < innerResult.length; j++) {
           if (result[i].id == innerResult[j].conversation_id) {
             innerArray.push(innerResult[j].user_firstname);
           }
