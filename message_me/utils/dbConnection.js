@@ -99,14 +99,8 @@ function insert(tableName, model, callback) {
 
   console.log('Inserting row in table : ' + tableName);
 
-  // for ( var prop in model) {
-  // if (model.prop === '') {
-  // model.prop = null;
-  // }
-  // }
-
   // build query
-  var query = buildInsertStatement(tableName, model);
+  var query = buildInsertStatement(tableName, model.fields);
 
   pg.connect(db_conString, function(err, client, done) {
 
@@ -117,42 +111,72 @@ function insert(tableName, model, callback) {
       return;
     }
 
-    console.log('INSERT query : ' + query);
+    // BEGIN Statement
+    console.log('BEGIN Transaction');
+    client.query('BEGIN', function(err) {
 
-    client.query(query, objectToArray(paramsArray), function(err, result) {
-
-      // release connection whatever happened.
-      done();
-
-      // err treatment.
       if (err) {
-        console.log('SELECT : An error occurred while executing query : ' + query);
+        console.log('BEGIN : An error occurred while beginning transaction');
         console.log('Error : ' + err);
+        performRollback(client, done);
         callback(err);
         return;
       }
 
-      // normal case.
-      callback(null, result.rows);
+      // This function is a sort of insurance that the passed function will be executed on the next VM internal loop,
+      // which means it will be the very first executed lines of code.
+      // @see http://nodejs.org/api/all.html#all_process_nexttick_callback for more
+      process.nextTick(function() {
+
+        // First Insert Statement
+        console.log('INSERT query : ' + query);
+        client.query(query, objectToArray(model.fields), function(err, insertedResult) {
+
+          // err treatment.
+          if (err) {
+            console.log('INSERT : An error occurred while inserting row : ' + query);
+            console.log('Error : ' + err);
+            performRollback(client, done);
+            callback(err);
+            return;
+          }
+
+          console.log('INSERT o2ms query');
+          performOneToManyInserts(client, insertedResult.rows[0].id, model, function(err) {
+
+            if (err) {
+              console.log('INSERT : An error occurred while inserting o2ms rows.');
+              console.log('Error : ' + err);
+              performRollback(client, done);
+              callback(err);
+              return;
+            }
+
+            console.log('INSERT m2ms query');
+            performManyToManyInserts(client, insertedResult.rows[0].id, model, function(err) {
+
+              if (err) {
+                console.log('INSERT : An error occurred while inserting m2ms rows.');
+                console.log('Error : ' + err);
+                performRollback(client, done);
+                callback(err);
+                return;
+              }
+
+              // COMMIT the transaction
+              console.log('COMMIT Transaction');
+              client.query('COMMIT', function() {
+
+                done();
+                // normal case.
+                callback(null, insertedResult.rows[0]);
+              });
+            });
+          });
+        });
+      });
     });
   });
-
-  // connection.query('INSERT INTO ' + tableName + ' SET ?', model, function(err, result) {
-  //
-  // // release connection whatever happened.
-  // connection.release();
-  //
-  // if (err) {
-  // console.log('INSERT : An error occurred while inserting row in table : ' + tableName);
-  // console.log('Error : ' + err);
-  // callback(err, result);
-  // return;
-  // }
-  //
-  // if (callback) {
-  // callback(null, result.insertId);
-  // }
-  // });
 }
 
 /**
@@ -224,6 +248,137 @@ function findOptions(query, paramsArray, callback) {
 }
 
 /**
+ * If there was a problem rolling back the query something is seriously messed up. Return the error to the done function
+ * to close & remove this client from the pool. If you leave a client in the pool with an unaborted transaction __very
+ * bad things__ will happen.
+ * 
+ * @param client
+ *          The client who open the transaction
+ * @param done
+ *          The done function the must be called after the rollback
+ */
+function performRollback(client, done) {
+
+  console.log('ROLLBACK Transaction');
+  client.query('ROLLBACK', function(err) {
+
+    return done(err);
+  });
+};
+
+/**
+ * Insert into database the values of the manyToMany elements of the given model
+ * 
+ * @param client
+ *          the postgres client
+ * @param id
+ *          the id of the model
+ * @param model
+ *          the model containing the manyToManies elements
+ * @param callback
+ *          the cb executed after all insert statements
+ */
+function performManyToManyInserts(client, id, model, callback) {
+
+  var m2ms = model.manyToMany;
+  var NumberInserted = 0;
+  var totalInsert = 0;
+
+  for ( var m2m in m2ms) {
+    if (!m2ms[m2m].values) {
+      callback();
+      return;
+    }
+    totalInsert += m2ms[m2m].values.length;
+  }
+
+  for ( var m2m in m2ms) {
+
+    var m2mTemp = m2ms[m2m];
+    for (var i = 0; i < m2mTemp.values.length; i++) {
+
+      var query = 'INSERT INTO ' + m2mTemp.tableName;
+      query += ' ("' + m2mTemp.thisId + '", "' + m2mTemp.valueId + '") ';
+      query += 'VALUES (' + id + ', ' + m2mTemp.values[i].id + ') ';
+
+      console.log('INSERT query : ' + query);
+      var q = client.query(query, function(err, result) {
+
+        if (err) {
+          console.log('INSERT : An error occurred while inserting row : ' + query);
+          callback(err);
+          return;
+        }
+
+        // All the m2m query are performed in parallele.
+        // We need to be sure every query ended, and ended  without error before calling the callback.
+        NumberInserted++;
+        if (NumberInserted >= totalInsert) {
+          NumberInserted = 0;
+          callback();
+        }
+      });
+    }
+  }
+}
+
+/**
+ * Insert into database the values of the oneToMany elements of the given model
+ * 
+ * @param client
+ *          the postgres client
+ * @param id
+ *          the id of the model
+ * @param model
+ *          the model containing the onetoManies elements
+ * @param callback
+ *          the cb executed after all insert statements
+ */
+function performOneToManyInserts(client, id, model, callback) {
+
+  var o2ms = model.oneToMany;
+  var NumberInserted = 0;
+  var totalInsert = 0;
+
+  for ( var o2m in o2ms) {
+    if (!o2ms[o2m].values) {
+      callback();
+      return;
+    }
+    totalInsert += o2ms[o2m].values.length;
+  }
+
+  for ( var o2m in o2ms) {
+
+    var o2mTemp = o2ms[o2m];
+    for (var i = 0; i < o2mTemp.values.length; i++) {
+
+      var element = o2mTemp.values[i];
+      element[o2mTemp.valueId] = id;
+      var query = buildInsertStatement(o2mTemp.tableName, element);
+
+      console.log('INSERT query : ' + query);
+      var q = client.query(query, objectToArray(element), function(err, result) {
+
+        if (err) {
+          console.log('INSERT : An error occurred while inserting row : ' + query);
+          callback(err);
+          return;
+        }
+
+        // All the o2m query are performed in parallele.
+        // We need to be sure every query ended, and ended  without error before calling the callback.
+        NumberInserted++;
+        if (NumberInserted >= totalInsert) {
+          NumberInserted = 0;
+          callback();
+        }
+      });
+    }
+  }
+}
+
+/**
  * Take the properties names of the given args and transform it to a parametered WHERE clause.
  * 
  * Exemple :<br>
@@ -279,34 +434,27 @@ function objectToArray(object) {
  * 
  * @param tableName
  *          The name of the table where to insert the object
- * @param model
- *          The model object to insert
+ * @param fields
+ *          The fields to insert
  * @returns The query as a String
  */
-function buildInsertStatement(tableName, model) {
+function buildInsertStatement(tableName, fields) {
 
-  var query = 'INSERT INTO ' + tableName + ' SET (';
+  var query = 'INSERT INTO ' + tableName + ' (';
   var values = 'VALUES (';
 
-  if (typeof model == 'object' && Object.keys(model).length > 0) {
+  if (typeof fields == 'object' && Object.keys(fields).length > 0) {
     var idx = 1;
-    for ( var col in model) {
-
-      if (Array.isArray(model[col])) {
-        // We assume it is for a many to many relationship
-
-        continue;
-      }
+    for ( var col in fields) {
 
       if (idx > 1) {
         query += ', ';
         values += ', ';
       }
-      query += col;
-      values += model[col];
-      idx++;
+      query += '"' + col + '"';
+      values += '$' + idx++;
     }
   }
 
-  return query + ') ' + values + ') ';
+  return query + ') ' + values + ') RETURNING *';
 }

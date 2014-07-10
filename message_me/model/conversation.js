@@ -3,26 +3,47 @@
  */
 var mysql = require('../utils/dbConnection');
 var user = require('../model/user');
+var message = require('../model/message');
 var TABLE_NAME = 'tb_conversation';
 var JOIN_CONV_USER = 'tj_conv_user';
 
 exports.find = find;
 exports.findWithUser = findWithUser;
 exports.conversation = Conversation;
+exports.TABLE_NAME = TABLE_NAME;
 
 function Conversation(form) {
 
-  this.title = form.title;
-  this.content = form.content;
-  this.date = form.date || new Date();
-  this.user = form.users;
-}
+  this.fields = { titre : form.title,
+                 date_ouverture : form.date || new Date() }
 
-function validate() {
+  this.manyToMany = { users : { tableName : JOIN_CONV_USER,
+                               thisId : 'conversation',
+                               valueId : 'user',
+                               values : form.users } };
 
-  // TODO implement validation
-  var notNull = false;
-  return notNull;
+  this.oneToMany = { messages : { tableName : message.TABLE_NAME,
+                                 valueId : 'conversation',
+                                 values : form.messages } };
+
+  this.validate = [ { field : 'title',
+                     type : String,
+                     max : 200,
+                     notNull : true },
+
+                   { field : 'date',
+                    type : Date,
+                    notNull : true },
+
+                   { field : 'users',
+                    type : Array,
+                    min : 1,
+                    notNull : true },
+
+                   { field : 'messages',
+                    type : Array,
+                    min : 1,
+                    notNull : true } ];
 }
 
 /**

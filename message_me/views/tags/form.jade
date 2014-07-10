@@ -1,6 +1,6 @@
-//- Form tag
-//- attributes are given to the form element
-//- this mixin insert a table element
+// - Form tag
+// - attributes are given to the form element
+// - this mixin insert a table element
 mixin form(nameId, action, method)
   form(id=nameId, action=action, method=method || 'POST')&attributes(attributes)
     table.form-table
@@ -23,7 +23,7 @@ mixin input(type, name, required)
   //- The i18n input label is built from page filename and the input name, such as the i18n key look like :
   //- '<filename>_<inputName>_label'
   //- i.e. : 'login_password_label' is the key for the password input label in the /login.jade page.
-  - var label = filename.substring(filename.lastIndexOf('\\') + 1, filename.lastIndexOf('.jade')).replace('-', '_') + '_' + name + '_label';
+  - var label = filename.substring(filename.lastIndexOf('\\') + 1, filename.lastIndexOf('.jade')).replace('-', '_') + '_' + name.replace('.', '_') + '_label';
   - label = i18n.get(label);
   
   if (label)

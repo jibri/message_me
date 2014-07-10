@@ -7,6 +7,7 @@ var TABLE_NAME = 'tb_message';
 
 exports.find = find;
 exports.findFromConv = findFromConv;
+exports.TABLE_NAME = TABLE_NAME;
 
 function validate() {
 

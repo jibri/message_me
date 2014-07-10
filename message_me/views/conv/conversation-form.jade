@@ -6,7 +6,7 @@ include /tags/form
     +formLine()
       +inputText('title', true)(maxlength=200)
     +formLine()
-      +input('textarea','content', true)(maxlength=3000).resize-vertical
+      +input('textarea','messages.content', true)(maxlength=3000).resize-vertical
     +formLine()
       +autocomplete('users', true)(rel=url.GET_USERS_AUTOCOMPLETE)
     +buttons

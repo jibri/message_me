@@ -42,9 +42,8 @@ function initForms() {
                        continue;
                      }
 
-                     $(errorInputClass + '#' + key).addClass(VALIDATION_ERROR_SELECTOR);
-                     $(errorMessageClass + '.' + key).html(json[key]);
-
+                     $(errorInputClass + '#' + escape(key)).addClass(VALIDATION_ERROR_SELECTOR);
+                     $(errorMessageClass + '.' + escape(key)).html(json[key]);
                    }
 
                    // on focus, Remove coloration and show eror message
@@ -52,14 +51,14 @@ function initForms() {
 
                      if ($(this).hasClass(VALIDATION_ERROR_SELECTOR)) {
                        $(this).removeClass(VALIDATION_ERROR_SELECTOR);
-                       $(errorMessageClass + '.' + $(this).attr('id')).addClass('visible');
+                       $(errorMessageClass + '.' + escape($(this).attr('id'))).addClass('visible');
                      }
                    });
 
                    // Remove the message on blur
                    $(errorInputClass).one('blur', function() {
 
-                     $(errorMessageClass + '.' + $(this).attr('id')).removeClass('visible');
+                     $(errorMessageClass + '.' + escape($(this).attr('id'))).removeClass('visible');
                    });
 
                    alert(json.message);
@@ -199,7 +198,7 @@ function submitButtonClickHandler(button) {
     if (result) {
       var escapedId = '';
       var arrayId = formId.split('-');
-      for ( var i = 0; i < arrayId.length; i++) {
+      for (var i = 0; i < arrayId.length; i++) {
         escapedId += arrayId[i].charAt(0).toUpperCase() + arrayId[i].slice(1);
       }
       var handler = 'handle' + escapedId + 'Success';
@@ -211,6 +210,18 @@ function submitButtonClickHandler(button) {
       }
     }
   } });
+}
+
+/**
+ * Escape charaters of the given string in order to use the string as a jquery selector.
+ * 
+ * @param str
+ *          The String to escape
+ * @returns the escaped string
+ */
+function escape(str) {
+
+  return str.replace(/(:|\.|\[|\])/g, "\\$1");
 }
 
 /***********************************************************************************************************************

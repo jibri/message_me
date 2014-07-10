@@ -60,8 +60,8 @@ function getUserId(req, res, callback) {
 function findUsersLikeName(term, callback) {
 
   var query = 'SELECT "user".id, "user".name, "user".firstname FROM ' + TABLE_NAME + ' "user" ';
-  query += 'WHERE "user".name ILIKE \'%' + term + '%\' ';
-  query += 'OR "user".firstname ILIKE\'%' + term + '%\' ';
+  query += 'WHERE IULIKE("user".name, \'%' + term + '%\') ';
+  query += 'OR IULIKE("user".firstname, \'%' + term + '%\') ';
   query += ' ORDER BY "user".firstname ASC';
 
   mysql.findQuery(query, callback);
