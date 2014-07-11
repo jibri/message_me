@@ -135,86 +135,6 @@ exports.getUsersAutocomplete = function(req, res) {
   });
 };
 
-//TODO centralize
-// TODO en cours validation parsing json retour.
-var TYPE_ERROR_TAG = 'type';
-var MIN_ERROR_TAG = 'min';
-var MAX_ERROR_TAG = 'max';
-var NOT_NULL_ERROR_TAG = 'null';
-
-function validateConversationForm(form) {
-
-  var json = {};
-
-  // The form must have a validate attribute
-  if (form.validate) {
-    var validate = form.validate;
-
-    for (var i = 0; i < validate.length; i++) {
-
-      var fieldName = validate[i].field;
-      var fieldType = validate[i].type;
-      var fieldMin = validate[i].min;
-      var fieldMax = validate[i].max;
-      var fieldNotNull = validate[i].notNull;
-      console.log("fieldName " + fieldName);
-      console.log("fieldType " + fieldType);
-      console.log("fieldMin " + fieldMin);
-      console.log("fieldMax " + fieldMax);
-      console.log("fieldNotNull " + fieldNotNull);
-
-      var fieldValue = form[fieldName];
-      console.log("fieldValue " + fieldValue);
-
-      // Type validation
-      if (fieldType && !(typeof fieldValue === fieldType)) {
-        console.log("type false " + fieldType + " instead of " + typeof fieldValue);
-
-        // Check if array
-        if (fieldType === 'array' && !Array.isArray(fieldValue)) {
-          console.log("arraytise the field " + fieldName);
-          form[fieldName] = [ form[fieldName] ];
-        } else {
-          json[fieldName] = TYPE_ERROR_TAG;
-          continue;
-        }
-      }
-
-      // NotNull validation
-      if (fieldNotNull === true
-          && (!fieldValue || fieldValue == '' || fieldValue.trim() === '' || fieldValue.length <= 0)) {
-        console.log("notnull false");
-        json[fieldName] = NOT_NULL_ERROR_TAG;
-        continue;
-      }
-
-      // Min validation
-      if (fieldMin && fieldValue.length < fieldMin) {
-        console.log("min false");
-        json[fieldName] = MIN_ERROR_TAG;
-        continue;
-      }
-
-      // Max validation
-      if (fieldMax && fieldValue.length > fieldMax) {
-        console.log("max false");
-        json[fieldName] = MAX_ERROR_TAG;
-        continue;
-      }
-    }
-  }
-
-  if (Object.keys(obj).length > 0) {
-    if (form.message) {
-      json.message = form.message;
-    }
-  } else {
-    return;
-  }
-
-  return json;
-}
-
 // TODO centralize
 function conversationFormToJSON(form) {
 
@@ -237,24 +157,6 @@ function conversationFormToJSON(form) {
   }
 
   return json;
-}
-
-// TODO Centralize
-function mapForm(rawForm) {
-
-  var finalForm = {};
-  var temp;
-  for ( var props in rawForm) {
-    temp = finalForm;
-    var parts = props.split('.');
-    var key = parts.pop();
-    while (parts.length) {
-      var part = parts.shift();
-      temp = temp[part] = temp[part] || {};
-    }
-    temp[key] = rawForm[props];
-  }
-  return finalForm;
 }
 
 function ConversationForm(form) {

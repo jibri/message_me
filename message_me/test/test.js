@@ -60,8 +60,18 @@ app.configure(function() {
 http.createServer(app).listen('3002', function() {
 
   console.log("Express test server listening on port 3002");
+  console.log("Test begin : ");
+
+  // Put test functions here
   testValidateForm();
+
 });
+
+// --------------------------------------------
+//
+// TEST FUNCTIONS
+//
+// --------------------------------------------
 
 function testInsertConversation() {
 
@@ -84,105 +94,21 @@ function testInsertConversation() {
 
 function testValidateForm() {
 
-  var form = { /* title : 'aze', */
-    number : 3,
-    messages : { content : 'azeaze' },
+  var validator = require('../form/formValidation');
+
+  var form = { //title : [ 'aty',
+    //       ' qsqs',
+    //     2 ],
+    //number : 3,
+    //messages : { content : 'azeaze' },
+
+    // TODO JSON.parse pour valider un object sous une string.
     users : '{"id":2,"name":"a                             ","firstname":"a                             "}',
-    validate : [ { field : 'title',
-                  type : 'string',
-                  max : 2,
-                  notNull : true },
-                { field : 'number',
-                 type : 'number',
-                 max : 2,
-                 min : 0 },
-                { field : 'users',
-                 type : 'array',
-                 notNull : true },
-                { field : 'messages',
-                 type : 'array',
-                 notNull : true } ] };
+    validate : [ { field : 'users',
+                  type : 'object',
+                  notNull : true } ] };
 
-  console.log(validateConversationForm(form));
-
-}
-
-function validateConversationForm(form) {
-
-  var json = {};
-
-  // The form must have a validate attribute
-  if (form.validate) {
-    var validate = form.validate;
-
-    for (var i = 0; i < validate.length; i++) {
-
-      var fieldName = validate[i].field;
-      var fieldType = validate[i].type;
-      var fieldMin = validate[i].min;
-      var fieldMax = validate[i].max;
-      var fieldNotNull = validate[i].notNull;
-      console.log("fieldName " + fieldName);
-      console.log("fieldType " + fieldType);
-      console.log("fieldMin " + fieldMin);
-      console.log("fieldMax " + fieldMax);
-      console.log("fieldNotNull " + fieldNotNull);
-
-      var fieldValue = form[fieldName];
-      console.log("fieldValue " + fieldValue);
-
-      // NotNull validation
-      if (fieldNotNull === true) {
-        if (!fieldValue || fieldValue == '' || (fieldValue.trim && fieldValue.trim()) === '' || fieldValue.length <= 0) {
-          console.log("notnull false");
-          json[fieldName] = "NOT_NULL_ERROR_TAG";
-          continue;
-        }
-      }
-
-      // Type validation
-      if (fieldType && !(typeof fieldValue === fieldType)) {
-        console.log("type false " + fieldType + " instead of " + typeof fieldValue);
-
-        // Check if array
-        if (fieldType === 'array' && !Array.isArray(fieldValue)) {
-          console.log("arraytise the field " + fieldName);
-          form[fieldName] = [ form[fieldName] ];
-        } else {
-          json[fieldName] = "TYPE_ERROR_TAG";
-          continue;
-        }
-      }
-
-      // Min validation
-      if (fieldMin) {
-        if (fieldType === 'number' && fieldValue < fieldMin || fieldValue.length < fieldMin) {
-          console.log("min false");
-          json[fieldName] = "MIN_ERROR_TAG";
-          continue;
-        }
-      }
-
-      // Max validation
-      if (fieldMax) {
-        if (fieldType === 'number' && fieldValue > fieldMax || fieldValue.length > fieldMax) {
-          console.log("max false");
-          json[fieldName] = "MAX_ERROR_TAG";
-          continue;
-        }
-      }
-    }
-  }
-
-  if (Object.keys(json).length > 0) {
-    if (form.message) {
-      json.message = form.message;
-    }
-  } else {
-    return;
-  }
-
-  return json;
+  console.log(validator.validateForm(form));
 }
 
 function testJSONParsing() {

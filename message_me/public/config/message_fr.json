@@ -9,7 +9,10 @@
   
   
   "validation_generic" : "Certains champs du formulaire ne sont pas renseignés correctement.",
-  "validation_required" : "Doit être renseigné.",
+  "validation_required_field" : "Doit être renseigné.",
+  "validation_under_min_field" : "Doit être supérieur à {0}.",
+  "validation_above_max_field" : "Doit être inférieur à {0}",
+  "validation_bad_type_field" : "La valeur n'est pas conforme.",
 
   
   "header_index_tooltip" : "Retour à l'accueil",
