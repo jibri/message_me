@@ -1,0 +1,7 @@
+{
+    "service": "<ServiceMail>",
+    "auth": {
+        "user": "<UserLogin>",
+        "pass": "<Password>"
+    }
+}
