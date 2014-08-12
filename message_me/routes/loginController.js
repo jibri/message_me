@@ -4,12 +4,13 @@
  * req.query : contains request parameters in the GET query after ?
  * 
  */
-var urlMapping = require('../utils/urlMapping');
 var hash = require('credential');
-var errors = require('../routes/errors');
-var viewHandler = require('../utils/viewsHandler');
-var userModel = require('../model/user');
-var i18n = require('../utils/i18n');
+var errors = require(__root + 'routes/errorsController');
+var userModel = require(__root + 'model/user');
+var urlMapping = require(__root + 'utils/urlMapping');
+var viewHandler = require(__root + 'utils/viewsHandler');
+var i18n = require(__root + 'utils/i18n');
+var logger = require(__root + 'utils/logger');
 
 /*
  * GET users listing.
@@ -42,12 +43,12 @@ exports.submitForm = function(req, res) {
   userModel.find({ name : loginForm.name }, function(err, result) {
 
     if (err) {
-      console.log('User ' + loginForm.name + ' authentification failure : ' + err);
+      logger.logError('User ' + loginForm.name + ' authentification failure : ' + err);
       return errors.throwServerError(req, res, err);
     }
 
     if (!result || result.length === 0) {
-      console.log('User ' + loginForm.name + ' authentification failure : bad login');
+      logger.logDebug('User ' + loginForm.name + ' authentification failure : bad login');
       return errors.throwInvalidForm(req, res, err, i18n.get('login_connexion_failed'));
     }
 
@@ -61,14 +62,15 @@ exports.submitForm = function(req, res) {
       }
 
       if (isValid) {
-        console.log('User ' + authUser.name + ' authentified successfully.');
+        logger.logDebug('User ' + authUser.name + ' authentified successfully.');
         // Session storage
         req.session.connected = true;
+        req.session.userId = authUser.id;
         req.session.login = authUser.name;
         req.session.userName = authUser.firstname;
         res.send('OK');
       } else {
-        console.log('User ' + authUser.name + ' authentification failure : bad password.');
+        logger.logDebug('User ' + authUser.name + ' authentification failure : bad password.');
         return errors.throwInvalidForm(req, res, err, i18n.get('login_connexion_failed'));
       }
     });

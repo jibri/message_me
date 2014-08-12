@@ -43,6 +43,10 @@
   "message_messages_envelope" : "De {0}, {1}",
      
   
+  "message_form_add" : "Ajouter le message",
+  "message_form_placeHolder" : "Entrez un message",
+  
+  
   "conversation_form_frame_title" : "Créer une nouvelle conversation",
   "conversation_form_title_label" : "Titre",
   "conversation_form_messages_content_label" : "Votre message",

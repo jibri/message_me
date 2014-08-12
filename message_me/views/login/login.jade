@@ -10,11 +10,11 @@ block javascript
             
       $('.new-account').height($('.login').height());
       $('input[name=name]').focus();
+
+      $("form#login-form").on("form.succes", function(event, result){
+        location.reload();
+      });
     });
-  
-    function handleLoginFormSuccess(result){
-      location.reload();
-    }
 
 block content
   

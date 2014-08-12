@@ -1,5 +1,6 @@
 var nodemailer = require("nodemailer");
-var SMTPConfig = require('../public/config/mailer.config');
+var logger = require(__root + 'utils/logger');
+var SMTPConfig = require(__root + 'public/config/mailer.config');
 
 var smtpTransport;
 var sentMails = 0;
@@ -27,12 +28,12 @@ exports.sendMail = function(from, to, subject, content) {
 
     sentMails--;
     if (error) {
-      console.log(error);
+      logger.logError(error);
     } else {
-      console.log("Message sent: " + response.message);
+      logger.logDebug("Message sent: " + response.message);
 
       if (sentMails === 0) {
-        console.log('close smtp transport.');
+        logger.logDebug('close smtp transport.');
         smtpTransport.close(); // shut down the connection pool, no more messages
       }
     }

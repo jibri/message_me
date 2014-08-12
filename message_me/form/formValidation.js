@@ -35,10 +35,23 @@ var MIN_ERROR_I18N_KEY = 'validation_under_min_field';
 var MAX_ERROR_I18N_KEY = 'validation_above_max_field';
 var NOT_NULL_ERROR_I18N_KEY = 'validation_required_field';
 
+var i18nResolver;
+
+/**
+ * Set the i18n resolver to translate messages. This must be set on the main js file.
+ * 
+ * @Param The
+ *          fonction which translate i18n messages.
+ */
+exports.setI18N = function setI18N(resolver) {
+
+  i18nResolver = resolver;
+};
+
 /**
  * 
  * @param form
- * @returns {___anonymous72_73}
+ * @returns
  */
 exports.validateForm = function validateForm(form) {
 
@@ -48,30 +61,21 @@ exports.validateForm = function validateForm(form) {
   if (form.validate) {
     var validate = form.validate;
 
-    for (var i = 0; i < validate.length; i++) {
+    for ( var i = 0; i < validate.length; i++) {
 
       var fieldName = validate[i].field;
       var fieldType = validate[i].type;
       var fieldMin = validate[i].min;
       var fieldMax = validate[i].max;
       var fieldNotNull = validate[i].notNull;
-      console.log("fieldName " + fieldName);
-      console.log("fieldType " + fieldType);
-      console.log("fieldMin " + fieldMin);
-      console.log("fieldMax " + fieldMax);
-      console.log("fieldNotNull " + fieldNotNull);
-
       var fieldValue = form[fieldName];
-      console.log("fieldValue " + fieldValue);
-      console.log("fieldValue length " + fieldValue.length);
 
       // ---------------
       // NotNull validation
       // ---------------
       if (!fieldValue || fieldValue == '' || (fieldValue.trim && fieldValue.trim()) === '' || fieldValue.length <= 0) {
         if (fieldNotNull === true) {
-          console.log("notnull false");
-          errorObject[fieldName] = NOT_NULL_ERROR_I18N_KEY;
+          errorObject[fieldName] = i18nResolver(NOT_NULL_ERROR_I18N_KEY);
         }
         continue;
       }
@@ -80,19 +84,26 @@ exports.validateForm = function validateForm(form) {
       // Type validation
       // ---------------
       if (fieldType && !(typeof fieldValue === fieldType)) {
-        console.log("type false " + typeof fieldValue + " instead of " + fieldType);
 
-        // Check if array
-        if (fieldType === 'array') {
+        // It may be an object in a string try parsing
+        if (fieldType === 'object') {
+          try {
+
+            fieldValue = form[fieldName] = JSON.parse(fieldValue);
+          } catch (e) {
+
+            // Type Error.
+            errorObject[fieldName] = i18nResolver(TYPE_ERROR_I18N_KEY);
+            continue;
+          }
+        } else if (fieldType === 'array') {
+          // Check if array
 
           if (Array.isArray(fieldValue)) {
-
             // It is an Array. DO NOTHING
-            console.log("type OK It is an array");
           } else {
 
             // It is a single value. We put it in an array.
-            console.log("arraytise the field " + fieldName);
             fieldValue = form[fieldName] = [ form[fieldName] ];
           }
         } else if (fieldType === 'number' && !isNaN(fieldValue)) {
@@ -102,7 +113,7 @@ exports.validateForm = function validateForm(form) {
         } else {
 
           // Type Error.
-          errorObject[fieldName] = TYPE_ERROR_I18N_KEY;
+          errorObject[fieldName] = i18nResolver(TYPE_ERROR_I18N_KEY);
           continue;
         }
       }
@@ -112,8 +123,8 @@ exports.validateForm = function validateForm(form) {
       // ---------------
       if (fieldMin) {
         if (fieldType === 'number' && fieldValue < fieldMin || fieldValue.length < fieldMin) {
-          console.log("min false");
-          errorObject[fieldName] = MIN_ERROR_I18N_KEY;
+
+          errorObject[fieldName] = i18nResolver(MIN_ERROR_I18N_KEY);
           continue;
         }
       }
@@ -123,8 +134,8 @@ exports.validateForm = function validateForm(form) {
       // ---------------
       if (fieldMax) {
         if (fieldType === 'number' && fieldValue > fieldMax || fieldValue.length > fieldMax) {
-          console.log("max false");
-          errorObject[fieldName] = MAX_ERROR_I18N_KEY;
+
+          errorObject[fieldName] = i18nResolver(MAX_ERROR_I18N_KEY);
           continue;
         }
       }
@@ -140,9 +151,34 @@ exports.validateForm = function validateForm(form) {
   }
 
   return errorObject;
-}
+};
 
-function mapForm(rawForm) {
+/**
+ * Map the form, transforming dotted properties to inner objects.
+ * 
+ * <pre>
+ * i.e. :
+ * {
+ * name: 'John',
+ * car.name: 'BMW',
+ * car.age: '12' 
+ * } 
+ * 
+ * becomes :
+ * {
+ * name: 'John',
+ * car: {
+ *      name: 'BMW',
+ *      age: '12'
+ *      }
+ * }
+ * </pre>
+ * 
+ * @param rawForm
+ *          The raw form to map
+ * @returns The mapped form
+ */
+exports.mapForm = function mapForm(rawForm) {
 
   var finalForm = {};
   var temp;
@@ -157,4 +193,4 @@ function mapForm(rawForm) {
     temp[key] = rawForm[props];
   }
   return finalForm;
-}
+};

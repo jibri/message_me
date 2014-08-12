@@ -7,13 +7,14 @@
 /**
  * Database config
  */
-var db_full_config = require('../public/config/database.config');
+var db_full_config = require(__root + 'public/config/database.config');
 var db_config = db_full_config[db_full_config.env];
 var db_conString = 'postgre://' + db_config.user + ':' + db_config.password + ':' + db_config.port + '@'
     + db_config.host + '/' + db_config.database;
 
 // pool connections
 var pg = require('pg.js');
+var logger = require(__root + 'utils/logger');
 
 /**
  * 'connection' event listener
@@ -38,9 +39,9 @@ exports.findAll = findAll;
 function persist(tableName, model, callback) {
 
   if (model && model.id) {
-    update(tableName, model, callback)
+    update(tableName, model, callback);
   } else {
-    insert(tableName, model, callback)
+    insert(tableName, model, callback);
   }
 }
 
@@ -97,7 +98,7 @@ function find(tableName, args, callback) {
  */
 function insert(tableName, model, callback) {
 
-  console.log('Inserting row in table : ' + tableName);
+  logger.logInfo('Inserting row in table : ' + tableName);
 
   // build query
   var query = buildInsertStatement(tableName, model.fields);
@@ -105,19 +106,19 @@ function insert(tableName, model, callback) {
   pg.connect(db_conString, function(err, client, done) {
 
     if (err) {
-      console.log('Error while connecting to Database.');
-      console.log('Error : ' + err);
+      logger.logError('Error while connecting to Database.');
+      logger.logError('Error : ' + err);
       callback(err);
       return;
     }
 
     // BEGIN Statement
-    console.log('BEGIN Transaction');
+    logger.logInfo('BEGIN Transaction');
     client.query('BEGIN', function(err) {
 
       if (err) {
-        console.log('BEGIN : An error occurred while beginning transaction');
-        console.log('Error : ' + err);
+        logger.logError('BEGIN : An error occurred while beginning transaction');
+        logger.logError('Error : ' + err);
         performRollback(client, done);
         callback(err);
         return;
@@ -129,42 +130,42 @@ function insert(tableName, model, callback) {
       process.nextTick(function() {
 
         // First Insert Statement
-        console.log('INSERT query : ' + query);
+        logger.logDebug('INSERT query : ' + query);
         client.query(query, objectToArray(model.fields), function(err, insertedResult) {
 
           // err treatment.
           if (err) {
-            console.log('INSERT : An error occurred while inserting row : ' + query);
-            console.log('Error : ' + err);
+            logger.logError('INSERT : An error occurred while inserting row : ' + query);
+            logger.logError('Error : ' + err);
             performRollback(client, done);
             callback(err);
             return;
           }
 
-          console.log('INSERT o2ms query');
+          logger.logInfo('INSERT o2ms query');
           performOneToManyInserts(client, insertedResult.rows[0].id, model, function(err) {
 
             if (err) {
-              console.log('INSERT : An error occurred while inserting o2ms rows.');
-              console.log('Error : ' + err);
+              logger.logError('INSERT : An error occurred while inserting o2ms rows.');
+              logger.logError('Error : ' + err);
               performRollback(client, done);
               callback(err);
               return;
             }
 
-            console.log('INSERT m2ms query');
+            logger.logInfo('INSERT m2ms query');
             performManyToManyInserts(client, insertedResult.rows[0].id, model, function(err) {
 
               if (err) {
-                console.log('INSERT : An error occurred while inserting m2ms rows.');
-                console.log('Error : ' + err);
+                logger.logError('INSERT : An error occurred while inserting m2ms rows.');
+                logger.logError('Error : ' + err);
                 performRollback(client, done);
                 callback(err);
                 return;
               }
 
               // COMMIT the transaction
-              console.log('COMMIT Transaction');
+              logger.logInfo('COMMIT Transaction');
               client.query('COMMIT', function() {
 
                 done();
@@ -220,13 +221,13 @@ function findOptions(query, paramsArray, callback) {
   pg.connect(db_conString, function(err, client, done) {
 
     if (err) {
-      console.log('Error while connecting to Database.');
-      console.log('Error : ' + err);
+      logger.logError('Error while connecting to Database.');
+      logger.logError('Error : ' + err);
       callback(err);
       return;
     }
 
-    console.log('SELECT query : ' + query);
+    logger.logDebug('SELECT query : ' + query);
 
     client.query(query, objectToArray(paramsArray), function(err, result) {
 
@@ -235,8 +236,8 @@ function findOptions(query, paramsArray, callback) {
 
       // err treatment.
       if (err) {
-        console.log('SELECT : An error occurred while executing query : ' + query);
-        console.log('Error : ' + err);
+        logger.logError('SELECT : An error occurred while executing query : ' + query);
+        logger.logError('Error : ' + err);
         callback(err, null);
         return;
       }
@@ -259,7 +260,7 @@ function findOptions(query, paramsArray, callback) {
  */
 function performRollback(client, done) {
 
-  console.log('ROLLBACK Transaction');
+  logger.logInfo('ROLLBACK Transaction');
   client.query('ROLLBACK', function(err) {
 
     return done(err);
@@ -284,6 +285,11 @@ function performManyToManyInserts(client, id, model, callback) {
   var NumberInserted = 0;
   var totalInsert = 0;
 
+  if (!m2ms) {
+    callback();
+    return;
+  }
+
   for ( var m2m in m2ms) {
     if (!m2ms[m2m].values) {
       callback();
@@ -295,23 +301,23 @@ function performManyToManyInserts(client, id, model, callback) {
   for ( var m2m in m2ms) {
 
     var m2mTemp = m2ms[m2m];
-    for (var i = 0; i < m2mTemp.values.length; i++) {
+    for ( var i = 0; i < m2mTemp.values.length; i++) {
 
       var query = 'INSERT INTO ' + m2mTemp.tableName;
       query += ' ("' + m2mTemp.thisId + '", "' + m2mTemp.valueId + '") ';
       query += 'VALUES (' + id + ', ' + m2mTemp.values[i].id + ') ';
 
-      console.log('INSERT query : ' + query);
+      logger.logDebug('INSERT query : ' + query);
       var q = client.query(query, function(err, result) {
 
         if (err) {
-          console.log('INSERT : An error occurred while inserting row : ' + query);
+          logger.logError('INSERT : An error occurred while inserting row : ' + query);
           callback(err);
           return;
         }
 
         // All the m2m query are performed in parallele.
-        // We need to be sure every query ended, and ended  without error before calling the callback.
+        // We need to be sure every query ended, and ended without error before calling the callback.
         NumberInserted++;
         if (NumberInserted >= totalInsert) {
           NumberInserted = 0;
@@ -340,6 +346,11 @@ function performOneToManyInserts(client, id, model, callback) {
   var NumberInserted = 0;
   var totalInsert = 0;
 
+  if (!o2ms) {
+    callback();
+    return;
+  }
+
   for ( var o2m in o2ms) {
     if (!o2ms[o2m].values) {
       callback();
@@ -351,23 +362,23 @@ function performOneToManyInserts(client, id, model, callback) {
   for ( var o2m in o2ms) {
 
     var o2mTemp = o2ms[o2m];
-    for (var i = 0; i < o2mTemp.values.length; i++) {
+    for ( var i = 0; i < o2mTemp.values.length; i++) {
 
       var element = o2mTemp.values[i];
       element[o2mTemp.valueId] = id;
       var query = buildInsertStatement(o2mTemp.tableName, element);
 
-      console.log('INSERT query : ' + query);
+      logger.logDebug('INSERT query : ' + query);
       var q = client.query(query, objectToArray(element), function(err, result) {
 
         if (err) {
-          console.log('INSERT : An error occurred while inserting row : ' + query);
+          logger.logError('INSERT : An error occurred while inserting row : ' + query);
           callback(err);
           return;
         }
 
         // All the o2m query are performed in parallele.
-        // We need to be sure every query ended, and ended  without error before calling the callback.
+        // We need to be sure every query ended, and ended without error before calling the callback.
         NumberInserted++;
         if (NumberInserted >= totalInsert) {
           NumberInserted = 0;

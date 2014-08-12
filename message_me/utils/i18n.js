@@ -9,7 +9,7 @@ function setLang(lang) {
 
 function getMessage(msgKey, args) {
 
-  var messages = require('../public/config/message_' + LOCAL);
+  var messages = require(__root + 'public/config/message_' + LOCAL);
   var msg = messages[msgKey];
 
   if (msg) {
@@ -22,8 +22,6 @@ function getMessage(msgKey, args) {
     } else {
       msg = msg.replace('{0}', args);
     }
-  } else {
-    msg = 'not found : ' + msgKey;
   }
 
   return msg;

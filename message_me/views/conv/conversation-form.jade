@@ -2,7 +2,7 @@ include /tags/frame
 include /tags/form
 
 +frame(i18n.get('conversation_form_frame_title')).chats
-  +form('conversation-form')
+  +form('conversation-form', url.CONVERSATION_FORM, 'POST')
     +formLine()
       +inputText('title', true)(maxlength=200)
     +formLine()

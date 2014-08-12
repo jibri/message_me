@@ -1,9 +1,8 @@
 /**
  * Utilities functions on authenticated user.
  */
-
-var mysql = require('../utils/dbConnection');
-var errors = require('../routes/errors');
+var errors = require(__root + 'routes/errorsController');
+var mysql = require(__root + 'utils/dbConnection');
 var TABLE_NAME = 'tb_user';
 
 exports.find = find;

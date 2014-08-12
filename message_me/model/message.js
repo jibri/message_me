@@ -1,19 +1,43 @@
 /**
  * Conversation model object
  */
-var mysql = require('../utils/dbConnection');
-var user = require('../model/user');
+var user = require(__root + 'model/user');
+var mysql = require(__root + 'utils/dbConnection');
 var TABLE_NAME = 'tb_message';
 
-exports.find = find;
-exports.findFromConv = findFromConv;
-exports.TABLE_NAME = TABLE_NAME;
+module.exports = Message;
+module.exports.find = find;
+module.exports.findFromConv = findFromConv;
+module.exports.TABLE_NAME = TABLE_NAME;
 
-function validate() {
+function Message(form) {
 
-  // TODO implement validation
-  var notNull = false;
-  return notNull;
+  this.fields = { content : form.content,
+                 date_send : form.date || new Date(),
+                 user : form.user.id,
+                 conversation : form.conversation.id };
+
+  this.manyToOne = { user : { valueId : 'user',
+                             value : form.user },
+                    conversation : { valueId : 'conversation',
+                                    value : form.conversation } };
+
+  this.validate = [ { field : 'content',
+                     type : 'string',
+                     max : 3000,
+                     notNull : true },
+
+                   { field : 'date_send',
+                    type : 'date',
+                    notNull : true },
+
+                   { field : 'user',
+                    type : 'object',
+                    notNull : true },
+
+                   { field : 'conversation',
+                    type : 'object',
+                    notNull : true } ];
 }
 
 /**
@@ -40,7 +64,7 @@ function findFromConv(convId, userId, callback) {
   query += 'JOIN tj_conv_user tcu ON tcu.user = usr.id ';
   query += 'WHERE tcu.conversation = ' + convId + ')';
 
-  query += ' ORDER BY message.date_send ASC';
+  query += ' ORDER BY message.date_send DESC';
 
   mysql.findQuery(query, callback);
 }

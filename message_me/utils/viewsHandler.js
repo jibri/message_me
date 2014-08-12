@@ -1,4 +1,4 @@
-/*
+/**
  * Prepare and send the views
  */
 

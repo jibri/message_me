@@ -17,21 +17,26 @@ block javascript
         $(this).addClass('selected');
         getMessages($(this));
       });
+      
+      $(document).on('form.succes', "form#conversation-form", function(event, result){
+        location.reload();
+      });
+      
+      $(document).on('form.succes', "form#message-form", function(event, result){
+        $('#content').val('');
+        getMessages($('.conv-wrapper.selected'));
+      });
     });
-
-    function handleConversationFormSuccess(result){
-      alert(result);
-      location.reload();
-    }
     
     function getMessages(jqButton){
       var convId = jqButton.attr('id');
       var params = '';
       if (convId){
+        $('#message-form #'+ escape('conversation.id')).val(convId);
         params = '?conversation=' + convId;
       }
       $.post('#{url.GET_MESSAGES}' + params, function (result){
-        setFrameContent('msgs-wrapper', result);
+        $('.msgs-wrapper').html(result);
         bubbleLayout('msgs-wrapper');
       });
     }
@@ -52,7 +57,11 @@ block content
           +majorbutton()(rel='#{url.CONVERSATION_FORM},500', title=i18n.get('message_conversations_create_tootip')).open-popup.add-chat.tooltip= i18n.get('button_create')
   
       td
-        +frame(i18n.get('message_messages_frame_title')).msgs-wrapper.chat
-       
-    tr
-      td &nbsp;
+        +frame(i18n.get('message_messages_frame_title')).chat
+          +form('message-form', url.CONVERSATION, 'POST')
+            +input('hidden', 'conversation.id', true)
+            +formLine()
+              +input('textarea','content', true)(maxlength=3000,rows=3,cols=200,placeHolder= i18n.get('message_form_placeHolder'),wrap="hard").add-message
+              td
+                +button.submit-button.add-chat(rel='message-form')= i18n.get('message_form_add')
+          div.msgs-wrapper

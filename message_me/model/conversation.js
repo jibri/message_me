@@ -1,21 +1,23 @@
 /**
  * Conversation model object
  */
-var mysql = require('../utils/dbConnection');
-var user = require('../model/user');
-var message = require('../model/message');
+var user = require(__root + 'model/user');
+var message = require(__root + 'model/message');
+var mysql = require(__root + 'utils/dbConnection');
+
 var TABLE_NAME = 'tb_conversation';
 var JOIN_CONV_USER = 'tj_conv_user';
 
-exports.find = find;
-exports.findWithUser = findWithUser;
-exports.conversation = Conversation;
-exports.TABLE_NAME = TABLE_NAME;
+module.exports = Conversation;
+
+module.exports.find = find;
+module.exports.findWithUser = findWithUser;
+module.exports.TABLE_NAME = TABLE_NAME;
 
 function Conversation(form) {
 
   this.fields = { titre : form.title,
-                 date_ouverture : form.date || new Date() }
+                 date_ouverture : form.date || new Date() };
 
   this.manyToMany = { users : { tableName : JOIN_CONV_USER,
                                thisId : 'conversation',
@@ -57,6 +59,7 @@ function find(params, callback) {
 /**
  * find the conversations with the given user participant.
  */
+// FIXME centralize it
 function findWithUser(userId, callback) {
 
   var query = 'SELECT conversation.id, conversation.titre, conversation.date_ouverture FROM ' + TABLE_NAME
@@ -73,7 +76,7 @@ function findWithUser(userId, callback) {
     }
 
     var inArray = '(';
-    for (var i = 0; i < result.length; i++) {
+    for ( var i = 0; i < result.length; i++) {
       if (i !== 0) {
         inArray += ', ';
       }
@@ -92,9 +95,9 @@ function findWithUser(userId, callback) {
         return callback(err);
       }
 
-      for (var i = 0; i < result.length; i++) {
+      for ( var i = 0; i < result.length; i++) {
         var innerArray = [];
-        for (var j = 0; j < innerResult.length; j++) {
+        for ( var j = 0; j < innerResult.length; j++) {
           if (result[i].id == innerResult[j].conversation_id) {
             innerArray.push(innerResult[j].user_firstname);
           }

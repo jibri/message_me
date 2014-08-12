@@ -1,7 +1,7 @@
 /*
  * GET home page.
  */
-var viewHandler = require('../utils/viewsHandler.js');
+var viewHandler = require(__root + 'utils/viewsHandler.js');
 
 exports.index = function(req, res) {
 

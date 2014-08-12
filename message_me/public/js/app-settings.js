@@ -87,7 +87,7 @@ function initButtons() {
   });
   $(document).on('keypress', 'form', function(event) {
 
-    if (event.which === 13) {
+    if (event.which === 13 && !$(event.target).is('textarea')) {
       submitButtonClickHandler($('.' + SUBMIT_BUTTON_SELECTOR, $(this)));
       return false;
     }
@@ -191,23 +191,13 @@ function setTooltip(selector) {
 function submitButtonClickHandler(button) {
 
   var formId = button.attr('rel');
+  var formSelector = 'form#' + formId;
   button.addClass('loading');
 
-  $("form#" + formId).ajaxSubmit({ success : function(result) {
+  $(formSelector).ajaxSubmit({ success : function(result) {
 
     if (result) {
-      var escapedId = '';
-      var arrayId = formId.split('-');
-      for (var i = 0; i < arrayId.length; i++) {
-        escapedId += arrayId[i].charAt(0).toUpperCase() + arrayId[i].slice(1);
-      }
-      var handler = 'handle' + escapedId + 'Success';
-
-      if (window[handler]) {
-        window[handler](result);
-      } else {
-        $('body').html(result);
-      }
+      $(formSelector).trigger('form.succes', [ result ]);
     }
   } });
 }
@@ -305,6 +295,9 @@ function bubbleLayout(parentClass) {
 
   // First pass to set the layout
   $('.bubble-body').each(function(i) {
+
+    // replace '\n' by '<br/>'
+    $('.bubble-text', this).html($('.bubble-text', this).html().replace(/\n/g, '<br/>'));
 
     // set the boby to given min width
     $(this).width(MIN_WIDTH);

@@ -4,11 +4,12 @@
  * req.query : contains request parameters in the GET query after ?
  * 
  */
-var urlMapping = require('../utils/urlMapping');
-var mysql = require('../utils/dbConnection');
 var hash = require('credential');
-var errors = require('../routes/errors');
-var viewHandler = require('../utils/viewsHandler');
+var errors = require(__root + 'routes/errorsController');
+var urlMapping = require(__root + 'utils/urlMapping');
+var mysql = require(__root + 'utils/dbConnection');
+var viewHandler = require(__root + 'utils/viewsHandler');
+var logger = require(__root + 'utils/logger');
 
 /*
  * GET users listing.
@@ -23,7 +24,7 @@ exports.form = function(req, res) {
   mysql.findAll('tb_user', function(err, users) {
 
     if (err) {
-      console.log('error while finding users' + err);
+      logger.logError('error while finding users' + err);
       return errors.throwServerError(req, res, err);
     }
 
@@ -57,7 +58,7 @@ exports.submitForm = function(req, res) {
     mysql.persist('tb_user', user, function(err, id) {
 
       if (err) {
-        console.log('error while persist users : ' + err);
+        logger.logError('error while persist users : ' + err);
         return errors.throwServerError(req, res, err);
       }
 

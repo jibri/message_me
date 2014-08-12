@@ -1,22 +1,22 @@
 /*
  * Error handler
  */
-var view = require('../utils/viewsHandler');
-var i18n = require('../utils/i18n');
+var view = require(__root + 'utils/viewsHandler');
+var i18n = require(__root + 'utils/i18n');
 
-exports.throwInvalidForm = function(req, res, err, msg) {
+exports.throwInvalidForm = function(req, res, err, json) {
 
   var FORM_MESSAGE = i18n.get('validation_generic');
   res.status(406);
 
-  if (isJSON(msg)) {
-    if (!hasMsg(msg)) {
-      msg += '"message" : "' + FORM_MESSAGE + '"}';
+  if (json instanceof Object) {
+    if (!json.message) {
+      json.message = FORM_MESSAGE;
     }
   } else {
-    msg = msg || FORM_MESSAGE;
+    json = json || FORM_MESSAGE;
   }
-  redirectError(req, res, err, msg);
+  redirectError(req, res, err, JSON.stringify(json));
 };
 
 exports.throwServerError = function(req, res, err, msg) {
@@ -46,14 +46,4 @@ function redirectError(req, res, err, msg) {
                 err : err };
     view.render(req, res, 'layout/error', 'Erreur', args);
   }
-}
-
-function isJSON(msg) {
-
-  return msg.indexOf('{') === 0;
-}
-
-function hasMsg(msg) {
-
-  return msg.indexOf('"message"') != -1;
 }
