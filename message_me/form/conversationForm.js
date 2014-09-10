@@ -6,9 +6,9 @@
  */
 module.exports = function ConversationForm(form) {
 
-  this.title = form.title;
-  this.messages = form.messages;
-  this.users = form.users;
+  this.title = form ? form.title : undefined;
+  this.messages = form ? form.messages : undefined;
+  this.users = form ? form.users : undefined;
 
   this.validate = [ { field : 'title',
                      type : 'string',

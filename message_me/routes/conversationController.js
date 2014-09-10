@@ -1,6 +1,8 @@
 var userModel = require(__root + 'model/user');
 var convModel = require(__root + 'model/conversation');
+var Conversation = convModel.Conversation;
 var msgModel = require(__root + 'model/message');
+var Message = msgModel.Message;
 var errors = require(__root + 'routes/errorsController');
 var viewHandler = require(__root + 'utils/viewsHandler');
 var urlMapping = require(__root + 'utils/urlMapping');
@@ -20,6 +22,7 @@ exports.getConversation = function(req, res) {
   convModel.findWithUser(req.session.userId, function(err, convs) {
 
     if (err) {
+      logger.logError('An error occured while findind conversations list : ' + err);
       return errors.throwServerError(req, res, err);
     }
 
@@ -60,14 +63,17 @@ exports.postConversation = function(req, res) {
   conversationForm.messages[0].user = req.session.userId;
   conversationForm.messages[0].date_send = new Date();
 
-  var conversation = new convModel(conversationForm);
+  var conversation = new Conversation(conversationForm);
 
   DAO.persist(convModel.TABLE_NAME, conversation, function(err, insertedRow) {
 
     if (err) {
+      logger.logError('An error occured while persisting entity "conversation" : ' + err);
       return errors.throwServerError(req, res, err);
     }
 
+    console.log('insertedRow');
+    console.log(insertedRow);
     // mailer.sendMail('Me', 'grmdu44@hotmail.com', 'test subject', 'test<br/>content');
 
     res.send('OK');
@@ -84,6 +90,7 @@ exports.getMessages = function(req, res) {
   msgModel.findFromConv(convId, req.session.userId, function(err, messages) {
 
     if (err) {
+      logger.logError('An error occured while findind messages list : ' + err);
       return errors.throwServerError(req, res, err);
     }
 
@@ -102,6 +109,7 @@ exports.getUsersAutocomplete = function(req, res) {
   userModel.findUsersLikeName(query, function(err, result) {
 
     if (err) {
+      logger.logError("An error occured while findind Users for autocomplete field : " + err);
       return errors.throwServerError(req, res, err);
     }
 
@@ -139,7 +147,7 @@ exports.postMessage = function(req, res) {
 
   messageForm.user = { id : req.session.userId };
 
-  var message = new msgModel(messageForm);
+  var message = new Message(messageForm);
 
   DAO.persist(msgModel.TABLE_NAME, message, function(err, insertedRow) {
 

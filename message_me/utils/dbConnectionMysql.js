@@ -182,16 +182,16 @@ function findOptions(options, callback) {
 
     console.log('SELECT query : ' + options.sql);
 
-    connection.query(options, function(err, result) {
+    connection.query(options, function(errFind, result) {
 
       // release connection whatever happened.
       connection.release();
 
       // err treatment.
-      if (err) {
+      if (errFind) {
         console.log('SELECT : An error occurred while executing query : ' + options.sql);
-        console.log('Error : ' + err);
-        callback(err, null);
+        console.log('Error : ' + errFind);
+        callback(errFind, null);
         return;
       }
 

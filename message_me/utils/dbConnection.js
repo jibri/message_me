@@ -61,14 +61,16 @@ function findAll(tableName, callback) {
 /**
  * Find entities in the given table.
  * 
- * @param tableName
- *          The name of the table as it is in the DB
+ * @param entity
+ *          The Entity to find OR the tableName
  * @param args
  *          An object of args for the where clause. i.e { key: value } for display : "key = value"
  * @param callback
  *          The callback with parameter the result of the query.
  */
-function find(tableName, args, callback) {
+function find(entity, args, callback) {
+
+  var tableName = entity.tableName || entity;
 
   // build query
   var alias = '"' + tableName.substring(tableName.indexOf('_') + 1).toLowerCase() + '"';
@@ -79,7 +81,11 @@ function find(tableName, args, callback) {
     query += ' WHERE ' + toQueryString(args, alias);
   }
 
-  findOptions(query, args, callback);
+  if (entity.tableName) {
+    findOptions(query, entity, args, callback);
+  } else {
+    findOptions(query, undefined, args, callback);
+  }
 }
 
 /**
@@ -103,24 +109,24 @@ function insert(tableName, model, callback) {
   // build query
   var query = buildInsertStatement(tableName, model.fields);
 
-  pg.connect(db_conString, function(err, client, done) {
+  pg.connect(db_conString, function(errConnect, client, done) {
 
-    if (err) {
+    if (errConnect) {
       logger.logError('Error while connecting to Database.');
-      logger.logError('Error : ' + err);
-      callback(err);
+      logger.logError('Error : ' + errConnect);
+      callback(errConnect);
       return;
     }
 
     // BEGIN Statement
     logger.logInfo('BEGIN Transaction');
-    client.query('BEGIN', function(err) {
+    client.query('BEGIN', function(errBegin) {
 
-      if (err) {
+      if (errBegin) {
         logger.logError('BEGIN : An error occurred while beginning transaction');
-        logger.logError('Error : ' + err);
+        logger.logError('Error : ' + errBegin);
         performRollback(client, done);
-        callback(err);
+        callback(errBegin);
         return;
       }
 
@@ -131,36 +137,36 @@ function insert(tableName, model, callback) {
 
         // First Insert Statement
         logger.logDebug('INSERT query : ' + query);
-        client.query(query, objectToArray(model.fields), function(err, insertedResult) {
+        client.query(query, objectToArray(model.fields), function(errQuery, insertedResult) {
 
           // err treatment.
-          if (err) {
+          if (errQuery) {
             logger.logError('INSERT : An error occurred while inserting row : ' + query);
-            logger.logError('Error : ' + err);
+            logger.logError('Error : ' + errQuery);
             performRollback(client, done);
-            callback(err);
+            callback(errQuery);
             return;
           }
 
           logger.logInfo('INSERT o2ms query');
-          performOneToManyInserts(client, insertedResult.rows[0].id, model, function(err) {
+          performOneToManyInserts(client, insertedResult.rows[0].id, model, function(errO2M) {
 
-            if (err) {
+            if (errO2M) {
               logger.logError('INSERT : An error occurred while inserting o2ms rows.');
-              logger.logError('Error : ' + err);
+              logger.logError('Error : ' + errO2M);
               performRollback(client, done);
-              callback(err);
+              callback(errO2M);
               return;
             }
 
             logger.logInfo('INSERT m2ms query');
-            performManyToManyInserts(client, insertedResult.rows[0].id, model, function(err) {
+            performManyToManyInserts(client, insertedResult.rows[0].id, model, function(errM2M) {
 
-              if (err) {
+              if (errM2M) {
                 logger.logError('INSERT : An error occurred while inserting m2ms rows.');
-                logger.logError('Error : ' + err);
+                logger.logError('Error : ' + errM2M);
                 performRollback(client, done);
-                callback(err);
+                callback(errM2M);
                 return;
               }
 
@@ -216,34 +222,59 @@ function findQuery(query, callback) {
   findOptions(query, [], callback);
 }
 
-function findOptions(query, paramsArray, callback) {
+function findOptions(query, entity, paramsArray, callback) {
 
-  pg.connect(db_conString, function(err, client, done) {
+  pg.connect(db_conString, function(errConnect, client, done) {
 
-    if (err) {
+    if (errConnect) {
       logger.logError('Error while connecting to Database.');
-      logger.logError('Error : ' + err);
-      callback(err);
+      logger.logError('Error : ' + errConnect);
+      callback(errConnect);
       return;
     }
 
     logger.logDebug('SELECT query : ' + query);
 
-    client.query(query, objectToArray(paramsArray), function(err, result) {
-
-      // release connection whatever happened.
-      done();
+    client.query(query, objectToArray(paramsArray), function(errQuery, entityResult) {
 
       // err treatment.
-      if (err) {
+      if (errQuery) {
         logger.logError('SELECT : An error occurred while executing query : ' + query);
-        logger.logError('Error : ' + err);
-        callback(err, null);
+        logger.logError('Error : ' + errQuery);
+        done();
+        callback(errQuery, null);
         return;
       }
 
-      // normal case.
-      callback(null, result.rows);
+      logger.logInfo('SELECT o2ms query');
+      performOneToManySelect(client, entityResult.rows, entity, function(errO2M, o2mResult) {
+
+        if (errO2M) {
+          logger.logError('SELECT : An error occurred while Selecting o2ms rows.');
+          logger.logError('Error : ' + errO2M);
+          done();
+          callback(errO2M);
+          return;
+        }
+
+        logger.logInfo('SELECT m2ms query');
+        performManyToManySelect(client, o2mResult, entity, function(errM2M, m2mResult) {
+
+          if (errM2M) {
+            logger.logError('Select : An error occurred while Selecting m2ms rows.');
+            logger.logError('Error : ' + errM2M);
+            done();
+            callback(errM2M);
+            return;
+          }
+
+          // release connection whatever happened.
+          done();
+
+          // normal case.
+          callback(null, m2mResult);
+        });
+      });
     });
   });
 }
@@ -265,7 +296,144 @@ function performRollback(client, done) {
 
     return done(err);
   });
-};
+}
+
+/**
+ * Selected one to many association from paramsArray ojbect
+ * 
+ * @param client
+ *          The postgres client
+ * @param rows
+ *          The rows to fill with the one to manies
+ * @param paramsArray
+ *          The object containing one to many associations
+ * @param callback
+ *          callback to execute after selection
+ */
+function performOneToManySelect(client, rows, entity, callback) {
+
+  if (!entity || !entity.oneToMany) {
+    callback(undefined, rows);
+    return;
+  }
+
+  var o2ms = entity.oneToMany;
+  var totalo2ms = Object.keys(o2ms).length;
+
+  for ( var o2m in o2ms) {
+
+    var o2mTemp = o2ms[o2m];
+    var joinTable = o2mTemp.tableName;
+    var thisId = o2mTemp.thisId;
+
+    var inArray = '(';
+    for ( var i = 0; i < rows.length; i++) {
+      if (i !== 0) {
+        inArray += ', ';
+      }
+      inArray += rows[i].id;
+    }
+    inArray += ')';
+
+    var query = 'SELECT * FROM ' + joinTable + ' WHERE ' + thisId + ' IN ' + inArray;
+
+    client.query(query, function(err, oneToManyResult) {
+
+      // err treatment.
+      if (err) {
+        logger.logError('SELECT : An error occurred while executing query : ' + query);
+        logger.logError('Error : ' + err);
+        callback(err, null);
+        return;
+      }
+
+      for ( var i = 0; i < rows.length; i++) {
+        rows[i][o2m] = new Array();
+        for ( var j = 0; j < oneToManyResult.rows.length; j++) {
+          if (rows[i].id == oneToManyResult.rows[j][thisId]) {
+            rows[i][o2m].push(oneToManyResult.rows[j]);
+          }
+        }
+      }
+
+      totalo2ms--;
+      if (totalo2ms <= 0) {
+        callback(undefined, rows);
+      }
+    });
+  }
+}
+
+/**
+ * Select many to many association from paramsArray ojbect
+ * 
+ * @param client
+ *          The postgres client
+ * @param rows
+ *          The rows to fill with the one to manies
+ * @param paramsArray
+ *          The object containing one to many associations
+ * @param callback
+ *          callback to execute after selection
+ */
+function performManyToManySelect(client, rows, entity, callback) {
+
+  if (!entity || !entity.manyToMany) {
+    callback(undefined, rows);
+    return;
+  }
+
+  var m2ms = entity.manyToMany;
+  var totalm2ms = Object.keys(m2ms).length;
+
+  for ( var m2m in m2ms) {
+
+    var m2mTemp = m2ms[m2m];
+    var joinTable = m2mTemp.joinTableName;
+    var table = m2mTemp.tableName;
+    var thisId = m2mTemp.thisId;
+    var valueId = m2mTemp.valueId;
+
+    var inArray = '(';
+    for ( var i = 0; i < rows.length; i++) {
+      if (i !== 0) {
+        inArray += ', ';
+      }
+      inArray += rows[i].id;
+    }
+    inArray += ')';
+
+    var query = 'SELECT DISTINCT * FROM ' + table;
+    query += ' JOIN ' + joinTable + ' ON ' + joinTable + '.' + valueId + '=' + table + '.id';
+    query += ' WHERE ' + joinTable + '.' + thisId + ' IN ' + inArray;
+
+    client.query(query, function(err, manyToManyResult) {
+
+      // err treatment.
+      if (err) {
+        logger.logError('SELECT : An error occurred while executing query : ' + query);
+        logger.logError('Error : ' + err);
+        callback(err, null);
+        return;
+      }
+
+      for ( var i = 0; i < rows.length; i++) {
+        rows[i][m2m] = new Array();
+
+        for ( var j = 0; j < manyToManyResult.rows.length; j++) {
+          if (rows[i].id == manyToManyResult.rows[j][thisId]) {
+            rows[i][m2m].push(manyToManyResult.rows[j]);
+          }
+        }
+      }
+
+      totalm2ms--;
+      if (totalm2ms <= 0) {
+        callback(undefined, rows);
+      }
+    });
+  }
+}
 
 /**
  * Insert into database the values of the manyToMany elements of the given model
@@ -308,7 +476,7 @@ function performManyToManyInserts(client, id, model, callback) {
       query += 'VALUES (' + id + ', ' + m2mTemp.values[i].id + ') ';
 
       logger.logDebug('INSERT query : ' + query);
-      var q = client.query(query, function(err, result) {
+      client.query(query, function(err, result) {
 
         if (err) {
           logger.logError('INSERT : An error occurred while inserting row : ' + query);
@@ -369,7 +537,7 @@ function performOneToManyInserts(client, id, model, callback) {
       var query = buildInsertStatement(o2mTemp.tableName, element);
 
       logger.logDebug('INSERT query : ' + query);
-      var q = client.query(query, objectToArray(element), function(err, result) {
+      client.query(query, objectToArray(element), function(err, result) {
 
         if (err) {
           logger.logError('INSERT : An error occurred while inserting row : ' + query);

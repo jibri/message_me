@@ -79,7 +79,7 @@ app.configure(function() {
 
 app.all(urlMapping.AUTH_ROOT + '*', function(req, res, next) {
 
-  console.log('authenticated access ? : ' + req.session.connected);
+  logger.logDebug('authenticated access ? : ' + req.session.connected);
 
   if (req.session.connected) {
     next();

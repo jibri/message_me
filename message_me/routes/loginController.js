@@ -55,10 +55,10 @@ exports.submitForm = function(req, res) {
     var authUser = result[0];
 
     // Check Login and password
-    hash.verify(authUser.password, loginForm.password, function(err, isValid) {
+    hash.verify(authUser.password, loginForm.password, function(errVerify, isValid) {
 
-      if (err) {
-        return errors.throwServerError(req, res, err);
+      if (errVerify) {
+        return errors.throwServerError(req, res, errVerify);
       }
 
       if (isValid) {
@@ -71,7 +71,7 @@ exports.submitForm = function(req, res) {
         res.send('OK');
       } else {
         logger.logDebug('User ' + authUser.name + ' authentification failure : bad password.');
-        return errors.throwInvalidForm(req, res, err, i18n.get('login_connexion_failed'));
+        return errors.throwInvalidForm(req, res, errVerify, i18n.get('login_connexion_failed'));
       }
     });
   });

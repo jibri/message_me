@@ -5,7 +5,7 @@ var user = require(__root + 'model/user');
 var mysql = require(__root + 'utils/dbConnection');
 var TABLE_NAME = 'tb_message';
 
-module.exports = Message;
+module.exports.Message = Message;
 module.exports.find = find;
 module.exports.findFromConv = findFromConv;
 module.exports.TABLE_NAME = TABLE_NAME;

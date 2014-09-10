@@ -55,11 +55,11 @@ exports.submitForm = function(req, res) {
     user.password = JSONHash;
 
     // persist user
-    mysql.persist('tb_user', user, function(err, id) {
+    mysql.persist('tb_user', user, function(errPersist, id) {
 
-      if (err) {
-        logger.logError('error while persist users : ' + err);
-        return errors.throwServerError(req, res, err);
+      if (errPersist) {
+        logger.logError('error while persist users : ' + errPersist);
+        return errors.throwServerError(req, res, errPersist);
       }
 
       res.redirect(urlMapping.INDEX);

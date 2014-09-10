@@ -1,5 +1,5 @@
 var app = require('../app');
-testMailer();
+testSelect();
 
 // --------------------------------------------
 //
@@ -156,4 +156,19 @@ function testJSONParsing() {
   for ( var prop in output2) {
     console.log(prop + ' ' + output2[prop]);
   }
+}
+
+function testSelect() {
+
+  var Conversation = require(__root + 'model/conversation').Conversation;
+  var DAO = require(__root + 'utils/dbConnection');
+  var cf = require('../form/conversationForm');
+
+  var conv = new Conversation(new cf());
+
+  DAO.find(conv, {}, function(err, result) {
+
+    console.log('result');
+    console.log(result);
+  });
 }

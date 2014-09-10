@@ -8,7 +8,7 @@ var mysql = require(__root + 'utils/dbConnection');
 var TABLE_NAME = 'tb_conversation';
 var JOIN_CONV_USER = 'tj_conv_user';
 
-module.exports = Conversation;
+module.exports.Conversation = Conversation;
 
 module.exports.find = find;
 module.exports.findWithUser = findWithUser;
@@ -16,16 +16,19 @@ module.exports.TABLE_NAME = TABLE_NAME;
 
 function Conversation(form) {
 
+  this.tableName = TABLE_NAME;
+
   this.fields = { titre : form.title,
                  date_ouverture : form.date || new Date() };
 
-  this.manyToMany = { users : { tableName : JOIN_CONV_USER,
+  this.manyToMany = { users : { joinTableName : JOIN_CONV_USER,
+                               tableName : user.TABLE_NAME,
                                thisId : 'conversation',
                                valueId : 'user',
                                values : form.users } };
 
   this.oneToMany = { messages : { tableName : message.TABLE_NAME,
-                                 valueId : 'conversation',
+                                 thisId : 'conversation',
                                  values : form.messages } };
 
   this.validate = [ { field : 'title',
@@ -89,10 +92,10 @@ function findWithUser(userId, callback) {
     innerQuery += 'JOIN ' + user.TABLE_NAME + ' "user" ON jcu.user = "user".id ';
     innerQuery += 'WHERE jcu.conversation IN ' + inArray;
 
-    mysql.findQuery(innerQuery, function(err, innerResult) {
+    mysql.findQuery(innerQuery, function(errFind, innerResult) {
 
-      if (err) {
-        return callback(err);
+      if (errFind) {
+        return callback(errFind);
       }
 
       for ( var i = 0; i < result.length; i++) {
