@@ -3,5 +3,5 @@
   "log" : "tiny",
   "viewEngine" : "jade",
   "lang" : "fr",
-  "logger": {"level":"INFO", "path":"logs/"}
+  "logger": {"level":"INFO"}
 }

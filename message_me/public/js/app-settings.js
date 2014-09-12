@@ -37,6 +37,12 @@ function initForms() {
                    // JSON response error
                    var json = JSON.parse(jqXHR.responseText);
 
+                   // Sometimes the parsing doesn't throw exception on Strings.
+                   if (typeof level === 'string') {
+                     alert(json);
+                     return;
+                   }
+
                    for ( var key in json) {
                      if (key === 'message') {
                        continue;
@@ -128,7 +134,6 @@ function setAutocomplete(selector, inPopup) {
 
     var input = $(this);
     var source = input.attr('rel');
-    var selected = [];
     var name = input.attr('name');
     input.attr('name', input.attr('name') + '-autocomplete');
 
@@ -346,9 +351,10 @@ function bubbleLayout(parentClass) {
   $('.bubble-body').each(function(i) {
 
     var leftPos = $(this).offset().left - $(PARENT_SELECTOR).offset().left;
+    var isLast = false;
 
     if (i + 1 >= $('.bubble-body').length) {
-      var isLast = true;
+      isLast = true;
     }
     // set row elements width to fit parent width
     if (isLast || $(this).offset().top - $($('.bubble-body').get(i + 1)).offset().top < 0) {

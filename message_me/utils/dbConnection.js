@@ -1,7 +1,5 @@
-/*
- * DB mysql Connections
- * 
- * doc : https://npmjs.org/package/mysql
+/**
+ * DB postgres Connections
  */
 
 /**
@@ -11,6 +9,8 @@ var db_full_config = require(__root + 'public/config/database.config');
 var db_config = db_full_config[db_full_config.env];
 var db_conString = 'postgre://' + db_config.user + ':' + db_config.password + ':' + db_config.port + '@'
     + db_config.host + '/' + db_config.database;
+
+var utils = require(__root + 'utils/utils');
 
 // pool connections
 var pg = require('pg.js');
@@ -77,14 +77,14 @@ function find(entity, args, callback) {
   var query = 'SELECT * FROM ' + tableName + ' ' + alias;
 
   // Where clause only if args not empty
-  if (typeof args == 'object' && Object.keys(args).length > 0) {
+  if (utils.isObject(args)) {
     query += ' WHERE ' + toQueryString(args, alias);
   }
 
   if (entity.tableName) {
     findOptions(query, entity, args, callback);
   } else {
-    findOptions(query, undefined, args, callback);
+    findOptions(query, null, args, callback);
   }
 }
 
@@ -219,7 +219,7 @@ function update(tableName, model, connection, callback) {
 
 function findQuery(query, callback) {
 
-  findOptions(query, [], callback);
+  findOptions(query, null, null, callback);
 }
 
 function findOptions(query, entity, paramsArray, callback) {
@@ -243,6 +243,12 @@ function findOptions(query, entity, paramsArray, callback) {
         logger.logError('Error : ' + errQuery);
         done();
         callback(errQuery, null);
+        return;
+      }
+
+      if (entityResult.rows.length === 1) {
+        done();
+        callback(null, entityResult.rows);
         return;
       }
 
@@ -313,12 +319,22 @@ function performRollback(client, done) {
 function performOneToManySelect(client, rows, entity, callback) {
 
   if (!entity || !entity.oneToMany) {
-    callback(undefined, rows);
+    callback(null, rows);
     return;
   }
 
   var o2ms = entity.oneToMany;
   var totalo2ms = Object.keys(o2ms).length;
+
+  var inArray = new Array();
+  for ( var i = 0; i < rows.length; i++) {
+    inArray.push(rows[i].id);
+  }
+
+  if (inArray.length === 0) {
+    callback(null, rows);
+    return;
+  }
 
   for ( var o2m in o2ms) {
 
@@ -326,16 +342,7 @@ function performOneToManySelect(client, rows, entity, callback) {
     var joinTable = o2mTemp.tableName;
     var thisId = o2mTemp.thisId;
 
-    var inArray = '(';
-    for ( var i = 0; i < rows.length; i++) {
-      if (i !== 0) {
-        inArray += ', ';
-      }
-      inArray += rows[i].id;
-    }
-    inArray += ')';
-
-    var query = 'SELECT * FROM ' + joinTable + ' WHERE ' + thisId + ' IN ' + inArray;
+    var query = 'SELECT * FROM ' + joinTable + ' WHERE ' + thisId + ' IN (' + inArray.join(',') + ')';
 
     client.query(query, function(err, oneToManyResult) {
 
@@ -358,7 +365,7 @@ function performOneToManySelect(client, rows, entity, callback) {
 
       totalo2ms--;
       if (totalo2ms <= 0) {
-        callback(undefined, rows);
+        callback(null, rows);
       }
     });
   }
@@ -379,12 +386,22 @@ function performOneToManySelect(client, rows, entity, callback) {
 function performManyToManySelect(client, rows, entity, callback) {
 
   if (!entity || !entity.manyToMany) {
-    callback(undefined, rows);
+    callback(null, rows);
     return;
   }
 
   var m2ms = entity.manyToMany;
   var totalm2ms = Object.keys(m2ms).length;
+
+  var inArray = new Array();
+  for ( var i = 0; i < rows.length; i++) {
+    inArray.push(rows[i].id);
+  }
+
+  if (inArray.length === 0) {
+    callback(null, rows);
+    return;
+  }
 
   for ( var m2m in m2ms) {
 
@@ -394,18 +411,9 @@ function performManyToManySelect(client, rows, entity, callback) {
     var thisId = m2mTemp.thisId;
     var valueId = m2mTemp.valueId;
 
-    var inArray = '(';
-    for ( var i = 0; i < rows.length; i++) {
-      if (i !== 0) {
-        inArray += ', ';
-      }
-      inArray += rows[i].id;
-    }
-    inArray += ')';
-
     var query = 'SELECT DISTINCT * FROM ' + table;
     query += ' JOIN ' + joinTable + ' ON ' + joinTable + '.' + valueId + '=' + table + '.id';
-    query += ' WHERE ' + joinTable + '.' + thisId + ' IN ' + inArray;
+    query += ' WHERE ' + joinTable + '.' + thisId + ' IN (' + inArray.join(',') + ')';
 
     client.query(query, function(err, manyToManyResult) {
 
@@ -429,7 +437,7 @@ function performManyToManySelect(client, rows, entity, callback) {
 
       totalm2ms--;
       if (totalm2ms <= 0) {
-        callback(undefined, rows);
+        callback(null, rows);
       }
     });
   }
@@ -576,7 +584,7 @@ function toQueryString(args, alias) {
 
   var queryString = '';
 
-  if (typeof args == 'object' && Object.keys(args).length > 0) {
+  if (utils.isObject(args)) {
     var idx = 1;
     for ( var col in args) {
       queryString += alias + '.' + col + ' = $' + idx++;
@@ -597,7 +605,7 @@ function objectToArray(object) {
 
   var array = [];
 
-  if (typeof object == 'object' && Object.keys(object).length > 0) {
+  if (utils.isObject(object)) {
     for ( var col in object) {
       array.push(object[col]);
     }
@@ -622,7 +630,7 @@ function buildInsertStatement(tableName, fields) {
   var query = 'INSERT INTO ' + tableName + ' (';
   var values = 'VALUES (';
 
-  if (typeof fields == 'object' && Object.keys(fields).length > 0) {
+  if (utils.isObject(fields)) {
     var idx = 1;
     for ( var col in fields) {
 

@@ -102,5 +102,6 @@ app.post(urlMapping.GET_MESSAGES, conversation.getMessages);
 
 http.createServer(app).listen(app.get('port'), function() {
 
-  logger.logDebug("Express server listening on port " + app.get('port'));
+  // Formane module can't log in console at this point. WHY ?
+  // logger.logDebug("Express server listening on port " + app.get('port'));
 });

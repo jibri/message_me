@@ -107,8 +107,8 @@ function insert(tableName, model, connection, callback) {
   console.log('Inserting row in table : ' + tableName);
 
   for ( var prop in model) {
-    if (model.prop === '') {
-      model.prop = null;
+    if (model[prop] === '') {
+      model[prop] = null;
     }
   }
 

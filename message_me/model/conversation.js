@@ -3,7 +3,7 @@
  */
 var user = require(__root + 'model/user');
 var message = require(__root + 'model/message');
-var mysql = require(__root + 'utils/dbConnection');
+var dao = require(__root + 'utils/dbConnection');
 
 var TABLE_NAME = 'tb_conversation';
 var JOIN_CONV_USER = 'tj_conv_user';
@@ -56,7 +56,7 @@ function Conversation(form) {
  */
 function find(params, callback) {
 
-  mysql.find(TABLE_NAME, params, callback);
+  dao.find(TABLE_NAME, params, callback);
 }
 
 /**
@@ -72,27 +72,28 @@ function findWithUser(userId, callback) {
   query += 'WHERE "user".id = ' + userId;
   query += ' ORDER BY conversation.date_ouverture DESC';
 
-  mysql.findQuery(query, function(err, result) {
+  dao.findQuery(query, function(err, result) {
 
     if (err) {
       return callback(err);
     }
 
-    var inArray = '(';
+    var inArray = new Array();
     for ( var i = 0; i < result.length; i++) {
-      if (i !== 0) {
-        inArray += ', ';
-      }
-      inArray += result[i].id;
+      inArray.push(result[i].id);
     }
-    inArray += ')';
+
+    if (inArray.length === 0) {
+      callback(null, result);
+      return;
+    }
 
     var innerQuery = 'SELECT jcu.conversation conversation_id, "user".firstname user_firstname FROM ' + JOIN_CONV_USER
         + ' jcu ';
     innerQuery += 'JOIN ' + user.TABLE_NAME + ' "user" ON jcu.user = "user".id ';
-    innerQuery += 'WHERE jcu.conversation IN ' + inArray;
+    innerQuery += 'WHERE jcu.conversation IN (' + inArray.join(',') + ')';
 
-    mysql.findQuery(innerQuery, function(errFind, innerResult) {
+    dao.findQuery(innerQuery, function(errFind, innerResult) {
 
       if (errFind) {
         return callback(errFind);

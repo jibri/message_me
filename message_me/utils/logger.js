@@ -39,12 +39,14 @@ module.exports.logError = logError;
  */
 function setLogLevel(level) {
 
+  var logLevel = false;
+
   if (typeof level === 'string') {
-    level = LOG_LEVELS[level];
+    logLevel = LOG_LEVELS[level];
   }
 
-  if (level) {
-    LOG_LEVEL = level;
+  if (logLevel) {
+    LOG_LEVEL = logLevel;
   }
 }
 
@@ -113,21 +115,24 @@ function log(message, level) {
   if (isLevelEnabled(level)) {
 
     var now = new Date();
-    var filePath = FILE_PATH + dateToString(now) + '_' + FILE_NAME;
-    message = '[' + level.name + '] ' + dateToString(now, true) + ' ' + message;
+    var logMessage = '[' + level.name + '] ' + dateToString(now, true) + ' ' + message;
 
-    var file = fs.appendFile(filePath, NEW_LINE + message, function(err) {
+    if (FILE_PATH) {
+      var filePath = FILE_PATH + dateToString(now) + '_' + FILE_NAME;
 
-      if (err) {
-        console.log('An error occured while write log file. The message will not be recorded. ' + err);
-      }
+      fs.appendFile(filePath, NEW_LINE + logMessage, function(err) {
 
-      if (level === LOG_LEVELS.ERROR) {
-        console.error(message);
-      } else {
-        console.log(message);
-      }
-    });
+        if (err) {
+          console.log('An error occured while write log file. The message will not be recorded. ' + err);
+        }
+      });
+    }
+
+    if (level === LOG_LEVELS.ERROR) {
+      console.error(logMessage);
+    } else {
+      console.log(logMessage);
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 var app = require('../app');
-testSelect();
+testIsObject();
 
 // --------------------------------------------
 //
@@ -161,14 +161,31 @@ function testJSONParsing() {
 function testSelect() {
 
   var Conversation = require(__root + 'model/conversation').Conversation;
-  var DAO = require(__root + 'utils/dbConnection');
+  var dao = require(__root + 'utils/dbConnection');
   var cf = require('../form/conversationForm');
 
   var conv = new Conversation(new cf());
 
-  DAO.find(conv, {}, function(err, result) {
+  dao.find(conv, null, function(err, result) {
 
     console.log('result');
     console.log(result);
   });
+}
+
+function testIsObject() {
+
+  var utils = require(__root + 'utils/utils');
+
+  console.log(utils.isObject(undefined));
+  console.log(utils.isObject(null));
+  console.log(utils.isObject(""));
+  console.log(utils.isObject("salut"));
+  console.log(utils.isObject(0));
+  console.log(utils.isObject(1));
+  console.log(utils.isObject([]));
+  console.log(utils.isObject([ 'aze',
+                              'rty' ]));
+  console.log(utils.isObject({}));
+  console.log(utils.isObject({ aze : 'rty' }));
 }
