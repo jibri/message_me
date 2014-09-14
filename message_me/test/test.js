@@ -44,7 +44,8 @@ function testValidateForm() {
 
 function testLogging() {
 
-  var logger = require(__root + 'utils/logger');
+  var Logger = require(__root + 'utils/logger').Logger;
+  var logger = new Logger();
 
   // logger.setLogLevel(logger.LOG_LEVELS.INFO);
   // logger.setLogLevel(logger.LOG_LEVELS.DEBUG);

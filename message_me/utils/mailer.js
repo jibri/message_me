@@ -1,11 +1,17 @@
 var nodemailer = require("nodemailer");
-var logger = require(__root + 'utils/logger');
+var Logger = require(__root + 'utils/logger').Logger;
 var SMTPConfig = require(__root + 'public/config/mailer.config');
 
+// LOGGER
+var logger = new Logger();
+
+// the transport object which send the mails
 var smtpTransport;
+
+// The number of mail sent in one connection
 var sentMails = 0;
 
-exports.sendMail = function(from, to, subject, content) {
+module.exports.sendMail = function(from, to, subject, content) {
 
   if (!smtpTransport) {
     sentMails = 0;

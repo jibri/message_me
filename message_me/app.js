@@ -28,9 +28,10 @@ var conversation = require(__root + 'routes/conversationController');
 // utils
 var urlMapping = require(__root + 'routes/base/urlMapping');
 var i18n = require(__root + 'utils/i18n');
-var logger = require(__root + 'utils/logger');
+var Logger = require(__root + 'utils/logger').Logger;
 var forms = require(__root + 'form/formValidation');
 
+var logger = new Logger();
 var app = express();
 
 app.configure(function() {
@@ -59,7 +60,7 @@ app.configure(function() {
   app.use(express.favicon('public/images/favicon.png'));
 
   // loggers
-  logger.setLogFilePath(__root + appConfig.logger.path);
+  logger.setFilePath(__root + appConfig.logger.path);
   logger.setLogLevel(appConfig.logger.level);
 
   // i18n for form validation
@@ -103,5 +104,8 @@ app.post(urlMapping.GET_MESSAGES, conversation.getMessages);
 http.createServer(app).listen(app.get('port'), function() {
 
   // Formane module can't log in console at this point. WHY ?
-  // logger.logDebug("Express server listening on port " + app.get('port'));
+  logger.logInfo("Express server listening on port " + app.get('port'));
+  logger.logError("Express server listening on port " + app.get('port'));
+  logger.logDebug("Express server listening on port " + app.get('port'));
+  logger.log("Express server listening on port " + app.get('port'), logger.LOG_LEVELS.NONE);
 });

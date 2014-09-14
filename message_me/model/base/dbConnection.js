@@ -14,7 +14,10 @@ var utils = require(__root + 'utils/utils');
 
 // pool connections
 var pg = require('pg.js');
-var logger = require(__root + 'utils/logger');
+var Logger = require(__root + 'utils/logger').Logger;
+
+// LOGGER
+var logger = new Logger();
 
 /**
  * 'connection' event listener

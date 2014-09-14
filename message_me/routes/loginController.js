@@ -10,9 +10,12 @@ var userModel = require(__root + 'model/user');
 var urlMapping = require(__root + 'routes/base/urlMapping');
 var viewHandler = require(__root + 'routes/base/viewsHandler');
 var i18n = require(__root + 'utils/i18n');
-var logger = require(__root + 'utils/logger');
+var Logger = require(__root + 'utils/logger').Logger;
 var forms = require(__root + 'form/formValidation');
 var LoginForm = require(__root + 'form/loginForm');
+
+// LOGGER
+var logger = new Logger();
 
 /*
  * GET users listing.

@@ -1,33 +1,31 @@
 var fs = require('fs');
 
-// Log levels
-var LOG_LEVELS = { INFO : { value : 3,
-                           name : 'INFO' },
-                  DEBUG : { value : 2,
-                           name : 'DEBUG' },
-                  ERROR : { value : 1,
-                           name : 'ERROR' },
-                  NONE : { value : 0,
-                          name : 'NONE' } };
+var globalFilePath;
+var globalLevel;
 
-// Default log level
-var LOG_LEVEL = LOG_LEVELS.DEBUG;
+module.exports.Logger = Logger;
 
-// Default log file path
-var FILE_PATH = './';
+function Logger() {
 
-// Base of log file name
-var FILE_NAME = 'Log.log';
+  this.filePath = this.setFilePath(globalFilePath);
+  this.logLevel = this.setLogLevel(globalLevel);
 
-var NEW_LINE = '\n';
-
-// Exports functionss
-module.exports.LOG_LEVELS = LOG_LEVELS;
-module.exports.setLogFilePath = setLogFilePath;
-module.exports.setLogLevel = setLogLevel;
-module.exports.logInfo = logInfo;
-module.exports.logDebug = logDebug;
-module.exports.logError = logError;
+  // Base of log file name
+  this.NO_LOG_FILE = 'NO_LOG';
+  // Base of log file name
+  this.FILE_NAME = 'Log.log';
+  // New line char
+  this.NEW_LINE = '\n';
+  // Log levels enum
+  this.LOG_LEVELS = { INFO : { value : 3,
+                              name : 'INFO' },
+                     DEBUG : { value : 2,
+                              name : 'DEBUG' },
+                     ERROR : { value : 1,
+                              name : 'ERROR' },
+                     NONE : { value : 0,
+                             name : 'NONE' } };
+}
 
 /**
  * Set the log level.
@@ -37,18 +35,16 @@ module.exports.logError = logError;
  * @param level
  *          A string among the authoized ones, or a value from the LOG_LEVELS enum
  */
-function setLogLevel(level) {
-
-  var logLevel = false;
+Logger.prototype.setLogLevel = function setLogLevel(level) {
 
   if (typeof level === 'string') {
-    logLevel = LOG_LEVELS[level];
+    globalLevel = this.LOG_LEVELS[level];
+  } else {
+    globalLevel = level;
   }
 
-  if (logLevel) {
-    LOG_LEVEL = logLevel;
-  }
-}
+  this.logLevel = globalLevel;
+};
 
 /**
  * Set the path of the log file. Must end with '/'
@@ -56,10 +52,11 @@ function setLogLevel(level) {
  * @param path
  *          The new path
  */
-function setLogFilePath(path) {
+Logger.prototype.setFilePath = function setLogFilePath(path) {
 
-  FILE_PATH = path;
-}
+  globalFilePath = path ? path : this.NO_LOG_FILE;
+  this.filePath = globalFilePath;
+};
 
 /**
  * True if the given level is enabled to be written or not
@@ -67,40 +64,40 @@ function setLogFilePath(path) {
  * @param level
  *          The log level to check as a value from the LOG_LEVELS enum
  */
-function isLevelEnabled(level) {
+Logger.prototype.isLevelEnabled = function isLevelEnabled(level) {
 
-  return LOG_LEVEL != LOG_LEVELS.NONE && LOG_LEVEL.value >= level.value;
-}
+  return this.logLevel != this.LOG_LEVELS.NONE && this.logLevel.value >= level.value;
+};
 
 /**
  * Log the given message as an INFO log.
  * 
  * @param message
  */
-function logInfo(message) {
+Logger.prototype.logInfo = function logInfo(message) {
 
-  log(message, LOG_LEVELS.INFO);
-}
+  this.log(message, this.LOG_LEVELS.INFO);
+};
 
 /**
  * Log the given message as a DEBUG log.
  * 
  * @param message
  */
-function logDebug(message) {
+Logger.prototype.logDebug = function logDebug(message) {
 
-  log(message, LOG_LEVELS.DEBUG);
-}
+  this.log(message, this.LOG_LEVELS.DEBUG);
+};
 
 /**
  * Log the given message as an ERROR log.
  * 
  * @param message
  */
-function logError(message) {
+Logger.prototype.logError = function logError(message) {
 
-  log(message, LOG_LEVELS.ERROR);
-}
+  this.log(message, this.LOG_LEVELS.ERROR);
+};
 
 /**
  * Log the given message with the given log level. The log is written into a file and the console.
@@ -110,17 +107,17 @@ function logError(message) {
  * @param message
  * @param level
  */
-function log(message, level) {
+Logger.prototype.log = function log(message, level) {
 
-  if (isLevelEnabled(level)) {
+  if (this.isLevelEnabled(level)) {
 
     var now = new Date();
     var logMessage = '[' + level.name + '] ' + dateToString(now, true) + ' ' + message;
 
-    if (FILE_PATH) {
-      var filePath = FILE_PATH + dateToString(now) + '_' + FILE_NAME;
+    if (this.filePath !== this.NO_LOG_FILE) {
+      var path = this.filePath + dateToString(now) + '_' + this.FILE_NAME;
 
-      fs.appendFile(filePath, NEW_LINE + logMessage, function(err) {
+      fs.appendFile(path, this.NEW_LINE + logMessage, function(err) {
 
         if (err) {
           console.log('An error occured while write log file. The message will not be recorded. ' + err);
@@ -128,13 +125,13 @@ function log(message, level) {
       });
     }
 
-    if (level === LOG_LEVELS.ERROR) {
+    if (level === this.LOG_LEVELS.ERROR) {
       console.error(logMessage);
     } else {
       console.log(logMessage);
     }
   }
-}
+};
 
 function dateToString(date, hasTime) {
 

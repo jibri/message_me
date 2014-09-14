@@ -1,0 +1,10 @@
+{
+  "env" : "dev",
+  "dev" : {
+            "host" : "<host>",
+            "port" : "<port>",
+            "user" : "<user>",
+            "password" : "<password>",
+            "database" : "<db_name>"
+          }
+}

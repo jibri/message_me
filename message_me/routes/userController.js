@@ -9,7 +9,10 @@ var errors = require(__root + 'routes/errorsController');
 var urlMapping = require(__root + 'routes/base/urlMapping');
 var mysql = require(__root + 'model/base/dbConnection');
 var viewHandler = require(__root + 'routes/base/viewsHandler');
-var logger = require(__root + 'utils/logger');
+var Logger = require(__root + 'utils/logger').Logger;
+
+// LOGGER
+var logger = new Logger();
 
 /*
  * GET users listing.

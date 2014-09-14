@@ -8,12 +8,15 @@ var viewHandler = require(__root + 'routes/base/viewsHandler');
 var urlMapping = require(__root + 'routes/base/urlMapping');
 var DAO = require(__root + 'model/base/dbConnection');
 var i18n = require(__root + 'utils/i18n');
-var logger = require(__root + 'utils/logger');
+var Logger = require(__root + 'utils/logger').Logger;
 var mailer = require(__root + 'utils/mailer');
 var forms = require(__root + 'form/formValidation');
 var ConversationForm = require(__root + 'form/conversationForm');
 var MessageForm = require(__root + 'form/messageForm');
 var util = require('util');
+
+// LOGGER
+var logger = new Logger();
 
 /**
  * GET conversation listing view.
