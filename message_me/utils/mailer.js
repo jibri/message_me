@@ -28,6 +28,7 @@ exports.sendMail = function(from, to, subject, content) {
 
     sentMails--;
     if (error) {
+      logger.logError('Error while sending mail :');
       logger.logError(error);
     } else {
       logger.logDebug("Message sent: " + response.message);

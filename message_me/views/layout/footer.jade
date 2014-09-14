@@ -1,2 +1,41 @@
-div.footer-wrapper.
-  Pied de page ... à compléter
+include /tags/frame
+include /tags/form
+
+div.footer-wrapper
+  a.copyright(href = 'javascript:;')= i18n.get('footer_copyright')
+  span  | 
+  a.contact(href = 'javascript:;')= i18n.get('footer_contact')
+  
+  +frame(i18n.get('footer_copyright')).copyright
+    div.content
+      div!= i18n.get('footer_copyright_content')
+      +buttons
+        +button.close-popup= i18n.get('button_close_popup')
+      
+  +frame(i18n.get('footer_contact')).contact
+    div.content
+      div!= i18n.get('footer_contact_content')
+      +buttons
+        +button.close-popup= i18n.get('button_close_popup')
+  
+script(type='text/javascript').
+
+  $(document).ready( function () {
+    
+    var copyFrame = $('.frame-wrapper.copyright');
+    var contactFrame = $('.frame-wrapper.contact');
+
+    copyFrame.hide();
+    contactFrame.hide();
+    
+    $('a.copyright').on('click', function (){
+      copyFrame.show();
+      popupContent(copyFrame);
+    });
+    
+    $('a.contact').on('click', function (){
+      contactFrame.show();
+      popupContent(contactFrame);
+    });
+  });
+  

@@ -26,7 +26,7 @@ var user = require(__root + 'routes/userController');
 var conversation = require(__root + 'routes/conversationController');
 
 // utils
-var urlMapping = require(__root + 'utils/urlMapping');
+var urlMapping = require(__root + 'routes/base/urlMapping');
 var i18n = require(__root + 'utils/i18n');
 var logger = require(__root + 'utils/logger');
 var forms = require(__root + 'form/formValidation');

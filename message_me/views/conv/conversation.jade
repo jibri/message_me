@@ -36,6 +36,11 @@ block javascript
         params = '?conversation=' + convId;
       }
       $.post('#{url.GET_MESSAGES}' + params, function (result){
+        
+        // Chenge the frame title to conversation title
+        var messageFrameTitle = $('#' + convId + ' div.msg-content').html();
+        setFrameTitle('messages-frame', messageFrameTitle);
+        
         $('.msgs-wrapper').html(result);
         bubbleLayout('msgs-wrapper');
       });
@@ -47,21 +52,21 @@ block content
     tr
       td
         +frame(i18n.get('message_conversations_frame_title')).convs-wrapper.chats
+          +majorbutton()(rel='#{url.CONVERSATION_FORM},500', title=i18n.get('message_conversations_create_tootip')).open-popup.add-chat.tooltip= i18n.get('button_create')
           each conv in conversations
             div(id=conv.id).conv-wrapper
               div
                 span= i18n.get('message_conversations_envelope', moment(conv.date_ouverture).format('LLLL'))
               div.msg-content= conv.titre
               div.user-wrapper= i18n.get('message_conversations_chatters')
-                +printArray(conv.users, ', ', ' et ')
-          +majorbutton()(rel='#{url.CONVERSATION_FORM},500', title=i18n.get('message_conversations_create_tootip')).open-popup.add-chat.tooltip= i18n.get('button_create')
+                +printArray(conv.users, ', ', ' et ', 'user-element', 'firstname')
   
       td
-        +frame(i18n.get('message_messages_frame_title')).chat
+        +frame(i18n.get('message_messages_frame_title')).chat.messages-frame
           +form('message-form', url.CONVERSATION, 'POST')
             +input('hidden', 'conversation.id', true)
             +formLine()
-              +input('textarea','content', true)(maxlength=3000,rows=3,cols=200,placeHolder= i18n.get('message_form_placeHolder'),wrap="hard").add-message
+              +input('textarea','content', true)(maxlength=3000,rows=3,cols=200,placeHolder= i18n.get('message_form_placeHolder'),wrap='hard', autofocus='true').add-message
               td
                 +button.submit-button.add-chat(rel='message-form')= i18n.get('message_form_add')
           div.msgs-wrapper

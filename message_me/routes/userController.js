@@ -6,9 +6,9 @@
  */
 var hash = require('credential');
 var errors = require(__root + 'routes/errorsController');
-var urlMapping = require(__root + 'utils/urlMapping');
-var mysql = require(__root + 'utils/dbConnection');
-var viewHandler = require(__root + 'utils/viewsHandler');
+var urlMapping = require(__root + 'routes/base/urlMapping');
+var mysql = require(__root + 'model/base/dbConnection');
+var viewHandler = require(__root + 'routes/base/viewsHandler');
 var logger = require(__root + 'utils/logger');
 
 /*

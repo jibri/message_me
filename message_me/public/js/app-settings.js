@@ -38,7 +38,7 @@ function initForms() {
                    var json = JSON.parse(jqXHR.responseText);
 
                    // Sometimes the parsing doesn't throw exception on Strings.
-                   if (typeof level === 'string') {
+                   if (typeof json === 'string') {
                      alert(json);
                      return;
                    }

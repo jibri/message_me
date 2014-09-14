@@ -1,6 +1,5 @@
 var app = require('../app');
-testIsObject();
-
+testExtendsObject();
 // --------------------------------------------
 //
 // TEST FUNCTIONS
@@ -161,12 +160,12 @@ function testJSONParsing() {
 function testSelect() {
 
   var Conversation = require(__root + 'model/conversation').Conversation;
-  var dao = require(__root + 'utils/dbConnection');
+  var dao = require(__root + 'model/base/dbConnection');
   var cf = require('../form/conversationForm');
 
   var conv = new Conversation(new cf());
 
-  dao.find(conv, null, function(err, result) {
+  dao.find(conv, { id : 1 }, function(err, result) {
 
     console.log('result');
     console.log(result);
@@ -188,4 +187,32 @@ function testIsObject() {
                               'rty' ]));
   console.log(utils.isObject({}));
   console.log(utils.isObject({ aze : 'rty' }));
+}
+
+function testExtendsObject() {
+
+  function ClassMere() {
+
+    this.id = 2;
+    this.getId = function() {
+
+      return 'id : ' + this.id;
+    };
+  }
+
+  ClassFille.prototype = new ClassMere();
+  function ClassFille() {
+
+    this.name = 'fille';
+    this.getId = function() {
+
+      return '3 héhé';
+    };
+  }
+
+  var fille = new ClassFille();
+
+  console.log(fille.name);
+  console.log(fille.getId());
+  console.log(fille.id);
 }

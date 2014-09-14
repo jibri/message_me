@@ -22,8 +22,15 @@
   "header_logout" : "Déconnexion",
   
   
+  "footer_copyright" : "Anec.me 2014",
+  "footer_contact" : "Contacts",
+  "footer_copyright_content" : "<b>Anec.me</b><br/><ul><li>Version : v0.1.0</li><li>Auteur : Jérémie Briand</li><li>License : OpenSource (MIT)</li><li>Repertoire Git : <a href=\"http://github.com/jibri/message_me\">http://github.com</a></li></ul>",
+  "footer_contact_content" : "Support de l'application : Jérémie Briand \"jeremiebriand@free.fr\"",
+  
+  
   "login_connection_frame_title" : "Connexion",
-  "login_newAccount_frame_title" : "Demander un nouveau compte",
+  "login_newAccount_frame_title" : "Je n'ai pas de compte",
+  "login_newAccount_frame_content" : "Bienvenue sur <b>Anec.me</b>.<br/><br/>Malheureusement, l'application est actuellement fermée aux inscriptions. Un compte de démo va être mis en place sous peu pour vous permettre de découvrir les fonctionnalités disponibles.<br/><br/>A bientôt sur <b>Anec.me</b>.",
   "login_name_label" : "Identifiant",
   "login_password_label" : "Mot de passe",
   "login_connexion_failed" : "Les informations saisies n'ont pas permi de vous identifier. Vérifiez vos identifiants de connexion et réessayez.",

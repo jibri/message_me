@@ -1,9 +1,14 @@
 /**
  * Conversation model object
  */
+
+// --------------------------------------------------
+// TODO Use Conversation.prototype and a mother Entity class to set 'id' field' and dao methods.
+// --------------------------------------------------
 var user = require(__root + 'model/user');
 var message = require(__root + 'model/message');
-var dao = require(__root + 'utils/dbConnection');
+var dao = require(__root + 'model/base/dbConnection');
+var ConversationForm = require(__root + 'form/conversationForm');
 
 var TABLE_NAME = 'tb_conversation';
 var JOIN_CONV_USER = 'tj_conv_user';
@@ -15,6 +20,10 @@ module.exports.findWithUser = findWithUser;
 module.exports.TABLE_NAME = TABLE_NAME;
 
 function Conversation(form) {
+
+  if (!form) {
+    form = new ConversationForm();
+  }
 
   this.tableName = TABLE_NAME;
 
@@ -62,54 +71,16 @@ function find(params, callback) {
 /**
  * find the conversations with the given user participant.
  */
-// FIXME centralize it
 function findWithUser(userId, callback) {
 
-  var query = 'SELECT conversation.id, conversation.titre, conversation.date_ouverture FROM ' + TABLE_NAME
-      + ' conversation ';
+  var query = 'SELECT conversation.* FROM ' + TABLE_NAME + ' conversation ';
   query += 'JOIN ' + JOIN_CONV_USER + ' jcu ON conversation.id = jcu.conversation ';
   query += 'JOIN ' + user.TABLE_NAME + ' "user" ON jcu.user = "user".id ';
   query += 'WHERE "user".id = ' + userId;
   query += ' ORDER BY conversation.date_ouverture DESC';
 
-  dao.findQuery(query, function(err, result) {
+  dao.findOptions(query, new Conversation(), null, function(err, result) {
 
-    if (err) {
-      return callback(err);
-    }
-
-    var inArray = new Array();
-    for ( var i = 0; i < result.length; i++) {
-      inArray.push(result[i].id);
-    }
-
-    if (inArray.length === 0) {
-      callback(null, result);
-      return;
-    }
-
-    var innerQuery = 'SELECT jcu.conversation conversation_id, "user".firstname user_firstname FROM ' + JOIN_CONV_USER
-        + ' jcu ';
-    innerQuery += 'JOIN ' + user.TABLE_NAME + ' "user" ON jcu.user = "user".id ';
-    innerQuery += 'WHERE jcu.conversation IN (' + inArray.join(',') + ')';
-
-    dao.findQuery(innerQuery, function(errFind, innerResult) {
-
-      if (errFind) {
-        return callback(errFind);
-      }
-
-      for ( var i = 0; i < result.length; i++) {
-        var innerArray = [];
-        for ( var j = 0; j < innerResult.length; j++) {
-          if (result[i].id == innerResult[j].conversation_id) {
-            innerArray.push(innerResult[j].user_firstname);
-          }
-        }
-        result[i].users = innerArray;
-      }
-
-      callback(null, result);
-    });
+    callback(err, result);
   });
 }

@@ -2,7 +2,7 @@
  * Utilities functions on authenticated user.
  */
 var errors = require(__root + 'routes/errorsController');
-var mysql = require(__root + 'utils/dbConnection');
+var mysql = require(__root + 'model/base/dbConnection');
 var TABLE_NAME = 'tb_user';
 
 exports.find = find;

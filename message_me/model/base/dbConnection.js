@@ -36,12 +36,12 @@ exports.findAll = findAll;
 /**
  * persist query.
  */
-function persist(tableName, model, callback) {
+function persist(model, callback) {
 
   if (model && model.id) {
-    update(tableName, model, callback);
+    update(model, callback);
   } else {
-    insert(tableName, model, callback);
+    insert(model, callback);
   }
 }
 
@@ -102,12 +102,12 @@ function find(entity, args, callback) {
  *          <li>result : the result of the query with the inserted row.</li>
  *          </ul>
  */
-function insert(tableName, model, callback) {
+function insert(model, callback) {
 
-  logger.logInfo('Inserting row in table : ' + tableName);
+  logger.logInfo('Inserting row in table : ' + model.tableName);
 
   // build query
-  var query = buildInsertStatement(tableName, model.fields);
+  var query = buildInsertStatement(model.tableName, model.fields);
 
   pg.connect(db_conString, function(errConnect, client, done) {
 
@@ -175,8 +175,17 @@ function insert(tableName, model, callback) {
               client.query('COMMIT', function() {
 
                 done();
-                // normal case.
-                callback(null, insertedResult.rows[0]);
+
+                // Get the inserted Element with all its objects
+                find(model, { id : insertedResult.rows[0].id }, function(errSelect, element) {
+
+                  if (errSelect) {
+                    logger.logError('SELECT : An error occurred while Re finding the inserted rows.');
+                    logger.logError('Error : ' + errSelect);
+                  }
+
+                  callback(errSelect, element[0]);
+                });
               });
             });
           });
@@ -194,7 +203,7 @@ function insert(tableName, model, callback) {
  * @param connection
  *          The mysql Connection
  */
-function update(tableName, model, connection, callback) {
+function update(model, connection, callback) {
 
   // console.log('updating row number ' + model.id + ' in table : ' + tableName);
   //
@@ -246,7 +255,7 @@ function findOptions(query, entity, paramsArray, callback) {
         return;
       }
 
-      if (entityResult.rows.length === 1) {
+      if (entityResult.rows.length === 0) {
         done();
         callback(null, entityResult.rows);
         return;
@@ -479,7 +488,7 @@ function performManyToManyInserts(client, id, model, callback) {
     var m2mTemp = m2ms[m2m];
     for ( var i = 0; i < m2mTemp.values.length; i++) {
 
-      var query = 'INSERT INTO ' + m2mTemp.tableName;
+      var query = 'INSERT INTO ' + m2mTemp.joinTableName;
       query += ' ("' + m2mTemp.thisId + '", "' + m2mTemp.valueId + '") ';
       query += 'VALUES (' + id + ', ' + m2mTemp.values[i].id + ') ';
 
@@ -541,7 +550,7 @@ function performOneToManyInserts(client, id, model, callback) {
     for ( var i = 0; i < o2mTemp.values.length; i++) {
 
       var element = o2mTemp.values[i];
-      element[o2mTemp.valueId] = id;
+      element[o2mTemp.thisId] = id;
       var query = buildInsertStatement(o2mTemp.tableName, element);
 
       logger.logDebug('INSERT query : ' + query);

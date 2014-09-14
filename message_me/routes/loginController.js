@@ -7,10 +7,12 @@
 var hash = require('credential');
 var errors = require(__root + 'routes/errorsController');
 var userModel = require(__root + 'model/user');
-var urlMapping = require(__root + 'utils/urlMapping');
-var viewHandler = require(__root + 'utils/viewsHandler');
+var urlMapping = require(__root + 'routes/base/urlMapping');
+var viewHandler = require(__root + 'routes/base/viewsHandler');
 var i18n = require(__root + 'utils/i18n');
 var logger = require(__root + 'utils/logger');
+var forms = require(__root + 'form/formValidation');
+var LoginForm = require(__root + 'form/loginForm');
 
 /*
  * GET users listing.
@@ -32,10 +34,10 @@ exports.form = function(req, res) {
  */
 exports.submitForm = function(req, res) {
 
-  var loginForm = req.body;
+  var loginForm = new LoginForm(forms.mapForm(req.body));
+  var json = forms.validateForm(loginForm);
 
-  if (!validateLoginForm(loginForm)) {
-    var json = loginFormToJSON(loginForm);
+  if (json) {
     return errors.throwInvalidForm(req, res, '', json);
   }
 
@@ -87,23 +89,3 @@ exports.logout = function(req, res) {
     res.redirect(urlMapping.ROOT);
   });
 };
-
-function validateLoginForm(form) {
-
-  var hasName = form.name && form.name.length > 0;
-  var hasPass = form.password && form.password.length > 0;
-  return hasName && hasPass;
-}
-
-function loginFormToJSON(form) {
-
-  var json = '{';
-  if (!(form.name && form.name.length > 0)) {
-    json += '"name":"' + i18n.get('validation_required') + '",';
-  }
-  if (!(form.password && form.password.length > 0)) {
-    json += '"password":"' + i18n.get('validation_required') + '",';
-  }
-
-  return json;
-}

@@ -1,7 +1,7 @@
 include /tags/comicStrip
 
 if messages.length === 0
-  span i18n.get('message_messages_noMsg')
+  span= i18n.get('message_messages_noMsg')
 
 each msg, idx in messages
   - var classPos = 'pos' + idx % 4;

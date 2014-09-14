@@ -2,7 +2,7 @@
  * Conversation model object
  */
 var user = require(__root + 'model/user');
-var mysql = require(__root + 'utils/dbConnection');
+var dao = require(__root + 'model/base/dbConnection');
 var TABLE_NAME = 'tb_message';
 
 module.exports.Message = Message;
@@ -11,6 +11,8 @@ module.exports.findFromConv = findFromConv;
 module.exports.TABLE_NAME = TABLE_NAME;
 
 function Message(form) {
+
+  this.tableName = TABLE_NAME;
 
   this.fields = { content : form.content,
                  date_send : form.date || new Date(),
@@ -45,7 +47,7 @@ function Message(form) {
  */
 function find(params, callback) {
 
-  mysql.find(TABLE_NAME, params, callback);
+  dao.find(TABLE_NAME, params, callback);
 }
 
 /**
@@ -66,5 +68,5 @@ function findFromConv(convId, userId, callback) {
 
   query += ' ORDER BY message.date_send DESC';
 
-  mysql.findQuery(query, callback);
+  dao.findQuery(query, callback);
 }

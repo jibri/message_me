@@ -1,7 +1,7 @@
 /*
  * Error handler
  */
-var view = require(__root + 'utils/viewsHandler');
+var view = require(__root + 'routes/base/viewsHandler');
 var i18n = require(__root + 'utils/i18n');
 
 exports.throwInvalidForm = function(req, res, err, json) {

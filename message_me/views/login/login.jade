@@ -9,7 +9,6 @@ block javascript
     $(document).ready( function () {
             
       $('.new-account').height($('.login').height());
-      $('input[name=name]').focus();
 
       $("form#login-form").on("form.succes", function(event, result){
         location.reload();
@@ -24,7 +23,7 @@ block content
         +frame(i18n.get('login_connection_frame_title')).login
           +form('login-form', '', 'POST')
             +formLine
-              +inputText('name', true)
+              +inputText('name', true)(autofocus='true')
             +formLine
               +input('password', 'password', true)
             +buttons()
@@ -32,3 +31,4 @@ block content
               
       td
         +frame(i18n.get('login_newAccount_frame_title')).new-account.green
+          div.newaccount-message!= i18n.get('login_newAccount_frame_content')

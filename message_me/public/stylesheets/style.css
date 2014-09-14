@@ -111,7 +111,7 @@ table.inner-padding>tbody>tr>td:LAST-CHILD {
 
 .logo-wrapper a {
 	height: 111px;
-	background-image: url('../images/logo_pale_50.png');
+	background-image: url('../images/logo-anec-dot-me-50.png');
 	box-shadow: 0px 0px 2px 2px #aaa;
 }
 
@@ -134,6 +134,14 @@ a.logout {
 	padding-left: 25px;
 	margin-left: 10px;
 	border-left: 2px solid #888;
+}
+
+
+/*
+* FOOTER
+*/
+div.footer-wrapper {
+	text-align: center;
 }
 
 /*
@@ -203,6 +211,10 @@ div.frame-wrapper div.frame-content {
 	overflow: auto;
 }
 
+div.frame-wrapper div.frame-content div.content {
+	padding: 10px;
+}
+
 /* icons */
 div.frame-wrapper.login div.frame-title {
 	background-image: url(../images/icons/Login_in24.png);
@@ -222,6 +234,14 @@ div.frame-wrapper.chats div.frame-title {
 
 div.frame-wrapper.info div.frame-title {
 	background-image: url(../images/icons/Info24.png);
+}
+
+div.frame-wrapper.contact div.frame-title {
+	background-image: url(../images/icons/Users24.png);
+}
+
+div.frame-wrapper.copyright div.frame-title {
+	background-image: url(../images/icons/Faq24.png);
 }
 
 /*
@@ -314,40 +334,49 @@ div.buttons {
 	padding: 20px 0px 0px 0px;
 }
 
-div.buttons button {
+div.buttons div.button {
 	float: right;
 }
 
-button {
+div.button {
+	display: inline-block;
 	margin: 0px 5px;
-	background-color: #ddd;
 	border: solid 1px #aaa;
 	border-radius: 3px;
-	line-height: 25px;
-	font-weight: bold;
-	cursor: pointer;
-	background-position: 7px center;
-	background-repeat: no-repeat;
-	padding-left: 30px;
+  background-color: #ddd;
+  background: linear-gradient(to bottom, #eee, #ccc);
 }
 
-button:hover {
+div.button .button-text {
+  background-position: 7px center;
+  background-repeat: no-repeat;
+  line-height: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  padding-left: 30px;
+  padding-right: 5px;
+  text-shadow: 1px 1px 2px #fff;
+}
+
+div.button:hover {
 	background-color: #eee;
+	background: linear-gradient(to bottom, #fff, #ddd);
 }
 
-button:active {
+div.button:active {
 	background-color: #aaa;
+	background: linear-gradient(to bottom, #ccc, #eee);
 }
 
-button.submit-button {
+div.button.submit-button .button-text {
 	background-image: url(../images/icons/Accept16.png);
 }
 
-button.close-popup {
+div.button.close-popup .button-text {
 	background-image: url(../images/icons/Close16.png);
 }
 
-button.add-chat {
+div.button.add-chat .button-text {
 	background-image: url(../images/icons/Add_Chat16.png);
 }
 
@@ -356,7 +385,7 @@ button.add-chat {
 }
 
 /* Loading must be the last class */
-button.loading {
+div.button.loading .button-text {
 	background-image: url(../images/icons/loader.gif);
 }
 
@@ -377,7 +406,7 @@ div.major-button:hover {
 	background-position: 0px 60px;
 }
 
-div.major-button:ACTIVE {
+div.major-button:active {
 	background-position: 0px 30px;
 }
 
@@ -606,6 +635,10 @@ table.connexion-table {
 div.frame-wrapper.login .form-table {
 	width: 70%;
 	margin: auto;
+}
+
+div.newaccount-message {
+	padding: 10px;
 }
 
 /*

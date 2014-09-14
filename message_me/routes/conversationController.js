@@ -4,15 +4,16 @@ var Conversation = convModel.Conversation;
 var msgModel = require(__root + 'model/message');
 var Message = msgModel.Message;
 var errors = require(__root + 'routes/errorsController');
-var viewHandler = require(__root + 'utils/viewsHandler');
-var urlMapping = require(__root + 'utils/urlMapping');
-var DAO = require(__root + 'utils/dbConnection');
+var viewHandler = require(__root + 'routes/base/viewsHandler');
+var urlMapping = require(__root + 'routes/base/urlMapping');
+var DAO = require(__root + 'model/base/dbConnection');
 var i18n = require(__root + 'utils/i18n');
 var logger = require(__root + 'utils/logger');
 var mailer = require(__root + 'utils/mailer');
 var forms = require(__root + 'form/formValidation');
 var ConversationForm = require(__root + 'form/conversationForm');
 var MessageForm = require(__root + 'form/messageForm');
+var util = require('util');
 
 /**
  * GET conversation listing view.
@@ -65,16 +66,21 @@ exports.postConversation = function(req, res) {
 
   var conversation = new Conversation(conversationForm);
 
-  DAO.persist(convModel.TABLE_NAME, conversation, function(err, insertedRow) {
+  DAO.persist(conversation, function(err, insertedRow) {
 
-    if (err) {
+    if (err || !insertedRow) {
       logger.logError('An error occured while persisting entity "conversation" : ' + err);
       return errors.throwServerError(req, res, err);
     }
 
-    console.log('insertedRow');
-    console.log(insertedRow);
-    // mailer.sendMail('Me', 'grmdu44@hotmail.com', 'test subject', 'test<br/>content');
+    var users = insertedRow.users;
+    if (users && util.isArray(users)) {
+      for ( var i = 0; i < users.length; i++) {
+
+        if (req.session.userId !== users[i].id)
+          mailer.sendMail('Anec-dot-me', users[i].mail, 'une nouvelle conversation', insertedRow.title);
+      }
+    }
 
     res.send('OK');
   });
@@ -149,7 +155,7 @@ exports.postMessage = function(req, res) {
 
   var message = new Message(messageForm);
 
-  DAO.persist(msgModel.TABLE_NAME, message, function(err, insertedRow) {
+  DAO.persist(message, function(err, insertedRow) {
 
     if (err) {
       return errors.throwServerError(req, res, err);
