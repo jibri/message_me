@@ -1,30 +1,65 @@
 var fs = require('fs');
 
+// --------------------
+// GLOBAL PRIVATE VARIABLES
+// --------------------
+
+// The log file path. Set to NO_LOG_FILE to not generate log file
 var globalFilePath;
+
+// The log level
 var globalLevel;
 
+// Base of log file name
+var NO_LOG_FILE = 'NO_LOG';
+
+// Base of log file name
+var FILE_NAME = 'Log.log';
+
+// New line char
+var NEW_LINE = '\n';
+
+// Static Log levels enum
+var LOG_LEVELS = { INFO : { value : 3,
+                           name : 'INFO' },
+                  DEBUG : { value : 2,
+                           name : 'DEBUG' },
+                  ERROR : { value : 1,
+                           name : 'ERROR' },
+                  NONE : { value : 0,
+                          name : 'NONE' } };
+
+// --------------------
+// PROTOTYPE
+// --------------------
+Logger.prototype.setLogLevel = setLogLevel;
+Logger.prototype.setFilePath = setFilePath;
+Logger.prototype.isLevelEnabled = isLevelEnabled;
+Logger.prototype.logInfo = logInfo;
+Logger.prototype.logDebug = logDebug;
+Logger.prototype.logError = logError;
+Logger.prototype.log = log;
+
+// --------------------
+// STATIC FIELDS
+// --------------------
+Logger.LOG_LEVELS = LOG_LEVELS;
+
+// --------------------
+// MODULE EXPORT
+// --------------------
 module.exports.Logger = Logger;
 
+// --------------------
+// METHODS
+// --------------------
+
+/**
+ * Logger constructor
+ */
 function Logger() {
 
-  this.filePath = this.setFilePath(globalFilePath);
-  this.logLevel = this.setLogLevel(globalLevel);
-
-  // Base of log file name
-  this.NO_LOG_FILE = 'NO_LOG';
-  // Base of log file name
-  this.FILE_NAME = 'Log.log';
-  // New line char
-  this.NEW_LINE = '\n';
-  // Log levels enum
-  this.LOG_LEVELS = { INFO : { value : 3,
-                              name : 'INFO' },
-                     DEBUG : { value : 2,
-                              name : 'DEBUG' },
-                     ERROR : { value : 1,
-                              name : 'ERROR' },
-                     NONE : { value : 0,
-                             name : 'NONE' } };
+  // Empty constructor
 }
 
 /**
@@ -33,18 +68,16 @@ function Logger() {
  * Authorized values (first ones includ later ones): 'INFO', 'DEBUG', 'ERROR', 'NONE'
  * 
  * @param level
- *          A string among the authoized ones, or a value from the LOG_LEVELS enum
+ *          A string among the authorized ones, or a value from the LOG_LEVELS enum
  */
-Logger.prototype.setLogLevel = function setLogLevel(level) {
+function setLogLevel(level) {
 
   if (typeof level === 'string') {
-    globalLevel = this.LOG_LEVELS[level];
+    globalLevel = LOG_LEVELS[level];
   } else {
     globalLevel = level;
   }
-
-  this.logLevel = globalLevel;
-};
+}
 
 /**
  * Set the path of the log file. Must end with '/'
@@ -52,11 +85,14 @@ Logger.prototype.setLogLevel = function setLogLevel(level) {
  * @param path
  *          The new path
  */
-Logger.prototype.setFilePath = function setLogFilePath(path) {
+function setFilePath(path) {
 
-  globalFilePath = path ? path : this.NO_LOG_FILE;
-  this.filePath = globalFilePath;
-};
+  if (path.indexOf(NO_LOG_FILE) !== -1) {
+    globalFilePath = NO_LOG_FILE;
+  } else {
+    globalFilePath = path;
+  }
+}
 
 /**
  * True if the given level is enabled to be written or not
@@ -64,40 +100,40 @@ Logger.prototype.setFilePath = function setLogFilePath(path) {
  * @param level
  *          The log level to check as a value from the LOG_LEVELS enum
  */
-Logger.prototype.isLevelEnabled = function isLevelEnabled(level) {
+function isLevelEnabled(level) {
 
-  return this.logLevel != this.LOG_LEVELS.NONE && this.logLevel.value >= level.value;
-};
+  return globalLevel != LOG_LEVELS.NONE && globalLevel.value >= level.value;
+}
 
 /**
  * Log the given message as an INFO log.
  * 
  * @param message
  */
-Logger.prototype.logInfo = function logInfo(message) {
+function logInfo(message) {
 
-  this.log(message, this.LOG_LEVELS.INFO);
-};
+  this.log(message, LOG_LEVELS.INFO);
+}
 
 /**
  * Log the given message as a DEBUG log.
  * 
  * @param message
  */
-Logger.prototype.logDebug = function logDebug(message) {
+function logDebug(message) {
 
-  this.log(message, this.LOG_LEVELS.DEBUG);
-};
+  this.log(message, LOG_LEVELS.DEBUG);
+}
 
 /**
  * Log the given message as an ERROR log.
  * 
  * @param message
  */
-Logger.prototype.logError = function logError(message) {
+function logError(message) {
 
-  this.log(message, this.LOG_LEVELS.ERROR);
-};
+  this.log(message, LOG_LEVELS.ERROR);
+}
 
 /**
  * Log the given message with the given log level. The log is written into a file and the console.
@@ -107,17 +143,17 @@ Logger.prototype.logError = function logError(message) {
  * @param message
  * @param level
  */
-Logger.prototype.log = function log(message, level) {
+function log(message, level) {
 
   if (this.isLevelEnabled(level)) {
 
     var now = new Date();
     var logMessage = '[' + level.name + '] ' + dateToString(now, true) + ' ' + message;
 
-    if (this.filePath !== this.NO_LOG_FILE) {
-      var path = this.filePath + dateToString(now) + '_' + this.FILE_NAME;
+    if (globalFilePath != NO_LOG_FILE) {
+      var path = globalFilePath + dateToString(now) + '_' + FILE_NAME;
 
-      fs.appendFile(path, this.NEW_LINE + logMessage, function(err) {
+      fs.appendFile(path, NEW_LINE + logMessage, function(err) {
 
         if (err) {
           console.log('An error occured while write log file. The message will not be recorded. ' + err);
@@ -125,14 +161,23 @@ Logger.prototype.log = function log(message, level) {
       });
     }
 
-    if (level === this.LOG_LEVELS.ERROR) {
+    if (level === LOG_LEVELS.ERROR) {
       console.error(logMessage);
     } else {
       console.log(logMessage);
     }
   }
-};
+}
 
+/**
+ * Format a Date to a String suitable for printing in console
+ * 
+ * @param date
+ *          The date to print
+ * @param hasTime
+ *          If the time has to be printed too.
+ * @returns The formated String
+ */
 function dateToString(date, hasTime) {
 
   var string = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();

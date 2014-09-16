@@ -3,5 +3,8 @@
   "log" : "tiny",
   "viewEngine" : "jade",
   "lang" : "fr",
-  "logger": {"level":"INFO", "path":"NO_LOG"}
+  "logger" :  {
+                "level" : "DEBUG",
+                "path" : "NO_LOG"
+              }
 }

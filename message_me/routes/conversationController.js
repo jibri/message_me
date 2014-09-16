@@ -80,8 +80,9 @@ exports.postConversation = function(req, res) {
     if (users && util.isArray(users)) {
       for ( var i = 0; i < users.length; i++) {
 
-        if (req.session.userId !== users[i].id)
-          mailer.sendMail('Anec-dot-me', users[i].mail, 'une nouvelle conversation', insertedRow.title);
+        if (req.session.userId !== users[i].id) {
+          mailer.sendMail('no-reply@Anec.me', users[i].mail, 'une nouvelle conversation', insertedRow.titre);
+        }
       }
     }
 
@@ -158,12 +159,29 @@ exports.postMessage = function(req, res) {
 
   var message = new Message(messageForm);
 
-  DAO.persist(message, function(err, insertedRow) {
+  DAO.persist(message, function(errInsert, insertedMessage) {
 
-    if (err) {
-      return errors.throwServerError(req, res, err);
+    if (errInsert) {
+      return errors.throwServerError(req, res, errInsert);
     }
 
-    res.send('OK');
+    DAO.find(new Conversation(), { id : insertedMessage.conversation }, function(errSelect, conversation) {
+
+      if (errSelect) {
+        return errors.throwServerError(req, res, errSelect);
+      }
+
+      var users = conversation[0].users;
+      if (users && util.isArray(users)) {
+        for ( var i = 0; i < users.length; i++) {
+
+          if (req.session.userId !== users[i].id) {
+            mailer.sendMail('no-reply@Anec.me', users[i].mail, 'un nouveau message', insertedMessage.content);
+          }
+        }
+      }
+
+      res.send('OK');
+    });
   });
 };

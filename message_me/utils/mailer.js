@@ -28,6 +28,9 @@ module.exports.sendMail = function(from, to, subject, content) {
                      text : 'This email is an HTML email.',
                      html : content };
 
+  console.log('mailOptions');
+  console.log(mailOptions);
+
   sentMails++;
   // send mail with defined transport object
   smtpTransport.sendMail(mailOptions, function(error, response) {

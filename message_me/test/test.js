@@ -212,8 +212,22 @@ function testExtendsObject() {
   }
 
   var fille = new ClassFille();
+  var mere = new ClassMere();
+
+  ClassMere.prototype.miaou = 'miaou';
 
   console.log(fille.name);
   console.log(fille.getId());
   console.log(fille.id);
+  console.log(fille.miaou);
+  console.log(fille instanceof ClassFille);
+  console.log(fille instanceof ClassMere);
+
+  console.log(mere.name);
+  console.log(mere.getId());
+  console.log(mere.id);
+  console.log(mere.miaou);
+  console.log(mere instanceof ClassFille);
+  console.log(mere instanceof ClassMere);
+
 }

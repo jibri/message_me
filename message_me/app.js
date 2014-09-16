@@ -31,7 +31,9 @@ var i18n = require(__root + 'utils/i18n');
 var Logger = require(__root + 'utils/logger').Logger;
 var forms = require(__root + 'form/formValidation');
 
+// LOGGER
 var logger = new Logger();
+
 var app = express();
 
 app.configure(function() {
@@ -100,12 +102,13 @@ app.get(urlMapping.CONVERSATION_FORM, conversation.popupConversationForm);
 app.post(urlMapping.CONVERSATION_FORM, conversation.postConversation);
 app.get(urlMapping.GET_USERS_AUTOCOMPLETE, conversation.getUsersAutocomplete);
 app.post(urlMapping.GET_MESSAGES, conversation.getMessages);
+app.all('*', function(req, res, next) {
+
+  res.redirect(urlMapping.ROOT);
+});
 
 http.createServer(app).listen(app.get('port'), function() {
 
   // Formane module can't log in console at this point. WHY ?
   logger.logInfo("Express server listening on port " + app.get('port'));
-  logger.logError("Express server listening on port " + app.get('port'));
-  logger.logDebug("Express server listening on port " + app.get('port'));
-  logger.log("Express server listening on port " + app.get('port'), logger.LOG_LEVELS.NONE);
 });

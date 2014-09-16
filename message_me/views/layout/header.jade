@@ -26,8 +26,8 @@ if connected
     table.table-menu
       tr
         td.menu-item
-          a(href=url.INDEX) Accueil
+          a(href=url.INDEX)= i18n.get('menu_home')
         td.menu-item
-          a(href=url.CONVERSATION) Messages
+          a(href=url.CONVERSATION)= i18n.get('menu_messages')
         td.menu-item
-          a(href=url.LOGOUT) Déconnexion
+          a(href=url.LOGOUT)= i18n.get('menu_logout')
