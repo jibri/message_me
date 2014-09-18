@@ -1,12 +1,12 @@
 /*
- * req.body.<name> : get the value of a form element
- * req.params : contains request parameters right in the URL before ?
+ * req.body.<name> : get the value of a form element req.params : contains request parameters right in the URL before ?
  * req.query : contains request parameters in the GET query after ?
  * 
  */
 var hash = require('credential');
 var errors = require(__root + 'routes/errorsController');
-var userModel = require(__root + 'model/user');
+var dao = require(__root + 'model/base/dbConnection');
+var User = require(__root + 'model/user').User;
 var urlMapping = require(__root + 'routes/base/urlMapping');
 var viewHandler = require(__root + 'routes/base/viewsHandler');
 var i18n = require(__root + 'utils/i18n');
@@ -45,7 +45,7 @@ exports.submitForm = function(req, res) {
   }
 
   // find Login
-  userModel.find({ name : loginForm.name }, function(err, result) {
+  dao.find(new User(), { name : loginForm.name }, function(err, result) {
 
     if (err) {
       logger.logError('User ' + loginForm.name + ' authentification failure : ' + err);
@@ -63,6 +63,8 @@ exports.submitForm = function(req, res) {
     hash.verify(authUser.password, loginForm.password, function(errVerify, isValid) {
 
       if (errVerify) {
+        logger.logError('Error while verifying password of User ' + authUser.name);
+        logger.logError(errVerify);
         return errors.throwServerError(req, res, errVerify);
       }
 

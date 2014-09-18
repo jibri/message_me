@@ -30,7 +30,7 @@
   "footer_copyright" : "Anec.me 2014",
   "footer_contact" : "Contacts",
   "footer_copyright_content" : "<b>Anec.me</b><br/><ul><li>Version : v0.1.0</li><li>Auteur : Jérémie Briand</li><li>License : OpenSource (MIT)</li><li>Repertoire Git : <a href=\"http://github.com/jibri/message_me\">http://github.com</a></li></ul>",
-  "footer_contact_content" : "Support de l'application : Jérémie Briand \"anec.me@outlook.fr\"",
+  "footer_contact_content" : "Support de l'application : Jérémie Briand \"anecdotme@outlook.fr\"",
   
   
   "login_connection_frame_title" : "Connexion",
@@ -41,8 +41,9 @@
   "login_connexion_failed" : "Les informations saisies n'ont pas permi de vous identifier. Vérifiez vos identifiants de connexion et réessayez.",
     
     
-  "index_greating_message" : "Bienvenue dans l'application <b>Msg_Me</b> ",
-    
+  "index_greating_message" : "Bienvenue dans l'application <b>Anec.me</b>, prononcez 'anec dot me'.<br/>Cette appli est destinée à des groupes de personnes qui souhaitent pouvoir discuter ensemble sur divers sujets, sans pour autant ouvrir des usines à gaz qui possèdent 36 autres applications et qui gènes la navigation.<br/><br/>Anec.me est une application open source.Elle est actuellement en version beta, et toute suggestion est la bienvenue. De même toute erreur peut être remontée via l'adresse mail située dans contact en bas de page, ou bien dans les 'report issues' du repertoire Git indiqué dans les informations de l'application.",
+  "index_information_frame_title" : "Information",
+  
   
   "message_conversations_frame_title" : "Mes conversations",
   "message_conversations_envelope" : "Conversation du {0}",
@@ -64,7 +65,19 @@
   "conversation_form_messages_content_label" : "Votre message",
   "conversation_form_users_label" : "Avec",
   "conversation_form_create" : "Créer la conversation",
+  
+  
+  "mail_new_conversation_header" : "[Anec.me] Nouvelle conversation",
+  "mail_new_conversation_content" : "[[USER]] vient de démarrer une nouvelle conversation.<br/><hr/><a href=\"[[URL]]\"><b>[[TITLE]]</b><br/>[[CONTENT]]</a><hr/>",
+  "mail_new_message_header" : "[Anec.me] Nouveau message",
+  "mail_new_message_content" : "[[USER]] vient de déposer un nouveau message dans la conversation <b>[[TITLE]]</b><br/><hr/><a href=\"[[URL]]\">[[CONTENT]]</a><hr/>",
     
+  
+  "user_form_name_label" : "Nom",
+  "user_form_firstname_label" : "Prénom",
+  "user_form_password_label" : "Mot de passe",
+  "user_form_mail_label" : "Mail",
+  
   
   "end" : "end"
 }

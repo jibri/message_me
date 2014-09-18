@@ -380,6 +380,10 @@ div.button.add-chat .button-text {
 	background-image: url(../images/icons/Add_Chat16.png);
 }
 
+div.button.add-user .button-text {
+	background-image: url(../images/icons/Add_User16.png);
+}
+
 .major-button.add-chat .text {
 	background-image: url(../images/icons/Add_Chat24.png);
 }

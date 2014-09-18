@@ -1,5 +1,8 @@
 extends /layout/layout
+include /tags/frame
+include /tags/form
 
 block content
-   
-  p!= i18n.get('index_greating_message') + firstname
+
+  +frame(i18n.get('index_information_frame_title')).green.copyright
+    div.content!=i18n.get('index_greating_message')

@@ -11,7 +11,34 @@ var smtpTransport;
 // The number of mail sent in one connection
 var sentMails = 0;
 
-module.exports.sendMail = function(from, to, subject, content) {
+// Param values
+var PARAM = { USER : 'USER',
+             TITLE : 'TITLE',
+             CONTENT : 'CONTENT',
+             URL : 'URL' }
+
+// ------------------
+// MODULE.EXPORTS
+// ------------------
+module.exports.sendMail = sendMail;
+module.exports.setParameter = setParameter;
+module.exports.param = PARAM;
+
+// ------------------
+// FUNCTIONS
+// ------------------
+
+/**
+ * Send a mail to 'to'.
+ * 
+ * @param to
+ *          The mail adresse where to send the mail. It's a comma separated list.
+ * @param subject
+ *          The mail subject.
+ * @param content
+ *          The mail content.
+ */
+function sendMail(to, subject, content) {
 
   if (!smtpTransport) {
     sentMails = 0;
@@ -20,16 +47,13 @@ module.exports.sendMail = function(from, to, subject, content) {
   }
 
   // setup e-mail data with unicode symbols
-  var mailOptions = { from : from,
+  var mailOptions = { from : SMTPConfig.auth.user,
                      to : to.to || to,
                      cc : to.cc || '',
                      bcc : to.bcc || '',
                      subject : subject,
-                     text : 'This email is an HTML email.',
+                     /* text : 'This email is an HTML email.', */
                      html : content };
-
-  console.log('mailOptions');
-  console.log(mailOptions);
 
   sentMails++;
   // send mail with defined transport object
@@ -48,4 +72,20 @@ module.exports.sendMail = function(from, to, subject, content) {
       }
     }
   });
-};
+}
+
+/**
+ * Replace the param with the value in the content.
+ * 
+ * @param content
+ *          The content where to replace the param.
+ * @param param
+ *          The param to replace. To replace the param "PARAM", it MUST be formed as "[[PARAM]]" in the content.
+ * @param value
+ *          The value to set.
+ */
+function setParameter(content, param, value) {
+
+  var rg = new RegExp('\\[\\[' + param + '\\]\\]', 'g');
+  return content.replace(rg, value);
+}

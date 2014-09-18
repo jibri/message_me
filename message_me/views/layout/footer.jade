@@ -22,18 +22,18 @@ script(type='text/javascript').
 
   $(document).ready( function () {
     
-    var copyFrame = $('.frame-wrapper.copyright');
-    var contactFrame = $('.frame-wrapper.contact');
+    var copyFrame = $('.footer-wrapper .frame-wrapper.copyright');
+    var contactFrame = $('.footer-wrapper .frame-wrapper.contact');
 
     copyFrame.hide();
     contactFrame.hide();
     
-    $('a.copyright').on('click', function (){
+    $('.footer-wrapper a.copyright').on('click', function (){
       copyFrame.show();
       popupContent(copyFrame);
     });
     
-    $('a.contact').on('click', function (){
+    $('.footer-wrapper a.contact').on('click', function (){
       contactFrame.show();
       popupContent(contactFrame);
     });

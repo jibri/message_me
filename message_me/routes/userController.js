@@ -1,14 +1,16 @@
 /*
- * req.body.<name> : get the value of a form element
- * req.params : contains request parameters right in the URL before ?
+ * req.body.<name> : get the value of a form element req.params : contains request parameters right in the URL before ?
  * req.query : contains request parameters in the GET query after ?
  * 
  */
 var hash = require('credential');
 var errors = require(__root + 'routes/errorsController');
 var urlMapping = require(__root + 'routes/base/urlMapping');
-var mysql = require(__root + 'model/base/dbConnection');
+var dao = require(__root + 'model/base/dbConnection');
 var viewHandler = require(__root + 'routes/base/viewsHandler');
+var User = require(__root + 'model/user').User;
+var UserForm = require(__root + 'form/userForm');
+var forms = require(__root + 'form/formValidation');
 var Logger = require(__root + 'utils/logger').Logger;
 
 // LOGGER
@@ -24,7 +26,7 @@ exports.form = function(req, res) {
   // res.send('Hello-world');
   // res.status(404).render('', args) render template with given status
 
-  mysql.findAll('tb_user', function(err, users) {
+  dao.findAll(new User(), function(err, users) {
 
     if (err) {
       logger.logError('error while finding users' + err);
@@ -40,40 +42,35 @@ exports.form = function(req, res) {
  */
 exports.submitForm = function(req, res) {
 
-  var user = req.body;
-
   // validate form
-  if (!validateUser(user)) {
-    return errors.throwInvalidForm(req, res);
+  var userForm = new UserForm(forms.mapForm(req.body));
+  var json = forms.validateForm(userForm);
+
+  if (json) {
+    return errors.throwInvalidForm(req, res, '', json);
   }
 
   // hash password
-  hash.hash(user.password, function(err, JSONHash) {
+  hash.hash(userForm.password, function(err, JSONHash) {
 
     if (err) {
       return errors.throwInvalidForm(req, res, err);
     }
 
     // set hased password
-    user.password = JSONHash;
+    userForm.password = JSONHash;
+
+    var user = new User(userForm);
 
     // persist user
-    mysql.persist('tb_user', user, function(errPersist, id) {
+    dao.persist(user, function(errPersist, id) {
 
       if (errPersist) {
         logger.logError('error while persist users : ' + errPersist);
         return errors.throwServerError(req, res, errPersist);
       }
 
-      res.redirect(urlMapping.INDEX);
+      res.send('OK');
     });
   });
 };
-
-function validateUser(user) {
-
-  var hasName = user.name && user.name.length > 0;
-  var hasFirstname = user.firstName && user.firstName.length > 0;
-  var hasPass = user.password && user.password.length > 0;
-  return hasName && hasFirstname && hasPass;
-}

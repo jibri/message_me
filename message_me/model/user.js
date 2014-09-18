@@ -2,23 +2,48 @@
  * Utilities functions on authenticated user.
  */
 var errors = require(__root + 'routes/errorsController');
-var mysql = require(__root + 'model/base/dbConnection');
+var UserForm = require(__root + 'form/userForm');
+var dao = require(__root + 'model/base/dbConnection');
 var TABLE_NAME = 'tb_user';
 
-exports.find = find;
-exports.validate = validate;
-exports.getUserId = getUserId;
-exports.findUsersLikeName = findUsersLikeName;
-exports.TABLE_NAME = TABLE_NAME;
+module.exports.User = User;
 
-/**
- * Validate the user for the DB Model
- */
-function validate() {
+module.exports.find = find;
+module.exports.getUserId = getUserId;
+module.exports.findUsersLikeName = findUsersLikeName;
+module.exports.TABLE_NAME = TABLE_NAME;
 
-  // TODO implement validation
-  var notNull = false;
-  return notNull;
+function User(form) {
+
+  if (!form) {
+    form = new UserForm();
+  }
+
+  this.tableName = TABLE_NAME;
+
+  this.fields = { name : form.name,
+                 firstname : form.firstname,
+                 password : form.password,
+                 mail : form.mail };
+
+  this.validate = [ { field : 'name',
+                     type : 'string',
+                     max : 30,
+                     notNull : true },
+
+                   { field : 'firstname',
+                    type : 'string',
+                    max : 30,
+                    notNull : true },
+
+                   { field : 'password',
+                    type : 'string',
+                    notNull : true },
+
+                   { field : 'password',
+                    type : 'string',
+                    max : 250,
+                    notNull : true } ]
 }
 
 /**
@@ -26,7 +51,7 @@ function validate() {
  */
 function find(params, callback) {
 
-  mysql.find(TABLE_NAME, params, callback);
+  dao.find(TABLE_NAME, params, callback);
 }
 
 /**
@@ -63,5 +88,5 @@ function findUsersLikeName(term, callback) {
   query += 'OR IULIKE("user".firstname, \'%' + term + '%\') ';
   query += ' ORDER BY "user".firstname ASC';
 
-  mysql.findQuery(query, callback);
+  dao.findQuery(query, callback);
 }

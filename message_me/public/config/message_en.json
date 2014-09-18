@@ -42,6 +42,7 @@
     
     
   "index_greating_message" : "Welcome on the application <b>Anec.me</b>",
+  "index_information_frame_title" : "Information",
     
   
   "message_conversations_frame_title" : "My chats",
@@ -64,6 +65,12 @@
   "conversation_form_messages_content_label" : "Your anecdote",
   "conversation_form_users_label" : "With",
   "conversation_form_create" : "Create the chat",
+  
+  
+  "user_form_name_label" : 'Name',
+  "user_form_firstname_label" : 'Firstname',
+  "user_form_password_label" : 'Password',
+  "user_form_mail_label" : 'Mail',
     
   
   "end" : "end"
