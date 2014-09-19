@@ -10,6 +10,7 @@ var dao = require(__root + 'model/base/dbConnection');
 var viewHandler = require(__root + 'routes/base/viewsHandler');
 var User = require(__root + 'model/user').User;
 var UserForm = require(__root + 'form/userForm');
+var PasswordForm = require(__root + 'form/passwordForm');
 var forms = require(__root + 'form/formValidation');
 var Logger = require(__root + 'utils/logger').Logger;
 
@@ -20,7 +21,7 @@ var logger = new Logger();
 // MODULE.EXPORTS
 // ----------------
 module.exports.passowrdForm = passwordForm;
-module.exports.submitPassowrdForm = submitPassowrdForm;
+module.exports.submitPassowrdForm = submitPasswordForm;
 module.exports.form = userForm;
 module.exports.submitForm = submitForm;
 
@@ -93,11 +94,59 @@ function submitForm(req, res) {
  * @param req
  * @param res
  */
-function passowrdForm(req, res) {
+function passwordForm(req, res) {
 
   viewHandler.render(req, res, 'user/password-form', 'Password');
 }
 
-function passowrdForm(req, res) {
+/**
+ * 
+ * @param req
+ * @param res
+ * @returns
+ */
+function submitPasswordForm(req, res) {
 
+  var passwordForm = new PasswordForm(forms.mapForm(req.body));
+  var json = forms.validateForm(passwordForm);
+
+  if (json || passwordForm.password != passwordForm.confirm) {
+    return errors.throwInvalidForm(req, res, '', json);
+  }
+
+  //find Login
+  dao.find(new User(), { id : req.session.userId }, function(err, userForm) {
+
+    userForm = userForm[0];
+
+    if (err || !userForm || userForm.length === 0) {
+      logger.logError('User with id #' + req.session.userId + ' was not found : ' + err);
+      return errors.throwServerError(req, res, err);
+    }
+
+    // hash password
+    hash.hash(passwordForm.password, function(err, JSONHash) {
+
+      if (err) {
+        return errors.throwInvalidForm(req, res, err);
+      }
+
+      // set hased password
+      userForm.password = JSONHash;
+      console.log(userForm);
+      var user = new User(userForm);
+
+      // persist user
+      // FIXME update entity
+      dao.persist(user, function(errPersist, id) {
+
+        if (errPersist) {
+          logger.logError('error while persist users : ' + errPersist);
+          return errors.throwServerError(req, res, errPersist);
+        }
+
+        res.send('OK');
+      });
+    });
+  });
 }

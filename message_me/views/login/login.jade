@@ -11,7 +11,20 @@ block javascript
       $('.new-account').height($('.login').height());
 
       $("form#login-form").on("form.succes", function(event, result){
+        
+        if (result == 'OK'){
+          // connection OK
         location.reload();
+        }else{
+          // Need to change password
+          popupContent(result);
+        }
+      });
+      
+      $(document).on("form.succes", "form#password-form", function(event, result){
+        
+          // connection OK
+          location.reload();
       });
     });
 

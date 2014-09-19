@@ -4,7 +4,8 @@
  * @param form
  *          The received form from client side.
  */
-module.exports = function LoginForm(form) {
+module.exports = LoginForm;
+function LoginForm(form) {
 
   this.name = form ? form.name : undefined;
   this.password = form ? form.password : undefined;

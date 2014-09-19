@@ -75,7 +75,14 @@ exports.submitForm = function(req, res) {
         req.session.userId = authUser.id;
         req.session.login = authUser.name;
         req.session.userName = authUser.firstname;
-        res.send('OK');
+
+        // password == 'anecdotme', It must be changed
+        if (loginForm.password === 'anecdotme') {
+          res.redirect(urlMapping.USERS_PASSWORD_POPUP);
+        } else {
+          res.send('OK');
+        }
+
       } else {
         logger.logDebug('User ' + authUser.name + ' authentification failure : bad password.');
         return errors.throwInvalidForm(req, res, errVerify, i18n.get('login_connexion_failed'));

@@ -81,8 +81,8 @@
   
   
   "password_form_frame_title" : "Modifier mon mot de passe",
-  "password_form_frame_password" : "Nouveau mot de passe",
-  "password_form_frame_confirm" : "Confirmer",
+  "password_form_password_label" : "Nouveau mot de passe",
+  "password_form_confirm_label" : "Confirmer",
   
   
   "end" : "end"
