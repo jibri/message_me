@@ -5,6 +5,7 @@
   
   "button_connection" : "Connexion",
   "button_create" : "Créer",
+  "button_edit" : "Modifier",
   "button_close_popup" : "Fermer",
   
   
@@ -68,15 +69,20 @@
   
   
   "mail_new_conversation_header" : "[Anec.me] Nouvelle conversation",
-  "mail_new_conversation_content" : "[[USER]] vient de démarrer une nouvelle conversation.<br/><hr/><a href=\"[[URL]]\"><b>[[TITLE]]</b><br/>[[CONTENT]]</a><hr/>",
+  "mail_new_conversation_content" : "Bonjour,<br/><br/>[[USER]] vient de démarrer une nouvelle conversation.<br/><br/><hr/><a href=\"[[URL]]\"><b>[[TITLE]]</b><br/>[[CONTENT]]</a><hr/>",
   "mail_new_message_header" : "[Anec.me] Nouveau message",
-  "mail_new_message_content" : "[[USER]] vient de déposer un nouveau message dans la conversation <b>[[TITLE]]</b><br/><hr/><a href=\"[[URL]]\">[[CONTENT]]</a><hr/>",
+  "mail_new_message_content" : "Bonjour,<br/><br/>[[USER]] vient de déposer un nouveau message dans la conversation <b>[[TITLE]]</b><br/><br/><hr/><a href=\"[[URL]]\">[[CONTENT]]</a><hr/>",
     
   
   "user_form_name_label" : "Nom",
   "user_form_firstname_label" : "Prénom",
   "user_form_password_label" : "Mot de passe",
   "user_form_mail_label" : "Mail",
+  
+  
+  "password_form_frame_title" : "Modifier mon mot de passe",
+  "password_form_frame_password" : "Nouveau mot de passe",
+  "password_form_frame_confirm" : "Confirmer",
   
   
   "end" : "end"

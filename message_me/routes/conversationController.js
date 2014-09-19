@@ -23,6 +23,7 @@ var logger = new Logger();
  */
 exports.getConversation = function(req, res) {
 
+  console.log(urlMapping.resolveUrl(req, urlMapping.CONVERSATION));
   convModel.findWithUser(req.session.userId, function(err, convs) {
 
     if (err) {

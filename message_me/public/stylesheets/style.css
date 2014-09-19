@@ -244,6 +244,10 @@ div.frame-wrapper.copyright div.frame-title {
 	background-image: url(../images/icons/Faq24.png);
 }
 
+div.frame-wrapper.key div.frame-title {
+	background-image: url(../images/icons/Key24.png);
+}
+
 /*
  * FORM tag
  */

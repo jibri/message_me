@@ -96,6 +96,8 @@ app.get(urlMapping.LOGOUT, login.logout);
 app.get(urlMapping.INDEX, index.index);
 app.get(urlMapping.USERS, user.form);
 app.post(urlMapping.USERS, user.submitForm);
+app.get(urlMapping.USERS_PASSWORD_POPUP, user.passowrdForm);
+app.post(urlMapping.USERS_PASSWORD_POPUP, user.submitPassowrdForm);
 app.get(urlMapping.CONVERSATION, conversation.getConversation);
 app.post(urlMapping.CONVERSATION, conversation.postMessage);
 app.get(urlMapping.CONVERSATION_FORM, conversation.popupConversationForm);

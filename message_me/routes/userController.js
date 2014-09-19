@@ -16,10 +16,22 @@ var Logger = require(__root + 'utils/logger').Logger;
 // LOGGER
 var logger = new Logger();
 
+// ----------------
+// MODULE.EXPORTS
+// ----------------
+module.exports.passowrdForm = passwordForm;
+module.exports.submitPassowrdForm = submitPassowrdForm;
+module.exports.form = userForm;
+module.exports.submitForm = submitForm;
+
+//----------------
+// FUNCTIONS
+//----------------
+
 /*
  * GET users listing.
  */
-exports.form = function(req, res) {
+function userForm(req, res) {
 
   // res.render('', args) render jade, ejs ... template
   // res.send( code_status i.e. 200,404, '') render a string to send.
@@ -40,7 +52,7 @@ exports.form = function(req, res) {
 /*
  * POST user form
  */
-exports.submitForm = function(req, res) {
+function submitForm(req, res) {
 
   // validate form
   var userForm = new UserForm(forms.mapForm(req.body));
@@ -74,3 +86,18 @@ exports.submitForm = function(req, res) {
     });
   });
 };
+
+/**
+ * Send a form in a popup to
+ * 
+ * @param req
+ * @param res
+ */
+function passowrdForm(req, res) {
+
+  viewHandler.render(req, res, 'user/password-form', 'Password');
+}
+
+function passowrdForm(req, res) {
+
+}
