@@ -17,4 +17,4 @@ function LoginForm(form) {
                    { field : 'password',
                     type : 'string',
                     notNull : true } ];
-};
+}

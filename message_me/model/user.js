@@ -43,12 +43,13 @@ function User(form) {
                    { field : 'password',
                     type : 'string',
                     max : 250,
-                    notNull : true } ]
+                    notNull : true } ];
 }
 
 /**
  * find the user id with the given params.
  */
+// TODO find as a properties of the object "abstract entity"
 function find(params, callback) {
 
   dao.find(TABLE_NAME, params, callback);

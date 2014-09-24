@@ -25,9 +25,9 @@ module.exports.submitPassowrdForm = submitPasswordForm;
 module.exports.form = userForm;
 module.exports.submitForm = submitForm;
 
-//----------------
+// ----------------
 // FUNCTIONS
-//----------------
+// ----------------
 
 /*
  * GET users listing.
@@ -48,7 +48,7 @@ function userForm(req, res) {
 
     viewHandler.render(req, res, 'user/user-form', 'Utilisateurs', { users : users });
   });
-};
+}
 
 /*
  * POST user form
@@ -86,7 +86,7 @@ function submitForm(req, res) {
       res.send('OK');
     });
   });
-};
+}
 
 /**
  * Send a form in a popup to
@@ -114,21 +114,21 @@ function submitPasswordForm(req, res) {
     return errors.throwInvalidForm(req, res, '', json);
   }
 
-  //find Login
-  dao.find(new User(), { id : req.session.userId }, function(err, userForm) {
+  // find Login
+  dao.find(new User(), { id : req.session.userId }, function(errFind, userForm) {
 
     userForm = userForm[0];
 
-    if (err || !userForm || userForm.length === 0) {
-      logger.logError('User with id #' + req.session.userId + ' was not found : ' + err);
-      return errors.throwServerError(req, res, err);
+    if (errFind || !userForm || userForm.length === 0) {
+      logger.logError('User with id #' + req.session.userId + ' was not found : ' + errFind);
+      return errors.throwServerError(req, res, errFind);
     }
 
     // hash password
-    hash.hash(passwordForm.password, function(err, JSONHash) {
+    hash.hash(passwordForm.password, function(errHash, JSONHash) {
 
-      if (err) {
-        return errors.throwInvalidForm(req, res, err);
+      if (errHash) {
+        return errors.throwInvalidForm(req, res, errHash);
       }
 
       // set hased password

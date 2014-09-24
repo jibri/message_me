@@ -28,5 +28,5 @@ module.exports = function UserForm(form) {
                    { field : 'mail',
                     type : 'string',
                     max : 250,
-                    notNull : true } ]
+                    notNull : true } ];
 };

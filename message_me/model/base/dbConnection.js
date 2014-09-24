@@ -27,6 +27,8 @@ pg.on('connection', function(connection) {
   // Do something
 });
 
+// TODO centraliser les connexions
+
 /**
  * exports attributes
  */
@@ -203,30 +205,100 @@ function insert(model, callback) {
  * 
  * @param model
  *          The model to persist as an object (attribute must have columns names)
- * @param connection
- *          The mysql Connection
+ * @param callback
+ *          The callback to execute
  */
-function update(model, connection, callback) {
+function update(model, callback) {
 
-  // console.log('updating row number ' + model.id + ' in table : ' + tableName);
-  //
-  // connection.query('UPDATE ' + tableName + ' SET ? WHERE ID=?', [ model,
-  // model.id ], function(err, result) {
-  //
-  // // release connection whatever happened.
-  // connection.release();
-  //
-  // if (err) {
-  // console.log('UPDATE : An error occurred while updating row in table : ' + tableName);
-  // console.log('Error : ' + err);
-  // callback(err, result);
-  // return;
-  // }
-  //
-  // if (callback) {
-  // callback(null, result.insertId);
-  // }
-  // });
+  logger.logInfo('Updating row in table : ' + model.tableName);
+
+  // build query
+  var query = buildUpdateStatement(model.tableName, model.fields);
+
+  pg.connect(db_conString, function(errConnect, client, done) {
+
+    if (errConnect) {
+      logger.logError('Error while connecting to Database.');
+      logger.logError('Error : ' + errConnect);
+      callback(errConnect);
+      return;
+    }
+
+    // BEGIN Statement
+    logger.logInfo('BEGIN Transaction');
+    client.query('BEGIN', function(errBegin) {
+
+      if (errBegin) {
+        logger.logError('BEGIN : An error occurred while beginning transaction');
+        logger.logError('Error : ' + errBegin);
+        performRollback(client, done);
+        callback(errBegin);
+        return;
+      }
+
+      // This function is a sort of insurance that the passed function will be executed on the next VM internal loop,
+      // which means it will be the very first executed lines of code.
+      // @see http://nodejs.org/api/all.html#all_process_nexttick_callback for more
+      process.nextTick(function() {
+
+        // First Insert Statement
+        logger.logDebug('UPDATE query : ' + query);
+        client.query(query, objectToArray(model.fields), function(errQuery, insertedResult) {
+
+          // err treatment.
+          if (errQuery) {
+            logger.logError('UPDATE : An error occurred while updating row : ' + query);
+            logger.logError('Error : ' + errQuery);
+            performRollback(client, done);
+            callback(errQuery);
+            return;
+          }
+
+          logger.logInfo('UPDATE o2ms query');
+          performOneToManyUpdate(client, insertedResult.rows[0].id, model, function(errO2M) {
+
+            if (errO2M) {
+              logger.logError('UPDATE : An error occurred while inserting o2ms rows.');
+              logger.logError('Error : ' + errO2M);
+              performRollback(client, done);
+              callback(errO2M);
+              return;
+            }
+
+            logger.logInfo('UPDATE m2ms query');
+            performManyToManyUpdate(client, insertedResult.rows[0].id, model, function(errM2M) {
+
+              if (errM2M) {
+                logger.logError('UPDATE : An error occurred while inserting m2ms rows.');
+                logger.logError('Error : ' + errM2M);
+                performRollback(client, done);
+                callback(errM2M);
+                return;
+              }
+
+              // COMMIT the transaction
+              logger.logInfo('COMMIT Transaction');
+              client.query('COMMIT', function() {
+
+                done();
+
+                // Get the inserted Element with all its objects
+                find(model, { id : insertedResult.rows[0].id }, function(errSelect, element) {
+
+                  if (errSelect) {
+                    logger.logError('SELECT : An error occurred while Re finding the Updated rows.');
+                    logger.logError('Error : ' + errSelect);
+                  }
+
+                  callback(errSelect, element[0]);
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 }
 
 function findQuery(query, callback) {
@@ -517,6 +589,69 @@ function performManyToManyInserts(client, id, model, callback) {
 }
 
 /**
+ * Update into database the values of the manyToMany elements of the given model
+ * 
+ * @param client
+ *          the postgres client
+ * @param id
+ *          the id of the model
+ * @param model
+ *          the model containing the manyToManies elements
+ * @param callback
+ *          the cb executed after all insert statements
+ */
+function performManyToManyUpdate(client, id, model, callback) {
+
+  // TODO don't forget to delete before inserting
+
+  var m2ms = model.manyToMany;
+  var NumberInserted = 0;
+  var totalInsert = 0;
+
+  if (!m2ms) {
+    callback();
+    return;
+  }
+
+  for ( var m2m in m2ms) {
+    if (!m2ms[m2m].values) {
+      callback();
+      return;
+    }
+    totalInsert += m2ms[m2m].values.length;
+  }
+
+  for ( var m2m in m2ms) {
+
+    var m2mTemp = m2ms[m2m];
+    for ( var i = 0; i < m2mTemp.values.length; i++) {
+
+      var query = 'INSERT INTO ' + m2mTemp.joinTableName;
+      query += ' ("' + m2mTemp.thisId + '", "' + m2mTemp.valueId + '") ';
+      query += 'VALUES (' + id + ', ' + m2mTemp.values[i].id + ') ';
+
+      logger.logDebug('INSERT query : ' + query);
+      client.query(query, function(err, result) {
+
+        if (err) {
+          logger.logError('INSERT : An error occurred while inserting row : ' + query);
+          callback(err);
+          return;
+        }
+
+        // All the m2m query are performed in parallele.
+        // We need to be sure every query ended, and ended without error before calling the callback.
+        NumberInserted++;
+        if (NumberInserted >= totalInsert) {
+          NumberInserted = 0;
+          callback();
+        }
+      });
+    }
+  }
+}
+
+/**
  * Insert into database the values of the oneToMany elements of the given model
  * 
  * @param client
@@ -561,6 +696,67 @@ function performOneToManyInserts(client, id, model, callback) {
 
         if (err) {
           logger.logError('INSERT : An error occurred while inserting row : ' + query);
+          callback(err);
+          return;
+        }
+
+        // All the o2m query are performed in parallele.
+        // We need to be sure every query ended, and ended without error before calling the callback.
+        NumberInserted++;
+        if (NumberInserted >= totalInsert) {
+          NumberInserted = 0;
+          callback();
+        }
+      });
+    }
+  }
+}
+
+/**
+ * Update into database the values of the oneToMany elements of the given model
+ * 
+ * @param client
+ *          the postgres client
+ * @param id
+ *          the id of the model
+ * @param model
+ *          the model containing the onetoManies elements
+ * @param callback
+ *          the cb executed after all insert statements
+ */
+function performOneToManyUpdate(client, id, model, callback) {
+
+  var o2ms = model.oneToMany;
+  var NumberInserted = 0;
+  var totalInsert = 0;
+
+  if (!o2ms) {
+    callback();
+    return;
+  }
+
+  for ( var o2m in o2ms) {
+    if (!o2ms[o2m].values) {
+      callback();
+      return;
+    }
+    totalInsert += o2ms[o2m].values.length;
+  }
+
+  for ( var o2m in o2ms) {
+
+    var o2mTemp = o2ms[o2m];
+    for ( var i = 0; i < o2mTemp.values.length; i++) {
+
+      var element = o2mTemp.values[i];
+      element[o2mTemp.thisId] = id;
+      var query = buildUpdateStatement(o2mTemp.tableName, element);
+
+      logger.logDebug('UPDATE query : ' + query);
+      client.query(query, objectToArray(element), function(err, result) {
+
+        if (err) {
+          logger.logError('UPDATE : An error occurred while inserting row : ' + query);
           callback(err);
           return;
         }
@@ -656,4 +852,31 @@ function buildInsertStatement(tableName, fields) {
   }
 
   return query + ') ' + values + ') RETURNING *';
+}
+
+/**
+ * Build an update statement with the table name and the given object. Properties names are the columns names.
+ * 
+ * @param tableName
+ *          The name of the table where to insert the object
+ * @param fields
+ *          The fields to insert
+ * @returns The query as a String
+ */
+function buildUpdateStatement(tableName, fields) {
+
+  var query = 'UPDATE ' + tableName + ' SET (';
+
+  if (utils.isObject(fields)) {
+    var idx = 1;
+    for ( var col in fields) {
+
+      if (idx > 1) {
+        query += ', ';
+      }
+      query += '"' + col + '" = $' + idx++;
+    }
+  }
+
+  return query + ') RETURNING *';
 }
