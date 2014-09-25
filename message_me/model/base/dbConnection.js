@@ -602,8 +602,6 @@ function performManyToManyInserts(client, id, model, callback) {
  */
 function performManyToManyUpdate(client, id, model, callback) {
 
-  // TODO don't forget to delete before inserting
-
   var m2ms = model.manyToMany;
   var NumberInserted = 0;
   var totalInsert = 0;
@@ -621,33 +619,47 @@ function performManyToManyUpdate(client, id, model, callback) {
     totalInsert += m2ms[m2m].values.length;
   }
 
+  // Delete join entries before inserting new ones
+
   for ( var m2m in m2ms) {
 
     var m2mTemp = m2ms[m2m];
-    for ( var i = 0; i < m2mTemp.values.length; i++) {
 
-      var query = 'INSERT INTO ' + m2mTemp.joinTableName;
-      query += ' ("' + m2mTemp.thisId + '", "' + m2mTemp.valueId + '") ';
-      query += 'VALUES (' + id + ', ' + m2mTemp.values[i].id + ') ';
+    var deleteQuery = 'DELETE * FROM ' + m2mTemp.joinTableName + ' WHERE ' + m2mTemp.thisId + ' = ' + id;
 
-      logger.logDebug('INSERT query : ' + query);
-      client.query(query, function(err, result) {
+    client.query(deleteQuery, function(errDelete, deleteResult) {
 
-        if (err) {
-          logger.logError('INSERT : An error occurred while inserting row : ' + query);
-          callback(err);
-          return;
-        }
+      if (errDelete) {
+        logger.logError('DELETE : An error occurred while deleting row : ' + deleteQuery);
+        callback(errDelete);
+        return;
+      }
 
-        // All the m2m query are performed in parallele.
-        // We need to be sure every query ended, and ended without error before calling the callback.
-        NumberInserted++;
-        if (NumberInserted >= totalInsert) {
-          NumberInserted = 0;
-          callback();
-        }
-      });
-    }
+      for ( var i = 0; i < m2mTemp.values.length; i++) {
+
+        var query = 'INSERT INTO ' + m2mTemp.joinTableName;
+        query += ' ("' + m2mTemp.thisId + '", "' + m2mTemp.valueId + '") ';
+        query += 'VALUES (' + id + ', ' + m2mTemp.values[i].id + ') ';
+
+        logger.logDebug('INSERT query : ' + query);
+        client.query(query, function(err, result) {
+
+          if (err) {
+            logger.logError('INSERT : An error occurred while inserting row : ' + query);
+            callback(err);
+            return;
+          }
+
+          // All the m2m query are performed in parallele.
+          // We need to be sure every query ended, and ended without error before calling the callback.
+          NumberInserted++;
+          if (NumberInserted >= totalInsert) {
+            NumberInserted = 0;
+            callback();
+          }
+        });
+      }
+    });
   }
 }
 
