@@ -1,6 +1,6 @@
-/*
-COLORS
-*/
+/* ---------------------- */
+/*       APP COLORS       */
+/* ---------------------- */
 test {
 	blue1: #0099FF;
 	blue2: #77BCFF;
@@ -12,9 +12,9 @@ test {
 	green: #77cc77;
 }
 
-/*
- * RESET base elements
- */
+/* ---------------------- */
+/*          RESET         */
+/* ---------------------- */
 body {
 	margin: 0px;
 	background-color: #F5F5F5;
@@ -32,9 +32,10 @@ td {
 	vertical-align: top;
 }
 
-/*
-* GENERAL LAYOUT
-*/
+
+/* ---------------------- */
+/*        GENERAL         */
+/* ---------------------- */
 div.page {
 	padding: 10px;
 	margin-left: auto;
@@ -101,9 +102,9 @@ table.inner-padding>tbody>tr>td:LAST-CHILD {
 	resize: horizontal;
 }
 
-/*
-* HEADER
-*/
+/* ---------------------- */
+/*         HEADER         */
+/* ---------------------- */
 .logo-wrapper {
 	width: 323px;
 	vertical-align: middle;
@@ -136,19 +137,16 @@ a.logout {
 	border-left: 2px solid #888;
 }
 
-
-/*
-* FOOTER
-*/
+/* ---------------------- */
+/*          FOOTER        */
+/* ---------------------- */
 div.footer-wrapper {
 	text-align: center;
 }
 
-/*
-* POPUP LAYOUT
-*
-* .popup-wrapper
-*/
+/* ---------------------- */
+/*         POPUP          */
+/* ---------------------- */
 div.overlay {
 	background: repeat-x scroll 50% 50% #AAAAAA;
 	opacity: 0.3;
@@ -167,9 +165,10 @@ div.popup-wrapper {
 	position: fixed;
 }
 
-/*
- * FRAME widget
- */
+
+/* ---------------------- */
+/*         FRAMES         */
+/* ---------------------- */
 div.frame-wrapper {
 	border: 2px solid #0099FF;
 	border-radius: 4px 4px 0px 0px;
@@ -248,9 +247,10 @@ div.frame-wrapper.key div.frame-title {
 	background-image: url(../images/icons/Key24.png);
 }
 
-/*
- * FORM tag
- */
+
+/* ---------------------- */
+/*           FORMS        */
+/* ---------------------- */
 form {
 	padding: 20px 10px 10px 10px;
 }
@@ -313,9 +313,10 @@ label.required {
 	padding-right: 20px;
 }
 
-/*
-* AUTOCOMPLETE
-*/
+
+/* ---------------------- */
+/*     AUTOCOMPLETE       */
+/* ---------------------- */
 .autocomplete-values .autocomplete-value {
 	float: left;
 	line-height: 20px;
@@ -331,9 +332,10 @@ label.required {
 	cursor: pointer;
 }
 
-/*
-* BUTTONS
-*/
+
+/* ---------------------- */
+/*         BUTTONS        */
+/* ---------------------- */
 div.buttons {
 	padding: 20px 0px 0px 0px;
 }
@@ -398,24 +400,27 @@ div.button.loading .button-text {
 }
 
 div.major-button {
-	background-image: url('../images/button/create-button.png');
-	border: 2px solid #00aa00;
-	height: 30px;
+	/*background-image: url('../images/button/create-button.png');*/
+	background: linear-gradient(to bottom, #7c7, #2b2);
+	/*border: 2px solid #00aa00;*/
+	height: 50px;
 	color: #fff;
 	font-size: 25px;
-	line-height: 30px;
+	line-height: 50px;
 	text-align: center;
 	cursor: pointer;
-	text-shadow: 2px 2px #aaa;
-	border-radius: 4px;
+	text-shadow: 1px 1px #777;
+	/*border-radius: 4px;*/
 }
 
 div.major-button:hover {
-	background-position: 0px 60px;
+	background: linear-gradient(to bottom, #2b2, #0b0);
 }
 
 div.major-button:active {
-	background-position: 0px 30px;
+	
+  text-shadow: -1px -1px #777;
+	background: linear-gradient(to bottom, #0b0, #2b2);
 }
 
 div.major-button .text {
@@ -424,9 +429,10 @@ div.major-button .text {
 	padding-left: 30px;
 }
 
-/*
- * MENU
- */
+
+/* ---------------------- */
+/*          MENU          */
+/* ---------------------- */
 div.menu-wrapper {
 	margin-top: 20px;
 }
@@ -453,16 +459,18 @@ td.menu-item a:hover {
 	color: #eee;
 }
 
-/*
- * TOOLTIP
- */
+
+/* ---------------------- */
+/*         TOOLTIP        */
+/* ---------------------- */
 .ui-tooltip {
 	font: inherit;
 }
 
-/*
- * COMIC STRIP BUBBLES
- */
+
+/* ---------------------- */
+/*  COMIC STRIP BUBBLES   */
+/* ---------------------- */
 @font-face {
 	font-family: 'tintinregular';
 	src: url('tintin-webfont.eot');
@@ -593,9 +601,9 @@ div.bubble-wrapper.bubble-right .bubble-corner-block {
 *    *       *    *     * *    * * * *   * * *       *
 ******************************************************/
 
-/*
- * TIMER
- */
+/* ---------------------- */
+/*          TIMER         */
+/* ---------------------- */
 div.timer-wrapper {
 	background-image: url('../images/timer/milliSec.png');
 }
@@ -633,9 +641,9 @@ table.timer .timer-block.active {
 	opacity: 1;
 }
 
-/*
- * LOGIN
- */
+/* ---------------------- */
+/*       LOGIN FORM       */
+/* ---------------------- */
 table.connexion-table {
 	table-layout: fixed;
 }
@@ -649,22 +657,20 @@ div.newaccount-message {
 	padding: 10px;
 }
 
-/*
- * CONVERSATION
- */
+/* ---------------------- */
+/*      CONVERSATION      */
+/* ---------------------- */
 table.conversations-table td:FIRST-CHILD {
 	width: 200px;
 }
 
 div.convs-wrapper div.conv-wrapper {
-	/* 	background-color: #ffe4ca; */
 	cursor: pointer;
 	padding: 5px;
 	border-bottom: solid 1px #ccc;
 }
 
-div.convs-wrapper div.conv-wrapper:hover,div.convs-wrapper div.conv-wrapper.selected
-	{
+div.convs-wrapper div.conv-wrapper:hover,div.convs-wrapper div.conv-wrapper.selected {
 	background-color: #AAD6FF;
 }
 
@@ -675,9 +681,9 @@ div.convs-wrapper div.msg-content {
 	color: #888;
 }
 
-/*
- * MESSAGES
- */
+/* ---------------------- */
+/*       MESSAGES         */
+/* ---------------------- */
 div.msgs-wrapper {
 	
 }
@@ -687,9 +693,16 @@ textarea.form-input.add-message {
 	width: 500px;
 }
 
-/*
- * ENCYCLOPEDIA
- */
+/* ---------------------- */
+/*     PASSWORD FORM      */
+/* ---------------------- */
+#password-form td.label {
+  width: 200px;
+}
+
+/* ---------------------- */
+/*      ENCYCLOPEDIA      */
+/* ---------------------- */
 div.article {
 	padding: 10px;
 	text-align: justify;

@@ -7,10 +7,10 @@
 module.exports = LoginForm;
 function LoginForm(form) {
 
-  this.name = form ? form.name : undefined;
+  this.login = form ? form.login : undefined;
   this.password = form ? form.password : undefined;
 
-  this.validate = [ { field : 'name',
+  this.validate = [ { field : 'login',
                      type : 'string',
                      notNull : true },
 

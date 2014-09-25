@@ -57,7 +57,7 @@ exports.postConversation = function(req, res) {
 
   // FIXME there must be better way
   conversationForm.users.push({ id : req.session.userId });
-  for (var i = 0; i < conversationForm.users.length; i++) {
+  for ( var i = 0; i < conversationForm.users.length; i++) {
     try {
       conversationForm.users[i] = JSON.parse(conversationForm.users[i]);
     } catch (e) {
@@ -79,19 +79,20 @@ exports.postConversation = function(req, res) {
 
     var users = insertedRow.users;
     var header = i18n.get('mail_new_conversation_header');
-    var content = i18n.get('mail_new_conversation_content');
+    var mailContent = i18n.get('mail_new_conversation_content');
 
-    content = mailer.setParameter(content, mailer.param.USER, req.session.userName);
-    content = mailer.setParameter(content, mailer.param.TITLE, insertedRow.titre);
-    content = mailer.setParameter(content, mailer.param.CONTENT, conversationForm.messages[0].content);
-    content = mailer.setParameter(content, mailer.param.URL, urlMapping.resolveUrl(req, urlMapping.CONVERSATION));
+    mailContent = mailer.setParameter(mailContent, mailer.param.USER, req.session.userName);
+    mailContent = mailer.setParameter(mailContent, mailer.param.TITLE, insertedRow.titre);
+    mailContent = mailer.setParameter(mailContent, mailer.param.CONTENT, conversationForm.messages[0].content);
+    mailContent = mailer.setParameter(mailContent, mailer.param.URL, urlMapping
+        .resolveUrl(req, urlMapping.CONVERSATION));
 
     if (users && util.isArray(users)) {
 
-      for (var i = 0; i < users.length; i++) {
+      for ( var i = 0; i < users.length; i++) {
 
         if (req.session.userId !== users[i].id) {
-          mailer.sendMail(users[i].mail, header, content);
+          mailer.sendMail(users[i].mail, header, mailContent);
         }
       }
     }
@@ -136,7 +137,7 @@ exports.getUsersAutocomplete = function(req, res) {
     var values = [];
     var j = 0;
 
-    for (var i = 0; i < result.length; i++) {
+    for ( var i = 0; i < result.length; i++) {
 
       // Don't take connected user.
       if (result[i].id === req.session.userId) {
@@ -183,18 +184,19 @@ exports.postMessage = function(req, res) {
 
       var users = conversation[0].users;
       var header = i18n.get('mail_new_message_header');
-      var content = i18n.get('mail_new_message_content');
+      var mailContent = i18n.get('mail_new_message_content');
 
-      content = mailer.setParameter(content, mailer.param.USER, req.session.userName);
-      content = mailer.setParameter(content, mailer.param.TITLE, conversation[0].titre);
-      content = mailer.setParameter(content, mailer.param.CONTENT, insertedMessage.content);
-      content = mailer.setParameter(content, mailer.param.URL, urlMapping.resolveUrl(req, urlMapping.CONVERSATION));
+      mailContent = mailer.setParameter(mailContent, mailer.param.USER, req.session.userName);
+      mailContent = mailer.setParameter(mailContent, mailer.param.TITLE, conversation[0].titre);
+      mailContent = mailer.setParameter(mailContent, mailer.param.CONTENT, insertedMessage.content);
+      mailContent = mailer.setParameter(mailContent, mailer.param.URL, urlMapping.resolveUrl(req,
+          urlMapping.CONVERSATION));
 
       if (users && util.isArray(users)) {
-        for (var i = 0; i < users.length; i++) {
+        for ( var i = 0; i < users.length; i++) {
 
           if (req.session.userId !== users[i].id) {
-            mailer.sendMail(users[i].mail, header, content);
+            mailer.sendMail(users[i].mail, header, mailContent);
           }
         }
       }

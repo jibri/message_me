@@ -37,7 +37,7 @@
   "login_connection_frame_title" : "Connexion",
   "login_newAccount_frame_title" : "Je n'ai pas de compte",
   "login_newAccount_frame_content" : "Bienvenue sur <b>Anec.me</b>.<br/><br/>Malheureusement, l'application est actuellement fermée aux inscriptions. Un compte de démo va être mis en place sous peu pour vous permettre de découvrir les fonctionnalités disponibles.<br/><br/>A bientôt sur <b>Anec.me</b>.",
-  "login_name_label" : "Identifiant",
+  "login_login_label" : "Identifiant",
   "login_password_label" : "Mot de passe",
   "login_connexion_failed" : "Les informations saisies n'ont pas permi de vous identifier. Vérifiez vos identifiants de connexion et réessayez.",
     
@@ -81,6 +81,7 @@
   
   
   "password_form_frame_title" : "Modifier mon mot de passe",
+  "password_form_info" : "Entrez un nouveau mot de passe afin de finaliser votre inscription.",
   "password_form_password_label" : "Nouveau mot de passe",
   "password_form_confirm_label" : "Confirmer",
   

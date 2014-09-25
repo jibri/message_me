@@ -135,9 +135,9 @@ function submitPasswordForm(req, res) {
       userForm.password = JSONHash;
       console.log(userForm);
       var user = new User(userForm);
+      user.id = req.session.userId;
 
       // persist user
-      // FIXME update entity
       dao.persist(user, function(errPersist, id) {
 
         if (errPersist) {

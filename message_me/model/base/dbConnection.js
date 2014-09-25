@@ -213,7 +213,7 @@ function update(model, callback) {
   logger.logInfo('Updating row in table : ' + model.tableName);
 
   // build query
-  var query = buildUpdateStatement(model.tableName, model.fields);
+  var query = buildUpdateStatement(model.tableName, model.fields, model.id);
 
   pg.connect(db_conString, function(errConnect, client, done) {
 
@@ -762,7 +762,7 @@ function performOneToManyUpdate(client, id, model, callback) {
 
       var element = o2mTemp.values[i];
       element[o2mTemp.thisId] = id;
-      var query = buildUpdateStatement(o2mTemp.tableName, element);
+      var query = buildUpdateStatement(o2mTemp.tableName, element, element.id);
 
       logger.logDebug('UPDATE query : ' + query);
       client.query(query, objectToArray(element), function(err, result) {
@@ -875,9 +875,9 @@ function buildInsertStatement(tableName, fields) {
  *          The fields to insert
  * @returns The query as a String
  */
-function buildUpdateStatement(tableName, fields) {
+function buildUpdateStatement(tableName, fields, id) {
 
-  var query = 'UPDATE ' + tableName + ' SET (';
+  var query = 'UPDATE ' + tableName + ' SET ';
 
   if (utils.isObject(fields)) {
     var idx = 1;
@@ -890,5 +890,5 @@ function buildUpdateStatement(tableName, fields) {
     }
   }
 
-  return query + ') RETURNING *';
+  return query + ' WHERE id = ' + id + ' RETURNING *';
 }

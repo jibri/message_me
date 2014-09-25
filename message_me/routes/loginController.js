@@ -45,15 +45,15 @@ exports.submitForm = function(req, res) {
   }
 
   // find Login
-  dao.find(new User(), { name : loginForm.name }, function(err, result) {
+  dao.find(new User(), { mail : loginForm.login }, function(err, result) {
 
     if (err) {
-      logger.logError('User ' + loginForm.name + ' authentification failure : ' + err);
+      logger.logError('User ' + loginForm.login + ' authentification failure : ' + err);
       return errors.throwServerError(req, res, err);
     }
 
     if (!result || result.length === 0) {
-      logger.logDebug('User ' + loginForm.name + ' authentification failure : bad login');
+      logger.logDebug('User ' + loginForm.login + ' authentification failure : bad login');
       return errors.throwInvalidForm(req, res, err, i18n.get('login_connexion_failed'));
     }
 

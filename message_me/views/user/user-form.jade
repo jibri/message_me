@@ -4,12 +4,12 @@ include /tags/form
 
 block javascript
   script(type='text/javascript').
-  $(document).ready( function () {
-
-    $(document).on('form.succes', "form#user-form", function(event, result){
-      location.reload();
+    $(document).ready( function () {
+  
+      $(document).on('form.succes', "form#user-form", function(event, result){
+        location.reload();
+      });
     });
-  });
 
 block content
 

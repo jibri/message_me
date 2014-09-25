@@ -4,7 +4,7 @@
   "viewEngine" : "jade",
   "lang" : "fr",
   "logger" :  {
-                "level" : "DEBUG",
+                "level" : "INFO",
                 "path" : "NO_LOG"
               }
 }
