@@ -1,10 +1,10 @@
 {
   "env" : "dev",
   "dev" : {
-            "host" : "<host>",
-            "port" : "<port>",
-            "user" : "<user>",
-            "password" : "<password>",
-            "database" : "<db_name>"
+            "host" : "localhost",
+            "port" : "5432",
+            "user" : "postgres",
+            "password" : "root",
+            "database" : "msg_me"
           }
 }

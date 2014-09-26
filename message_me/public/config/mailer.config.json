@@ -1,7 +1,7 @@
 {
-    "service": "<ServiceMail>",
+    "service": "Hotmail",
     "auth": {
-        "user": "<UserLogin>",
-        "pass": "<Password>"
+        "user": "anec.me@outlook.com",
+        "pass": "jBr2014+"
     }
 }
