@@ -39,7 +39,7 @@ var app = express();
 app.configure(function() {
 
   // the port of the app
-  app.set('port', appConfig.port);
+  app.set('port', process.env.PORT || appConfig.port);
 
   // views dir for express "res.render()"
   app.set('views', path.join(__dirname, 'views'));
