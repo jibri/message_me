@@ -30,7 +30,7 @@
   "footer_copyright" : "Anec.me 2014",
   "footer_contact" : "Contacts",
   "footer_copyright_content" : "<b>Anec.me</b><br/><ul><li>Version : v0.1.0</li><li>Author : Jérémie Briand</li><li>License : OpenSource (MIT)</li><li>Git repository: <a href=\"http://github.com/jibri/message_me\">http://github.com</a></li></ul>",
-  "footer_contact_content" : "Application feedback : Jérémie Briand \"anec.me@outlook.fr\"",
+  "footer_contact_content" : "Application feedback : Jérémie Briand \"anec.me@outlook.com\"",
   
   
   "login_connection_frame_title" : "Connection",

@@ -31,7 +31,7 @@
   "footer_copyright" : "Anec.me 2014",
   "footer_contact" : "Contacts",
   "footer_copyright_content" : "<b>Anec.me</b><br/><ul><li>Version : v0.1.0</li><li>Auteur : Jérémie Briand</li><li>License : OpenSource (MIT)</li><li>Repertoire Git : <a href=\"http://github.com/jibri/message_me\">http://github.com</a></li></ul>",
-  "footer_contact_content" : "Support de l'application : Jérémie Briand \"anecdotme@outlook.fr\"",
+  "footer_contact_content" : "Support de l'application : Jérémie Briand \"anec.me@outlook.com\"",
   
   
   "login_connection_frame_title" : "Connexion",
@@ -71,7 +71,7 @@
   "mail_new_conversation_header" : "[Anec.me] Nouvelle conversation",
   "mail_new_conversation_content" : "Bonjour,<br/><br/>[[USER]] vient de démarrer une nouvelle conversation.<br/><br/><hr/><a href=\"[[URL]]\"><b>[[TITLE]]</b><br/>[[CONTENT]]</a><hr/>",
   "mail_new_message_header" : "[Anec.me] Nouveau message",
-  "mail_new_message_content" : "Bonjour,<br/><br/>[[USER]] vient de déposer un nouveau message dans la conversation <b>[[TITLE]]</b><br/><br/><hr/><a href=\"[[URL]]\">[[CONTENT]]</a><hr/>",
+  "mail_new_message_content" : "<html><body>Bonjour,<br/><br/>[[USER]] vient de déposer un nouveau \"message\" dans la conversation <b>[[TITLE]]</b><br/><br/><hr/><a href=\"[[URL]]\u0022>[[CONTENT]]</a><hr/></body></html>",
     
   
   "user_form_name_label" : "Nom",

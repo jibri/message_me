@@ -57,7 +57,7 @@ exports.postConversation = function(req, res) {
 
   // FIXME there must be better way
   conversationForm.users.push({ id : req.session.userId });
-  for ( var i = 0; i < conversationForm.users.length; i++) {
+  for (var i = 0; i < conversationForm.users.length; i++) {
     try {
       conversationForm.users[i] = JSON.parse(conversationForm.users[i]);
     } catch (e) {
@@ -89,7 +89,7 @@ exports.postConversation = function(req, res) {
 
     if (users && util.isArray(users)) {
 
-      for ( var i = 0; i < users.length; i++) {
+      for (var i = 0; i < users.length; i++) {
 
         if (req.session.userId !== users[i].id) {
           mailer.sendMail(users[i].mail, header, mailContent);
@@ -137,7 +137,7 @@ exports.getUsersAutocomplete = function(req, res) {
     var values = [];
     var j = 0;
 
-    for ( var i = 0; i < result.length; i++) {
+    for (var i = 0; i < result.length; i++) {
 
       // Don't take connected user.
       if (result[i].id === req.session.userId) {
@@ -192,8 +192,10 @@ exports.postMessage = function(req, res) {
       mailContent = mailer.setParameter(mailContent, mailer.param.URL, urlMapping.resolveUrl(req,
           urlMapping.CONVERSATION));
 
+      console.log(mailContent);
+
       if (users && util.isArray(users)) {
-        for ( var i = 0; i < users.length; i++) {
+        for (var i = 0; i < users.length; i++) {
 
           if (req.session.userId !== users[i].id) {
             mailer.sendMail(users[i].mail, header, mailContent);
