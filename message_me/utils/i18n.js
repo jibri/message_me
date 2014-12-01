@@ -14,13 +14,14 @@ function getMessage(msgKey, args, local) {
     local = LOCAL;
   }
 
-  var messages = require(__root + 'public/config/message_' + local);
+  var Messages = require(__root + 'public/config/message_' + local).Messages;
+  var messages = new Messages();
   var msg = messages[msgKey];
 
   if (msg) {
     if (Array.isArray(args)) {
       if (args && args.length !== 0) {
-        for (var i = 0; i < args.length; i++) {
+        for ( var i = 0; i < args.length; i++) {
           msg = msg.replace('{' + i + '}', args[i]);
         }
       }

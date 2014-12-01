@@ -6,5 +6,12 @@
             "user" : "postgres",
             "password" : "root",
             "database" : "msg_me"
+          },
+  "prod" : {
+            "host" : "ec2-23-21-101-129.compute-1.amazonaws.com",
+            "port" : "5432",
+            "user" : "liqudphwhclrvo",
+            "password" : "vyQA6PythlUkSN133-DVOgvDBV",
+            "database" : "d3gjmqhiru9i6a"
           }
 }
