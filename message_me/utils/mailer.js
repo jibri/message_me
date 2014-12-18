@@ -12,10 +12,12 @@ var smtpTransport;
 var sentMails = 0;
 
 // Param values
-var PARAM = { USER : 'USER',
-             TITLE : 'TITLE',
-             CONTENT : 'CONTENT',
-             URL : 'URL' }
+var PARAM = {
+	USER : 'USER',
+	TITLE : 'TITLE',
+	CONTENT : 'CONTENT',
+	URL : 'URL'
+};
 
 // ------------------
 // MODULE.EXPORTS
@@ -32,7 +34,8 @@ module.exports.param = PARAM;
  * Send a mail to 'to'.
  * 
  * @param to
- *          The mail adresse where to send the mail. It's a comma separated list.
+ *          The mail adresse where to send the mail. It's a comma separated
+ *          list.
  * @param subject
  *          The mail subject.
  * @param content
@@ -40,38 +43,41 @@ module.exports.param = PARAM;
  */
 function sendMail(to, subject, content) {
 
-  if (!smtpTransport) {
-    sentMails = 0;
-    // create reusable transport method (opens pool of SMTP connections)
-    smtpTransport = nodemailer.createTransport("SMTP", SMTPConfig);
-  }
+	if (!smtpTransport) {
+		sentMails = 0;
+		// create reusable transport method (opens pool of SMTP connections)
+		smtpTransport = nodemailer.createTransport("SMTP", SMTPConfig);
+	}
 
-  // setup e-mail data with unicode symbols
-  var mailOptions = { from : SMTPConfig.auth.user,
-                     to : to.to || to,
-                     cc : to.cc || '',
-                     bcc : to.bcc || '',
-                     subject : subject,
-                     /* text : 'This email is an HTML email.', */
-                     html : content };
+	// setup e-mail data with unicode symbols
+	var mailOptions = {
+		from : SMTPConfig.auth.user,
+		to : to.to || to,
+		cc : to.cc || '',
+		bcc : to.bcc || '',
+		subject : subject,
+		/* text : 'This email is an HTML email.', */
+		html : content
+	};
 
-  sentMails++;
-  // send mail with defined transport object
-  smtpTransport.sendMail(mailOptions, function(error, response) {
+	sentMails++;
+	// send mail with defined transport object
+	smtpTransport.sendMail(mailOptions, function(error, response) {
 
-    sentMails--;
-    if (error) {
-      logger.logError('Error while sending mail :');
-      logger.logError(error);
-    } else {
-      logger.logDebug("Message sent: " + response.message);
+		sentMails--;
+		if (error) {
+			logger.logError('Error while sending mail :');
+			logger.logError(error);
+		} else {
+			logger.logDebug("Message sent: " + response.message);
 
-      if (sentMails === 0) {
-        logger.logDebug('close smtp transport.');
-        smtpTransport.close(); // shut down the connection pool, no more messages
-      }
-    }
-  });
+			if (sentMails === 0) {
+				logger.logDebug('close smtp transport.');
+				smtpTransport.close(); // shut down the connection pool, no more
+																// messages
+			}
+		}
+	});
 }
 
 /**
@@ -80,12 +86,13 @@ function sendMail(to, subject, content) {
  * @param content
  *          The content where to replace the param.
  * @param param
- *          The param to replace. To replace the param "PARAM", it MUST be formed as "[[PARAM]]" in the content.
+ *          The param to replace. To replace the param "PARAM", it MUST be
+ *          formed as "[[PARAM]]" in the content.
  * @param value
  *          The value to set.
  */
 function setParameter(content, param, value) {
 
-  var rg = new RegExp('\\[\\[' + param + '\\]\\]', 'g');
-  return content.replace(rg, value);
+	var rg = new RegExp('\\[\\[' + param + '\\]\\]', 'g');
+	return content.replace(rg, value);
 }

@@ -3,101 +3,96 @@
  * req.query : contains request parameters in the GET query after ?
  * 
  */
-var hash = require('credential');
-var errors = require(__root + 'routes/errorsController');
-var dao = require(__root + 'model/base/dbConnection');
-var User = require(__root + 'model/user').User;
-var urlMapping = require(__root + 'routes/base/urlMapping');
+var mongoose = require('mongoose');
+var User = require(__root + 'model/user');
+var routes = require(__root + 'routes/base/routes');
 var viewHandler = require(__root + 'routes/base/viewsHandler');
 var i18n = require(__root + 'utils/i18n');
 var Logger = require(__root + 'utils/logger').Logger;
+var hash = require(__root + 'utils/utils').hash;
+var crypto = require('crypto');
 var forms = require(__root + 'form/formValidation');
 var LoginForm = require(__root + 'form/loginForm');
 
-// LOGGER
-var logger = new Logger();
+function LoginController() {
 
-/*
- * GET users listing.
- */
-exports.form = function(req, res) {
+	// LOGGER
+	var logger = new Logger();
 
-  // password = 'a'
-  // hash =
-  // {"hash":"2RoVYt+ua+lPnk6xuFvv7ys9T5v7uGSa+uPFcSHlahaBO1uf0tSVSEw6OYoEl3OsYgI/rOlLcZGib+oS8y6cKsH6","salt":"tiwn/mRMrWezVNyM7/ASGsBmNUeOTHRj1Pc66uqUSciSlTR+5rc1E/p+h2bBdRs015I9KicyzaAPFWHB6CNIaxbY","keyLength":66,"hashMethod":"pbkdf2","workUnits":60}
+	/*
+	 * GET login page.
+	 */
+	this.form = function(req, res, next) {
 
-  if (req.session.connected) {
-    res.redirect(urlMapping.INDEX);
-  }
-  viewHandler.render(req, res, 'login/login', 'Connexion');
-};
+		if (req.session.connected) {
+			res.redirect(routes.urls.INDEX);
+		}
+		viewHandler.render(req, res, 'login/login', 'Connexion');
+	},
 
-/*
- * POST user form
- */
-exports.submitForm = function(req, res) {
+	/*
+	 * POST login form
+	 */
+	this.submitForm = function(req, res, next) {
 
-  var loginForm = new LoginForm(forms.mapForm(req.body));
-  var json = forms.validateForm(loginForm);
+		var loginForm = new LoginForm(forms.mapForm(req.body));
+		var json = forms.validateForm(loginForm);
 
-  if (json) {
-    return errors.throwInvalidForm(req, res, '', json);
-  }
+		if (json) {
+			var err = new Error(json.message);
+			err.name = 'UNACCEPTABLE';
+			err.json = json;
+			return next(err);
+		}
 
-  // find Login
-  dao.find(new User(), { mail : loginForm.login }, function(err, result) {
+		// find Login
+		User.findById(loginForm.login, function(err, user) {
 
-    if (err) {
-      logger.logError('User ' + loginForm.login + ' authentification failure : ' + err);
-      return errors.throwServerError(req, res, err);
-    }
+			if (err) {
+				logger.logError('User ' + loginForm.login + ' authentification failure : ' + err);
+				return next(err);
+			}
 
-    if (!result || result.length === 0) {
-      logger.logDebug('User ' + loginForm.login + ' authentification failure : bad login');
-      return errors.throwInvalidForm(req, res, err, i18n.get('login_connexion_failed'));
-    }
+			if (!user || user.length === 0) {
+				logger.logDebug('User ' + loginForm.login + ' authentification failure : bad login');
+				return next(new Error(i18n.get('login_connexion_failed')));
+			}
 
-    var authUser = result[0];
+			// Check Login and password
+			if (user.hash == hash(loginForm.password, user.salt)) {
 
-    // Check Login and password
-    hash.verify(authUser.password, loginForm.password, function(errVerify, isValid) {
+				logger.logDebug('User ' + user.name + ' authentified successfully.');
+				// Session storage
+				req.session.connected = true;
+				req.session.userId = user.id;
+				req.session.userName = user.name;
+				req.session.userFirstname = user.firstname;
 
-      if (errVerify) {
-        logger.logError('Error while verifying password of User ' + authUser.name);
-        logger.logError(errVerify);
-        return errors.throwServerError(req, res, errVerify);
-      }
+				// password == 'anecdotme', It must be changed
+				if (loginForm.password === 'anecdotme') {
+					res.redirect(routes.urls.USERS_PASSWORD_POPUP);
+				} else {
+					res.send('OK');
+				}
 
-      if (isValid) {
-        logger.logDebug('User ' + authUser.name + ' authentified successfully.');
-        // Session storage
-        req.session.connected = true;
-        req.session.userId = authUser.id;
-        req.session.login = authUser.name;
-        req.session.userName = authUser.firstname;
+			} else {
+				logger.logDebug('User ' + user._id + ' authentification failure : bad password.');
+				return next(new Error(i18n.get('login_connexion_failed')));
+			}
+		});
+	},
 
-        // password == 'anecdotme', It must be changed
-        if (loginForm.password === 'anecdotme') {
-          res.redirect(urlMapping.USERS_PASSWORD_POPUP);
-        } else {
-          res.send('OK');
-        }
+	/*
+	 * Logout controller
+	 */
+	this.logout = function(req, res, next) {
 
-      } else {
-        logger.logDebug('User ' + authUser.name + ' authentification failure : bad password.');
-        return errors.throwInvalidForm(req, res, errVerify, i18n.get('login_connexion_failed'));
-      }
-    });
-  });
-};
+		req.session.destroy(function() {
 
-/*
- * Logout controller
- */
-exports.logout = function(req, res) {
+			res.redirect(routes.urls.ROOT);
+		});
+	};
+}
 
-  req.session.destroy(function() {
-
-    res.redirect(urlMapping.ROOT);
-  });
-};
+// MODULE EXPORTS
+module.exports.LoginController = LoginController;

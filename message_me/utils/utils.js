@@ -1,6 +1,5 @@
 var utils = require('util');
-
-module.exports.isObject = isObject;
+var crypto = require('crypto');
 
 /**
  * Test if the given ojbect is an objet with properties 'key:value'.
@@ -23,5 +22,23 @@ module.exports.isObject = isObject;
  */
 function isObject(obj) {
 
-  return typeof obj == 'object' && obj && Object.keys(obj).length > 0 && !utils.isArray(obj);
+	return typeof obj == 'object' && obj && Object.keys(obj).length > 0 && !utils.isArray(obj);
 }
+
+function validString(s) {
+	if ('string' != typeof s) {
+		s = '';
+	}
+	return s.trim();
+}
+
+function hash(pass, salt) {
+	var hash = crypto.createHash('sha512');
+	hash.update(pass, 'utf8');
+	hash.update(salt, 'utf8');
+	return hash.digest('base64');
+}
+
+module.exports.isObject = isObject;
+module.exports.validString = validString;
+module.exports.hash = hash;

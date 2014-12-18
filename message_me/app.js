@@ -20,13 +20,11 @@ var path = require('path');
 var appConfig = require(__root + 'public/config/app.config');
 
 // routes
-var index = require(__root + 'routes/indexController');
-var login = require(__root + 'routes/loginController');
-var user = require(__root + 'routes/userController');
-var conversation = require(__root + 'routes/conversationController');
+var Routes = require(__root + 'routes/base/routes').Routes;
 
 // utils
-var urlMapping = require(__root + 'routes/base/urlMapping');
+var connection = require(__root + 'model/base/dbConnection');
+var urls = require(__root + 'routes/base/routes');
 var i18n = require(__root + 'utils/i18n');
 var Logger = require(__root + 'utils/logger').Logger;
 var forms = require(__root + 'form/formValidation');
@@ -34,83 +32,65 @@ var forms = require(__root + 'form/formValidation');
 // LOGGER
 var logger = new Logger();
 
-var app = express();
+/**
+ * Open Mongo connections
+ */
+connection(function() {
 
-app.configure(function() {
+	var app = express();
 
-  // the port of the app
-  app.set('port', process.env.PORT || appConfig.port);
+	app.configure(function() {
 
-  // views dir for express "res.render()"
-  app.set('views', path.join(__dirname, 'views'));
-  // views dir for jade files (for include & extends statements)
-  app.locals.basedir = app.get('views');
-  app.set('view engine', appConfig.viewEngine);
+		// the port of the app
+		app.set('port', process.env.PORT || appConfig.port);
 
-  // moment.js
-  moment.lang(appConfig.lang);
-  app.locals.moment = moment;
+		// views dir for express "res.render()"
+		app.set('views', path.join(__dirname, 'views'));
+		// views dir for jade files (for include & extends statements)
+		app.locals.basedir = app.get('views');
+		app.set('view engine', appConfig.viewEngine);
 
-  // I18N messages
-  i18n.lang(appConfig.lang);
-  app.locals.i18n = i18n;
+		// moment.js
+		moment.lang(appConfig.lang);
+		app.locals.moment = moment;
 
-  // Url mapping in locals
-  app.locals.url = urlMapping;
+		// I18N messages
+		i18n.lang(appConfig.lang);
+		app.locals.i18n = i18n;
 
-  // Favicon
-  app.use(express.favicon('public/images/favicon.png'));
+		// Url mapping in locals
+		app.locals.url = urls.urls;
 
-  // loggers
-  logger.setFilePath(__root + appConfig.logger.path);
-  logger.setLogLevel(appConfig.logger.level);
+		// Favicon
+		app.use(express.favicon('public/images/favicon.png'));
 
-  // i18n for form validation
-  forms.setI18N(i18n.get);
+		// loggers
+		logger.setFilePath(__root + appConfig.logger.path);
+		logger.setLogLevel(appConfig.logger.level);
 
-  // pour récupérer les éléments d'un formulaire avec req.body.<name>
-  app.use(express.bodyParser());
+		// i18n for form validation
+		forms.setI18N(i18n.get);
 
-  // The 2 next lines goes together in order to keep object in session as cookies.
-  app.use(express.cookieParser('C00ki3s-S3cr3t'));
-  app.use(express.session());
+		// pour récupérer les éléments d'un formulaire avec req.body.<name>
+		app.use(express.bodyParser());
 
-  // Indique que "/public" contient des fichiers statics (convention)
-  app.use(express.static(path.join(__dirname, 'public')));
+		// The 2 next lines goes together in order to keep object in session as
+		// cookies.
+		app.use(express.cookieParser('C00ki3s-S3cr3t'));
+		app.use(express.session());
 
-});
+		// Indique que "/public" contient des fichiers statics (convention)
+		app.use(express.static(path.join(__dirname, 'public')));
 
-app.all(urlMapping.AUTH_ROOT + '*', function(req, res, next) {
+	});
 
-  logger.logDebug('authenticated access ? : ' + req.session.connected);
+	// Init routes controllers
+	var routes = new Routes();
+	routes.initControllers(app);
 
-  if (req.session.connected) {
-    next();
-  } else {
-    res.redirect(urlMapping.ROOT);
-  }
-});
-app.get(urlMapping.ROOT, login.form);
-app.post(urlMapping.ROOT, login.submitForm);
-app.get(urlMapping.LOGOUT, login.logout);
-app.get(urlMapping.INDEX, index.index);
-app.get(urlMapping.USERS, user.form);
-app.post(urlMapping.USERS, user.submitForm);
-app.get(urlMapping.USERS_PASSWORD_POPUP, user.passowrdForm);
-app.post(urlMapping.USERS_PASSWORD_POPUP, user.submitPassowrdForm);
-app.get(urlMapping.CONVERSATION, conversation.getConversation);
-app.post(urlMapping.CONVERSATION, conversation.postMessage);
-app.get(urlMapping.CONVERSATION_FORM, conversation.popupConversationForm);
-app.post(urlMapping.CONVERSATION_FORM, conversation.postConversation);
-app.get(urlMapping.GET_USERS_AUTOCOMPLETE, conversation.getUsersAutocomplete);
-app.post(urlMapping.GET_MESSAGES, conversation.getMessages);
-app.all('*', function(req, res, next) {
+	http.createServer(app).listen(app.get('port'), function() {
 
-  res.redirect(urlMapping.ROOT);
-});
-
-http.createServer(app).listen(app.get('port'), function() {
-
-  // Formane module can't log in console at this point. WHY ?
-  logger.logInfo("Express server listening on port " + app.get('port'));
+		// Formane module can't log in console at this point. WHY ?
+		logger.logInfo("Express server listening on port " + app.get('port'));
+	});
 });

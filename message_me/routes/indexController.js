@@ -3,7 +3,13 @@
  */
 var viewHandler = require(__root + 'routes/base/viewsHandler.js');
 
-exports.index = function(req, res) {
+function IndexController() {
 
-  viewHandler.render(req, res, 'index', 'Bienvenue');
-};
+	this.index = function(req, res) {
+
+		viewHandler.render(req, res, 'index', 'Bienvenue');
+	};
+}
+
+// MODULE EXPORTS
+module.exports.IndexController = IndexController;

@@ -5,35 +5,34 @@ module.exports.get = getMessage;
 
 function setLang(lang) {
 
-  LOCAL = lang;
+	LOCAL = lang;
 }
 
 function getMessage(msgKey, args, local) {
 
-  if (!local) {
-    local = LOCAL;
-  }
+	if (!local) {
+		local = LOCAL;
+	}
 
-  var Messages = require(__root + 'public/config/message_' + local).Messages;
-  var messages = new Messages();
-  var msg = messages[msgKey];
+	var messages = require(__root + 'public/config/message_' + local);
+	var msg = messages[msgKey];
 
-  if (msg) {
-    if (Array.isArray(args)) {
-      if (args && args.length !== 0) {
-        for ( var i = 0; i < args.length; i++) {
-          msg = msg.replace('{' + i + '}', args[i]);
-        }
-      }
-    } else {
-      msg = msg.replace('{0}', args);
-    }
-  } else {
-    // check the default language file.
-    if (local != DEFAULT_LOCAL) {
-      return getMessage(msgKey, args, DEFAULT_LOCAL);
-    }
-  }
+	if (msg) {
+		if (Array.isArray(args)) {
+			if (args && args.length !== 0) {
+				for (var i = 0; i < args.length; i++) {
+					msg = msg.replace('{' + i + '}', args[i]);
+				}
+			}
+		} else {
+			msg = msg.replace('{0}', args);
+		}
+	} else {
+		// check the default language file.
+		if (local != DEFAULT_LOCAL) {
+			return getMessage(msgKey, args, DEFAULT_LOCAL);
+		}
+	}
 
-  return msg;
+	return msg;
 }

@@ -3,9 +3,8 @@ var convModel = require(__root + 'model/conversation');
 var Conversation = convModel.Conversation;
 var msgModel = require(__root + 'model/message');
 var Message = msgModel.Message;
-var errors = require(__root + 'routes/errorsController');
 var viewHandler = require(__root + 'routes/base/viewsHandler');
-var urlMapping = require(__root + 'routes/base/urlMapping');
+var urls = require(__root + 'routes/base/routes');
 var DAO = require(__root + 'model/base/dbConnection');
 var i18n = require(__root + 'utils/i18n');
 var Logger = require(__root + 'utils/logger').Logger;
@@ -15,195 +14,199 @@ var ConversationForm = require(__root + 'form/conversationForm');
 var MessageForm = require(__root + 'form/messageForm');
 var util = require('util');
 
-// LOGGER
-var logger = new Logger();
+function ConversationController() {
 
-/**
- * GET conversation listing view.
- */
-exports.getConversation = function(req, res) {
+	// LOGGER
+	var logger = new Logger();
 
-  console.log(urlMapping.resolveUrl(req, urlMapping.CONVERSATION));
-  convModel.findWithUser(req.session.userId, function(err, convs) {
+	/**
+	 * GET conversation listing view.
+	 */
+	this.getConversation = function(req, res) {
 
-    if (err) {
-      logger.logError('An error occured while findind conversations list : ' + err);
-      return errors.throwServerError(req, res, err);
-    }
+		console.log(urls.resolveUrl(req, urls.CONVERSATION));
+		convModel.findWithUser(req.session.userId, function(err, convs) {
 
-    viewHandler.render(req, res, 'conv/conversation', 'Messages', { conversations : convs });
-  });
-};
+			if (err) {
+				logger.logError('An error occured while findind conversations list : ' + err);
+				return errors.throwServerError(req, res, err);
+			}
 
-/**
- * GET POPUP conversation form
- */
-exports.popupConversationForm = function(req, res) {
+			viewHandler.render(req, res, 'conv/conversation', 'Messages', { conversations : convs });
+		});
+	},
 
-  viewHandler.render(req, res, 'conv/conversation-form');
-};
+	/**
+	 * GET POPUP conversation form
+	 */
+	this.popupConversationForm = function(req, res) {
 
-/**
- * POST new conversation form
- */
-exports.postConversation = function(req, res) {
+		viewHandler.render(req, res, 'conv/conversation-form');
+	},
 
-  var conversationForm = new ConversationForm(forms.mapForm(req.body));
-  var json = forms.validateForm(conversationForm);
+	/**
+	 * POST new conversation form
+	 */
+	this.postConversation = function(req, res) {
 
-  if (json) {
-    return errors.throwInvalidForm(req, res, '', json);
-  }
+		var conversationForm = new ConversationForm(forms.mapForm(req.body));
+		var json = forms.validateForm(conversationForm);
 
-  // FIXME there must be better way
-  conversationForm.users.push({ id : req.session.userId });
-  for (var i = 0; i < conversationForm.users.length; i++) {
-    try {
-      conversationForm.users[i] = JSON.parse(conversationForm.users[i]);
-    } catch (e) {
-      // DO NOTHING
-    }
-  }
+		if (json) {
+			return errors.throwInvalidForm(req, res, '', json);
+		}
 
-  conversationForm.messages[0].user = req.session.userId;
-  conversationForm.messages[0].date_send = new Date();
+		// FIXME there must be better way
+		conversationForm.users.push({ id : req.session.userId });
+		for (var i = 0; i < conversationForm.users.length; i++) {
+			try {
+				conversationForm.users[i] = JSON.parse(conversationForm.users[i]);
+			} catch (error) {
+				// DO NOTHING
+			}
+		}
 
-  var conversation = new Conversation(conversationForm);
+		conversationForm.messages[0].user = req.session.userId;
+		conversationForm.messages[0].date_send = new Date();
 
-  DAO.persist(conversation, function(err, insertedRow) {
+		var conversation = new Conversation(conversationForm);
 
-    if (err || !insertedRow) {
-      logger.logError('An error occured while persisting entity "conversation" : ' + err);
-      return errors.throwServerError(req, res, err);
-    }
+		DAO.persist(conversation, function(err, insertedRow) {
 
-    var users = insertedRow.users;
-    var header = i18n.get('mail_new_conversation_header');
-    var mailContent = i18n.get('mail_new_conversation_content');
+			if (err || !insertedRow) {
+				logger.logError('An error occured while persisting entity "conversation" : ' + err);
+				return errors.throwServerError(req, res, err);
+			}
 
-    mailContent = mailer.setParameter(mailContent, mailer.param.USER, req.session.userName);
-    mailContent = mailer.setParameter(mailContent, mailer.param.TITLE, insertedRow.titre);
-    mailContent = mailer.setParameter(mailContent, mailer.param.CONTENT, conversationForm.messages[0].content);
-    mailContent = mailer.setParameter(mailContent, mailer.param.URL, urlMapping
-        .resolveUrl(req, urlMapping.CONVERSATION));
+			var users = insertedRow.users;
+			var header = i18n.get('mail_new_conversation_header');
+			var mailContent = i18n.get('mail_new_conversation_content');
 
-    if (users && util.isArray(users)) {
+			mailContent = mailer.setParameter(mailContent, mailer.param.USER, req.session.userFirstname);
+			mailContent = mailer.setParameter(mailContent, mailer.param.TITLE, insertedRow.titre);
+			mailContent = mailer.setParameter(mailContent, mailer.param.CONTENT, conversationForm.messages[0].content);
+			mailContent = mailer.setParameter(mailContent, mailer.param.URL, urls.resolveUrl(req, urls.CONVERSATION));
 
-      for (var i = 0; i < users.length; i++) {
+			if (users && util.isArray(users)) {
 
-        if (req.session.userId !== users[i].id) {
-          mailer.sendMail(users[i].mail, header, mailContent);
-        }
-      }
-    }
+				for (var i = 0; i < users.length; i++) {
 
-    res.send('OK');
-  });
-};
+					if (req.session.userId !== users[i].id) {
+						mailer.sendMail(users[i].mail, header, mailContent);
+					}
+				}
+			}
 
-/**
- * GET messages listing.
- */
-exports.getMessages = function(req, res) {
+			res.send('OK');
+		});
+	},
 
-  var convId = req.query.conversation || 0;
+	/**
+	 * GET messages listing.
+	 */
+	this.getMessages = function(req, res) {
 
-  msgModel.findFromConv(convId, req.session.userId, function(err, messages) {
+		var convId = req.query.conversation || 0;
 
-    if (err) {
-      logger.logError('An error occured while findind messages list : ' + err);
-      return errors.throwServerError(req, res, err);
-    }
+		msgModel.findFromConv(convId, req.session.userId, function(err, messages) {
 
-    viewHandler.render(req, res, 'conv/messages', 'Messages', { messages : messages });
-  });
-};
+			if (err) {
+				logger.logError('An error occured while findind messages list : ' + err);
+				return errors.throwServerError(req, res, err);
+			}
 
-/**
- * GET Users for Autocomplete
- */
-exports.getUsersAutocomplete = function(req, res) {
+			viewHandler.render(req, res, 'conv/messages', 'Messages', { messages : messages });
+		});
+	},
 
-  // 'term' is a jquery param used in autocomplete widget
-  var query = req.query.term;
+	/**
+	 * GET Users for Autocomplete
+	 */
+	this.getUsersAutocomplete = function(req, res) {
 
-  userModel.findUsersLikeName(query, function(err, result) {
+		// 'term' is a jquery param used in autocomplete widget
+		var query = req.query.term;
 
-    if (err) {
-      logger.logError("An error occured while findind Users for autocomplete field : " + err);
-      return errors.throwServerError(req, res, err);
-    }
+		userModel.findUsersLikeName(query, function(err, result) {
 
-    var values = [];
-    var j = 0;
+			if (err) {
+				logger.logError("An error occured while findind Users for autocomplete field : " + err);
+				return errors.throwServerError(req, res, err);
+			}
 
-    for (var i = 0; i < result.length; i++) {
+			var values = [];
+			var j = 0;
 
-      // Don't take connected user.
-      if (result[i].id === req.session.userId) {
-        continue;
-      }
+			for (var i = 0; i < result.length; i++) {
 
-      values[j] = {};
-      values[j].value = result[i];
-      values[j].label = result[i].firstname + ' ' + result[i].name;
-      j++;
-    }
+				// Don't take connected user.
+				if (result[i].id === req.session.userId) {
+					continue;
+				}
 
-    res.send(values);
-  });
-};
+				values[j] = {};
+				values[j].value = result[i];
+				values[j].label = result[i].firstname + ' ' + result[i].name;
+				j++;
+			}
 
-/**
- * POST the message in the conversation
- */
-exports.postMessage = function(req, res) {
+			res.send(values);
+		});
+	},
 
-  var messageForm = new MessageForm(forms.mapForm(req.body));
-  var json = forms.validateForm(messageForm);
+	/**
+	 * POST the message in the conversation
+	 */
+	this.postMessage = function(req, res) {
 
-  if (json) {
-    return errors.throwInvalidForm(req, res, '', json);
-  }
+		var messageForm = new MessageForm(forms.mapForm(req.body));
+		var json = forms.validateForm(messageForm);
 
-  messageForm.user = { id : req.session.userId };
+		if (json) {
+			return errors.throwInvalidForm(req, res, '', json);
+		}
 
-  var message = new Message(messageForm);
+		messageForm.user = { id : req.session.userId };
 
-  DAO.persist(message, function(errInsert, insertedMessage) {
+		var message = new Message(messageForm);
 
-    if (errInsert) {
-      return errors.throwServerError(req, res, errInsert);
-    }
+		DAO.persist(message, function(errInsert, insertedMessage) {
 
-    DAO.find(new Conversation(), { id : insertedMessage.conversation }, function(errSelect, conversation) {
+			if (errInsert) {
+				return errors.throwServerError(req, res, errInsert);
+			}
 
-      if (errSelect) {
-        return errors.throwServerError(req, res, errSelect);
-      }
+			DAO.find(new Conversation(), { id : insertedMessage.conversation }, function(errSelect, conversation) {
 
-      var users = conversation[0].users;
-      var header = i18n.get('mail_new_message_header');
-      var mailContent = i18n.get('mail_new_message_content');
+				if (errSelect) {
+					return errors.throwServerError(req, res, errSelect);
+				}
 
-      mailContent = mailer.setParameter(mailContent, mailer.param.USER, req.session.userName);
-      mailContent = mailer.setParameter(mailContent, mailer.param.TITLE, conversation[0].titre);
-      mailContent = mailer.setParameter(mailContent, mailer.param.CONTENT, insertedMessage.content);
-      mailContent = mailer.setParameter(mailContent, mailer.param.URL, urlMapping.resolveUrl(req,
-          urlMapping.CONVERSATION));
+				var users = conversation[0].users;
+				var header = i18n.get('mail_new_message_header');
+				var mailContent = i18n.get('mail_new_message_content');
 
-      console.log(mailContent);
+				mailContent = mailer.setParameter(mailContent, mailer.param.USER, req.session.userFirstname);
+				mailContent = mailer.setParameter(mailContent, mailer.param.TITLE, conversation[0].titre);
+				mailContent = mailer.setParameter(mailContent, mailer.param.CONTENT, insertedMessage.content);
+				mailContent = mailer.setParameter(mailContent, mailer.param.URL, urls.resolveUrl(req, urls.CONVERSATION));
 
-      if (users && util.isArray(users)) {
-        for (var i = 0; i < users.length; i++) {
+				console.log(mailContent);
 
-          if (req.session.userId !== users[i].id) {
-            mailer.sendMail(users[i].mail, header, mailContent);
-          }
-        }
-      }
+				if (users && util.isArray(users)) {
+					for (var i = 0; i < users.length; i++) {
 
-      res.send('OK');
-    });
-  });
-};
+						if (req.session.userId !== users[i].id) {
+							mailer.sendMail(users[i].mail, header, mailContent);
+						}
+					}
+				}
+
+				res.send('OK');
+			});
+		});
+	};
+}
+
+// MODULE EXPORTS.
+module.exports.ConversationController = ConversationController;
