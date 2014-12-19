@@ -1,4 +1,6 @@
 .project
 .eclipse
-message_me/node_modules
 .settings
+message_me/node_modules
+message_me/keys
+message_me/htpasswd
