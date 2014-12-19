@@ -20,89 +20,95 @@ var FILE_NAME = 'Log.log';
 var NEW_LINE = '\n';
 
 // Static Log levels enum
-var LOG_LEVELS = { INFO : { value : 3,
-                           name : 'INFO' },
-                  DEBUG : { value : 2,
-                           name : 'DEBUG' },
-                  ERROR : { value : 1,
-                           name : 'ERROR' },
-                  NONE : { value : 0,
-                          name : 'NONE' } };
+var LOG_LEVELS = {
+    INFO : { value : 3, name : 'INFO' },
+    DEBUG : { value : 2, name : 'DEBUG' },
+    ERROR : { value : 1, name : 'ERROR' },
+    NONE : { value : 0, name : 'NONE' } };
 
-// --------------------
-// PROTOTYPE
-// --------------------
-Logger.prototype.setLogLevel = setLogLevel;
-Logger.prototype.setFilePath = setFilePath;
-Logger.prototype.isLevelEnabled = isLevelEnabled;
-Logger.prototype.logInfo = logInfo;
-Logger.prototype.logDebug = logDebug;
-Logger.prototype.logError = logError;
-Logger.prototype.log = log;
+/**
+ * Logger constructor
+ */
+function Logger(name) {
 
-// --------------------
-// STATIC FIELDS
-// --------------------
+    // ATTRIBUTES
+    this.className = name || 'global'; 
+    
+    // METHODS
+    this.isLevelEnabled = isLevelEnabled;
+    this.logInfo = logInfo;
+    this.logDebug = logDebug;
+    this.logError = logError;
+    this.log = log;
+}
+
+//--------------------
+// STATIC
+//--------------------
 Logger.LOG_LEVELS = LOG_LEVELS;
-
-// --------------------
-// MODULE EXPORT
-// --------------------
-module.exports.Logger = Logger;
+Logger.config = config;
 
 // --------------------
 // METHODS
 // --------------------
 
 /**
- * Logger constructor
- */
-function Logger() {
-
-  // Empty constructor
-}
-
-/**
  * Set the log level.
  * 
- * Authorized values (first ones includ later ones): 'INFO', 'DEBUG', 'ERROR', 'NONE'
+ * Authorized values (first ones includ later ones): 'INFO', 'DEBUG', 'ERROR',
+ * 'NONE'
  * 
  * @param level
- *          A string among the authorized ones, or a value from the LOG_LEVELS enum
+ *            A string among the authorized ones, or a value from the LOG_LEVELS
+ *            enum
  */
 function setLogLevel(level) {
 
-  if (typeof level === 'string') {
-    globalLevel = LOG_LEVELS[level];
-  } else {
-    globalLevel = level;
-  }
+    if (typeof level === 'string') {
+        globalLevel = LOG_LEVELS[level];
+    } else {
+        globalLevel = level;
+    }
 }
 
 /**
  * Set the path of the log file. Must end with '/'
  * 
  * @param path
- *          The new path
+ *            The new path
  */
 function setFilePath(path) {
 
-  if (path.indexOf(NO_LOG_FILE) !== -1) {
-    globalFilePath = NO_LOG_FILE;
-  } else {
-    globalFilePath = path;
-  }
+    if (path.indexOf(NO_LOG_FILE) !== -1) {
+        globalFilePath = NO_LOG_FILE;
+    } else {
+        globalFilePath = path;
+    }
+}
+
+/**
+ * Static method to config the logger. Uses <code>setLogLevel</code> and <code>setFielPath</code>
+ * functions
+ * 
+ * @param path
+ *            The path to the log file
+ * @param level
+ *            The log level
+ */
+function config(path, level) {
+    setFilePath(path);
+    setLogLevel(level);
 }
 
 /**
  * True if the given level is enabled to be written or not
  * 
  * @param level
- *          The log level to check as a value from the LOG_LEVELS enum
+ *            The log level to check as a value from the LOG_LEVELS enum
  */
 function isLevelEnabled(level) {
 
-  return globalLevel != LOG_LEVELS.NONE && globalLevel.value >= level.value;
+    return globalLevel != LOG_LEVELS.NONE && globalLevel.value >= level.value;
 }
 
 /**
@@ -112,7 +118,7 @@ function isLevelEnabled(level) {
  */
 function logInfo(message) {
 
-  this.log(message, LOG_LEVELS.INFO);
+    this.log(message, LOG_LEVELS.INFO);
 }
 
 /**
@@ -122,7 +128,7 @@ function logInfo(message) {
  */
 function logDebug(message) {
 
-  this.log(message, LOG_LEVELS.DEBUG);
+    this.log(message, LOG_LEVELS.DEBUG);
 }
 
 /**
@@ -132,59 +138,67 @@ function logDebug(message) {
  */
 function logError(message) {
 
-  this.log(message, LOG_LEVELS.ERROR);
+    this.log(message, LOG_LEVELS.ERROR);
 }
 
 /**
- * Log the given message with the given log level. The log is written into a file and the console.
+ * Log the given message with the given log level. The log is written into a
+ * file and the console.
  * 
- * To set the filePath, use setLogFilePath, and to set accepted log level, use setLogLevel
+ * To set the filePath, use setLogFilePath, and to set accepted log level, use
+ * setLogLevel
  * 
  * @param message
  * @param level
  */
 function log(message, level) {
 
-  if (this.isLevelEnabled(level)) {
+    if (this.isLevelEnabled(level)) {
 
-    var now = new Date();
-    var logMessage = '[' + level.name + '] ' + dateToString(now, true) + ' ' + message;
+        var now = new Date();
+        var logMessage = '[' + level.name + '] ' + dateToString(now, true) + ' ' + this.className + ' : ' + message;
 
-    if (globalFilePath != NO_LOG_FILE) {
-      var path = globalFilePath + dateToString(now) + '_' + FILE_NAME;
+        if (globalFilePath != NO_LOG_FILE) {
+            var path = globalFilePath + dateToString(now) + '_' + FILE_NAME;
 
-      fs.appendFile(path, NEW_LINE + logMessage, function(err) {
+            fs.appendFile(path, NEW_LINE + logMessage, function(err) {
 
-        if (err) {
-          console.log('An error occured while write log file. The message will not be recorded. ' + err);
+                if (err) {
+                    console.log('An error occured while write log file. The message will not be recorded. ' + err);
+                }
+            });
         }
-      });
-    }
 
-    if (level === LOG_LEVELS.ERROR) {
-      console.error(logMessage);
-    } else {
-      console.log(logMessage);
+        if (level === LOG_LEVELS.ERROR) {
+            console.error(logMessage);
+        } else {
+            console.log(logMessage);
+        }
     }
-  }
 }
 
 /**
  * Format a Date to a String suitable for printing in console
  * 
  * @param date
- *          The date to print
+ *            The date to print
  * @param hasTime
- *          If the time has to be printed too.
+ *            If the time has to be printed too.
  * @returns The formated String
  */
 function dateToString(date, hasTime) {
 
-  var string = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    var string = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
 
-  if (hasTime) {
-    string += ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
-  }
-  return string;
+    if (hasTime) {
+        string += ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    }
+    return string;
 
 }
+
+// --------------------
+// MODULE EXPORT
+// --------------------
+// Logger constructor
+module.exports.Logger = Logger;

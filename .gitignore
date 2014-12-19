@@ -1,4 +1,4 @@
 .project
 .eclipse
-/node_modules
+message_me/node_modules
 .settings

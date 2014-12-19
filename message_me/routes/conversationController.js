@@ -4,7 +4,7 @@ var Conversation = convModel.Conversation;
 var msgModel = require(__root + 'model/message');
 var Message = msgModel.Message;
 var viewHandler = require(__root + 'routes/base/viewsHandler');
-var urls = require(__root + 'routes/base/routes');
+var Routes = require(__root + 'routes/base/routes');
 var DAO = require(__root + 'model/base/dbConnection');
 var i18n = require(__root + 'utils/i18n');
 var Logger = require(__root + 'utils/logger').Logger;
@@ -24,7 +24,7 @@ function ConversationController() {
 	 */
 	this.getConversation = function(req, res) {
 
-		console.log(urls.resolveUrl(req, urls.CONVERSATION));
+		console.log(Routes.resolveUrl(req, Routes.CONVERSATION));
 		convModel.findWithUser(req.session.userId, function(err, convs) {
 
 			if (err) {
@@ -85,7 +85,7 @@ function ConversationController() {
 			mailContent = mailer.setParameter(mailContent, mailer.param.USER, req.session.userFirstname);
 			mailContent = mailer.setParameter(mailContent, mailer.param.TITLE, insertedRow.titre);
 			mailContent = mailer.setParameter(mailContent, mailer.param.CONTENT, conversationForm.messages[0].content);
-			mailContent = mailer.setParameter(mailContent, mailer.param.URL, urls.resolveUrl(req, urls.CONVERSATION));
+			mailContent = mailer.setParameter(mailContent, mailer.param.URL, Routes.resolveUrl(req, Routes.CONVERSATION));
 
 			if (users && util.isArray(users)) {
 
@@ -189,7 +189,7 @@ function ConversationController() {
 				mailContent = mailer.setParameter(mailContent, mailer.param.USER, req.session.userFirstname);
 				mailContent = mailer.setParameter(mailContent, mailer.param.TITLE, conversation[0].titre);
 				mailContent = mailer.setParameter(mailContent, mailer.param.CONTENT, insertedMessage.content);
-				mailContent = mailer.setParameter(mailContent, mailer.param.URL, urls.resolveUrl(req, urls.CONVERSATION));
+				mailContent = mailer.setParameter(mailContent, mailer.param.URL, Routes.resolveUrl(req, Routes.CONVERSATION));
 
 				console.log(mailContent);
 

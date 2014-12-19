@@ -5,7 +5,7 @@
  */
 var mongoose = require('mongoose');
 var User = require(__root + 'model/user');
-var routes = require(__root + 'routes/base/routes');
+var Routes = require(__root + 'routes/base/routes');
 var viewHandler = require(__root + 'routes/base/viewsHandler');
 var i18n = require(__root + 'utils/i18n');
 var Logger = require(__root + 'utils/logger').Logger;
@@ -13,11 +13,13 @@ var hash = require(__root + 'utils/utils').hash;
 var crypto = require('crypto');
 var forms = require(__root + 'form/formValidation');
 var LoginForm = require(__root + 'form/loginForm');
+var CustomError = require(__root + 'utils/errors/errors');
+var errorTypes = require(__root + 'utils/errors/errors').types;
 
 function LoginController() {
 
 	// LOGGER
-	var logger = new Logger();
+	var logger = new Logger('LoginController');
 
 	/*
 	 * GET login page.
@@ -25,7 +27,7 @@ function LoginController() {
 	this.form = function(req, res, next) {
 
 		if (req.session.connected) {
-			res.redirect(routes.urls.INDEX);
+			res.redirect(Routes.urls.INDEX);
 		}
 		viewHandler.render(req, res, 'login/login', 'Connexion');
 	},
@@ -39,10 +41,7 @@ function LoginController() {
 		var json = forms.validateForm(loginForm);
 
 		if (json) {
-			var err = new Error(json.message);
-			err.name = 'UNACCEPTABLE';
-			err.json = json;
-			return next(err);
+			return next(new CustomError(errorTypes.INVALID_FORM, json));
 		}
 
 		// find Login
@@ -70,7 +69,7 @@ function LoginController() {
 
 				// password == 'anecdotme', It must be changed
 				if (loginForm.password === 'anecdotme') {
-					res.redirect(routes.urls.USERS_PASSWORD_POPUP);
+					res.redirect(Routes.urls.USERS_PASSWORD_POPUP);
 				} else {
 					res.send('OK');
 				}
@@ -89,7 +88,7 @@ function LoginController() {
 
 		req.session.destroy(function() {
 
-			res.redirect(routes.urls.ROOT);
+			res.redirect(Routes.urls.ROOT);
 		});
 	};
 }

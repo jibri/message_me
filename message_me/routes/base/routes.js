@@ -32,11 +32,14 @@ var urls = {
 	GET_MESSAGES : AUTH_ROOT + 'get-messages.html',
 	GET_USERS_AUTOCOMPLETE : AUTH_ROOT + 'get-users-autocomplete.html', };
 
-// Constructor
+/**
+ * @constructor of Routes
+ */
 function Routes() {
 
 	this.initControllers = function(app) {
 
+	    // Inject the controllers
 		var login = new LoginController();
 		var index = new IndexController();
 		var user = new UserController();
@@ -106,7 +109,9 @@ function resolveUrl(request, path, query) {
 	return url.format(urlObj);
 }
 
+// STATIC METHODS
+Routes.urls = urls;
+Routes.resolveUrl = resolveUrl;
+
 // MODULE EXPORTS
-module.exports.Routes = Routes;
-module.exports.urls = urls;
-module.exports.resolveUrl = resolveUrl;
+module.exports = Routes;

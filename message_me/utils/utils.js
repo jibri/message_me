@@ -17,28 +17,48 @@ var crypto = require('crypto');
  * <li> { aze : 'rty' } => true
  * 
  * @param obj
- *          The object to test
+ *            The object to test
  * @returns If it's an object
  */
 function isObject(obj) {
 
-	return typeof obj == 'object' && obj && Object.keys(obj).length > 0 && !utils.isArray(obj);
+    return typeof obj == 'object' && obj && Object.keys(obj).length > 0 && !utils.isArray(obj);
 }
 
+/**
+ * return the s parameter as a string
+ * 
+ * @param s
+ *            any object
+ * @returns s if it a string, '' else.
+ */
 function validString(s) {
-	if ('string' != typeof s) {
-		s = '';
-	}
-	return s.trim();
+    var valid;
+    if ('string' != typeof s) {
+        valid = '';
+    } else {
+        valid = s;
+    }
+    return valid.trim();
 }
 
+/**
+ * Create a hash with the given pass and salt
+ * 
+ * @param pass
+ *            the password to hash
+ * @param salt
+ *            the required salt for hashing
+ * @returns the created hash
+ */
 function hash(pass, salt) {
-	var hash = crypto.createHash('sha512');
-	hash.update(pass, 'utf8');
-	hash.update(salt, 'utf8');
-	return hash.digest('base64');
+    var hash = crypto.createHash('sha512');
+    hash.update(pass, 'utf8');
+    hash.update(salt, 'utf8');
+    return hash.digest('base64');
 }
 
+// MODULE EXPORTS
 module.exports.isObject = isObject;
 module.exports.validString = validString;
 module.exports.hash = hash;
