@@ -1,9 +1,19 @@
-/*
- * req.body.<name> : get the value of a form element req.params : contains request parameters right in the URL before ?
- * req.query : contains request parameters in the GET query after ?
- * 
+/**
+ *        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *                    Version 2, December 2004
+ *
+ * Copyright (C) 2004 Jeremie Briand <jeremie.briand@outlook.fr>
+ *
+ * Everyone is permitted to copy and distribute verbatim or modified
+ * copies of this license document, and changing it is allowed as long
+ * as the name is changed.
+ *
+ *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+ *
+ *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-var viewHandler = require(__root + 'routes/base/viewsHandler');
+
 var User = require(__root + 'model/user');
 var UserForm = require(__root + 'form/userForm');
 var PasswordForm = require(__root + 'form/passwordForm');

@@ -1,9 +1,24 @@
+/**
+ *        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *                    Version 2, December 2004
+ *
+ * Copyright (C) 2004 Jeremie Briand <jeremie.briand@outlook.fr>
+ *
+ * Everyone is permitted to copy and distribute verbatim or modified
+ * copies of this license document, and changing it is allowed as long
+ * as the name is changed.
+ *
+ *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+ *
+ *  0. You just DO WHAT THE FUCK YOU WANT TO.
+ */
+
 var userModel = require(__root + 'model/user');
 var convModel = require(__root + 'model/conversation');
 var Conversation = convModel.Conversation;
 var msgModel = require(__root + 'model/message');
 var Message = msgModel.Message;
-var viewHandler = require(__root + 'routes/base/viewsHandler');
 var Routes = require(__root + 'routes/base/routes');
 var DAO = require(__root + 'model/base/dbConnection');
 var i18n = require(__root + 'utils/i18n');

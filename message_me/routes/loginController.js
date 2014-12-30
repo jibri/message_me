@@ -1,15 +1,25 @@
-/*
- * req.body.<name> : get the value of a form element req.params : contains request parameters right in the URL before ?
- * req.query : contains request parameters in the GET query after ?
- * 
+/**
+ *        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *                    Version 2, December 2004
+ *
+ * Copyright (C) 2004 Jeremie Briand <jeremie.briand@outlook.fr>
+ *
+ * Everyone is permitted to copy and distribute verbatim or modified
+ * copies of this license document, and changing it is allowed as long
+ * as the name is changed.
+ *
+ *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+ *
+ *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
+
 var mongoose = require('mongoose');
 var User = require(__root + 'model/user');
 var Routes = require(__root + 'routes/base/routes');
-var viewHandler = require(__root + 'routes/base/viewsHandler');
 var i18n = require(__root + 'utils/i18n');
 var Logger = require(__root + 'utils/logger').Logger;
-var hash = require(__root + 'utils/utils').hash;
+var Utils = require(__root + 'utils/utils');
 var crypto = require('crypto');
 var forms = require(__root + 'form/formValidation');
 var LoginForm = require(__root + 'form/loginForm');
@@ -27,9 +37,12 @@ function LoginController() {
 	this.form = function(req, res, next) {
 
 		if (req.session.connected) {
-			res.redirect(Routes.urls.INDEX);
+		    req.viewProperties = {redirect: Routes.urls.INDEX};
+			next();
 		}
-		viewHandler.render(req, res, 'login/login', 'Connexion');
+		
+		req.viewProperties = {name: 'login/login', title: 'Connexion'};
+		next();
 	},
 
 	/*
@@ -58,7 +71,7 @@ function LoginController() {
 			}
 
 			// Check Login and password
-			if (user.hash == hash(loginForm.password, user.salt)) {
+			if (user.hash == Utils.hash(loginForm.password, user.salt)) {
 
 				logger.logDebug('User ' + user.name + ' authentified successfully.');
 				// Session storage
@@ -69,9 +82,12 @@ function LoginController() {
 
 				// password == 'anecdotme', It must be changed
 				if (loginForm.password === 'anecdotme') {
-					res.redirect(Routes.urls.USERS_PASSWORD_POPUP);
+				    // redirect to change password form
+					req.viewProperties = {redirect: Routes.urls.USERS_PASSWORD_POPUP};
+		            next();
 				} else {
-					res.send('OK');
+				    req.viewProperties = {body: 'OK'};
+				    next();
 				}
 
 			} else {
@@ -88,7 +104,8 @@ function LoginController() {
 
 		req.session.destroy(function() {
 
-			res.redirect(Routes.urls.ROOT);
+		    req.viewProperties = {redirect: Routes.urls.ROOT};
+			next();
 		});
 	};
 }

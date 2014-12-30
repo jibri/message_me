@@ -1,6 +1,19 @@
-/*
- * Mapping of all application URLs
+/**
+ *        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *                    Version 2, December 2004
+ *
+ * Copyright (C) 2004 Jeremie Briand <jeremie.briand@outlook.fr>
+ *
+ * Everyone is permitted to copy and distribute verbatim or modified
+ * copies of this license document, and changing it is allowed as long
+ * as the name is changed.
+ *
+ *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+ *
+ *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
+
 var IndexController = require(__root + 'routes/indexController').IndexController;
 var LoginController = require(__root + 'routes/loginController').LoginController;
 var UserController = require(__root + 'routes/userController').UserController;
@@ -33,7 +46,9 @@ var urls = {
 	GET_USERS_AUTOCOMPLETE : AUTH_ROOT + 'get-users-autocomplete.html', };
 
 /**
+ * Mapping of all application URLs
  * @constructor of Routes
+ * @author Jeremie BRIAND
  */
 function Routes() {
 
@@ -82,12 +97,12 @@ function Routes() {
 		app.get(urls.GET_USERS_AUTOCOMPLETE, conversation.getUsersAutocomplete);
 
 		// Page does not exists
+		// TODO 404
 		// app.all('*', function(req, res, next) {
 		//
 		// res.redirect(urls.ROOT);
 		// });
 
-		// TODO ErrorHandler.
 		app.use(error.errorHandler);
 	};
 }
