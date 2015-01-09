@@ -42,8 +42,7 @@ var logger = new Logger('app');
  * Open Mongo connections
  */
 connection(function() {
-    var o = {a:{b:{c:{d:{e:1}}}}};
-    console.log(o);
+    
     var app = express();
     middleware(app);
 

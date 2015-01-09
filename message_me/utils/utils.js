@@ -1,17 +1,16 @@
 /**
- *        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
- *                    Version 2, December 2004
- *
+ * DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE Version 2, December 2004
+ * 
  * Copyright (C) 2004 Jeremie Briand <jeremie.briand@outlook.fr>
- *
- * Everyone is permitted to copy and distribute verbatim or modified
- * copies of this license document, and changing it is allowed as long
- * as the name is changed.
- *
- *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
- *   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
- *
- *  0. You just DO WHAT THE FUCK YOU WANT TO.
+ * 
+ * Everyone is permitted to copy and distribute verbatim or modified copies of
+ * this license document, and changing it is allowed as long as the name is
+ * changed.
+ * 
+ * DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE TERMS AND CONDITIONS FOR COPYING,
+ * DISTRIBUTION AND MODIFICATION
+ * 
+ * 0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
 var utils = require('util');
@@ -46,18 +45,6 @@ function Utils() {
 function isObject(obj) {
 
     return typeof obj == 'object' && obj && Object.keys(obj).length > 0 && !utils.isArray(obj);
-}
-
-/**
- * Print the object in console with all its properties at all deep
- * 
- * @param obj
- *            The object to print
- */
-function printObject(obj) {
-    
-    console.log(obj);
-//    console.log(JSON.stringify(obj, null, 4));
 }
 
 /**

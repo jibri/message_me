@@ -26,6 +26,10 @@ var Logger = require(__root + 'utils/logger').Logger;
 var auth = require("http-auth");
 var basic = auth.basic({ realm : "Private area", file : __root + "htpasswd" });
 
+// One Year representation in millisecond
+var ONE_YEAR_MS = 1000 * 60 * 60 * 24 * 365;
+
+
 /**
  * Middleware utilities methods to use with express app.<br>
  * Instanciate all middleware for the app entry point.
@@ -39,6 +43,7 @@ function middleware(app) {
     // Enable 'trust proxy' for http redirection to https
     app.enable('trust proxy');
     app.use(function(req, res, next) {
+        
         if (req.secure) {
             // request was via https, so do no special handling
             next();
@@ -88,7 +93,7 @@ function middleware(app) {
         var lang = req.cookies.lang || appConfig.lang;
         
         app.set('lang', lang);
-        res.cookie('lang', lang);
+        res.cookie('lang', lang, { maxAge: ONE_YEAR_MS });
 
         // moment.js
         moment.lang(lang);
