@@ -44,7 +44,7 @@ var messages = {
 	login_newAccount_frame_content : "Welcome on <b>Anec.me</b>.<br/><br/>Unfortunatly, the app is currently closed to new registration. A demo account will be soon be set up to allow you to browse the available features.<br/><br/>See ya on <b>Anec.me</b>.",
 	login_login_label : "Login",
 	login_password_label : "Password",
-	login_connexion_failed : "The given date did not allow us to identify yourself. Check out your credentials and try again.",
+	login_connexion_failed : "The given data did not allow us to identify yourself. Check out your credentials and try again.",
     
 	// Index page
 	index_greating_message : "Welcome on the application <b>Anec.me</b>",

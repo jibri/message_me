@@ -47,8 +47,7 @@ connection(function() {
     middleware(app);
 
     // Init routes controllers
-    var routes = new Routes();
-    routes.initControllers(app);
+    Routes.initControllers(app);
 
     // View Render
     app.use(ViewRender.render);

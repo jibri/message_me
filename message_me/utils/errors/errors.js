@@ -26,7 +26,7 @@ function CustomError(name, message) {
     this.name = name, this.message = message;
 }
 
-CustomError.types = { INVALID_FORM : 'invalidForm' };
+CustomError.types = { INVALID_FORM : 'invalidForm', NOT_ALLOWED : 'notAllowed' };
 
 // MODULE EXPORTS
 module.exports = CustomError;

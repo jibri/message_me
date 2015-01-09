@@ -49,8 +49,8 @@ function middleware(app) {
             next();
         } else {
             // request was via http, so redirect to https
-            console.log(req.headers);
-            res.redirect('https://' + req.headers.host + ':' + app.get('port') + req.url);
+            console.log('request is unsecured http -> redirect to https.');
+            res.redirect('https://' + req.headers.host.split(':')[0] + ':' + app.get('port') + req.url);
         }
     });
 

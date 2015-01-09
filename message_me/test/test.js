@@ -15,7 +15,7 @@
 
 var app = require('../app');
 // test function here
-
+testUser();
 
 // --------------------------------------------
 //
@@ -246,4 +246,37 @@ function testExtendsObject() {
     console.log(mere instanceof ClassFille);
     console.log(mere instanceof ClassMere);
 
+}
+
+function testUser() {
+    var User = require(__root + 'model/user');
+    var utils = require(__root + 'utils/utils');
+    var crypto = require('crypto');
+
+    crypto.randomBytes(16, function(err, bytes) {
+
+        var salt = bytes.toString('utf8');
+        var hashed = utils.hash('jeremie', salt);
+
+        var usr = new User({ _id: 'jrm.brd@mail.com', name : 'Briand', firstname : 'Jérémie', salt : salt, hash : hashed });
+        
+        User.create(usr, function (err, newUser) {
+            
+            if (err) {
+              return next(err);
+            }
+
+            // user created successfully
+            console.log('created user: %s', newUser);
+
+            // Find it back
+            User.findById('jrm.brd@mail.com', function (errFind, user) {
+                if (errFind){
+                    return next(errFind);
+                }
+                
+                console.log('Found user: %s', user);
+          });
+        });
+    });
 }

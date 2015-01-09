@@ -49,22 +49,24 @@ function ViewRender() {
  *            The next middleware
  */
 function render(req, res, next) {
-
+    
     // viewName, title, args
     var properties = req.viewProperties || {};
 
     // We only handle a res.send(message)
     if (properties.body) {
+        
         res.send(properties.body);
         return;
     }
 
     // We only handle a res.redirect(url)
     if (properties.redirect) {
+        
         res.redirect(properties.redirect);
         return;
     }
- 
+    
     properties.lang = req.app.get('lang');
     properties.title = properties.title || 'Message_Me';
     properties.connected = req.session ? req.session.connected : false;

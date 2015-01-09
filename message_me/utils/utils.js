@@ -82,7 +82,6 @@ function hash(pass, salt) {
 
 // STATIC METHODS
 Utils.isObject = isObject;
-Utils.printObject = printObject;
 Utils.validString = validString;
 Utils.hash = hash;
 

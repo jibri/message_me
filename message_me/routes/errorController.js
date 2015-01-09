@@ -1,17 +1,16 @@
 /**
- *        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
- *                    Version 2, December 2004
- *
+ * DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE Version 2, December 2004
+ * 
  * Copyright (C) 2004 Jeremie Briand <jeremie.briand@outlook.fr>
- *
- * Everyone is permitted to copy and distribute verbatim or modified
- * copies of this license document, and changing it is allowed as long
- * as the name is changed.
- *
- *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
- *   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
- *
- *  0. You just DO WHAT THE FUCK YOU WANT TO.
+ * 
+ * Everyone is permitted to copy and distribute verbatim or modified copies of
+ * this license document, and changing it is allowed as long as the name is
+ * changed.
+ * 
+ * DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE TERMS AND CONDITIONS FOR COPYING,
+ * DISTRIBUTION AND MODIFICATION
+ * 
+ * 0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
 var i18n = require(__root + 'utils/i18n');
@@ -36,24 +35,22 @@ function ErrorController() {
      */
     this.errorHandler = function(err, req, res, next) {
 
-        console.log(err);
-
         // True Error (Unhandled)
         if (err instanceof Error) {
-            throwServerError(req, res, err);
+            throwServerError(err, req, res, next);
         }
 
         // Custom Error
         switch (err.name) {
             case errorTypes.INVALID_FORM:
-                throwInvalidForm(req, res, err);
+                throwInvalidForm(err, req, res, next);
                 break;
             case errorTypes.NOT_ALLOWED:
-                throwNotAllowedError(req, res, err);
+                throwNotAllowedError(err, req, res, next);
                 break;
             default:
                 // Unknown
-                throwServerError(req, res, err);
+                throwServerError(err, req, res, next);
         }
     };
 
@@ -73,10 +70,11 @@ function ErrorController() {
         } else {
             json = json || FORM_MESSAGE;
         }
-        logger.logDebug(json.message);
+
+        logger.logDebug(json.message || json);
 
         err.message = JSON.stringify(json);
-        redirectError(req, res, err);
+        redirectError(err, req, res, next);
     }
 
     /**
@@ -89,8 +87,8 @@ function ErrorController() {
         var DEFAULT_MESSAGE = i18n.get('server_generic_error');
 
         res.status(500);
-        err.message |= DEFAULT_MESSAGE;
-        redirectError(req, res, err);
+        err.message = err.message || DEFAULT_MESSAGE;
+        redirectError(err, req, res, next);
     }
 
     /**
@@ -102,7 +100,7 @@ function ErrorController() {
 
         res.status(405);
         err.message |= NOT_ALLOWED_MESSAGE;
-        redirectError(req, res, err);
+        redirectError(err, req, res, next);
     }
 
     /**
@@ -110,13 +108,14 @@ function ErrorController() {
      */
     function redirectError(err, req, res, next) {
 
+        // Ajax call running
         if (req.xhr) {
-            req.viewProperties.boby = err.message;
-            next();
-        } else {
-            var args = { message : err.message, err : err };
-            view.render(req, res, 'layout/error', 'Erreur', args);
+            req.viewProperties = { body : err.message };
+            return next();
         }
+
+        req.viewProperties = { name : 'layout/error', title : 'Erreur', message : err.message, err : err };
+        return next();
     }
 }
 
