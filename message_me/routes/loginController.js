@@ -17,7 +17,7 @@ var mongoose = require('mongoose');
 
 var User = require(__root + 'model/user');
 
-var Routes = require(__root + 'routes/base/routes');
+var urls = require(__root + 'routes/base/urls').urls;
 
 var forms = require(__root + 'form/formValidation');
 var LoginForm = require(__root + 'form/loginForm');
@@ -30,89 +30,89 @@ var errorTypes = require(__root + 'utils/errors/errors').types;
 
 function LoginController() {
 
-    // LOGGER
-    var logger = new Logger('LoginController');
+	// LOGGER
+	var logger = new Logger('LoginController');
 
-    /*
-     * GET login page.
-     */
-    this.form = function(req, res, next) {
+	/*
+	 * GET login page.
+	 */
+	this.form = function(req, res, next) {
 
-        if (req.session.connected) {
-            req.viewProperties = { redirect : Routes.urls.INDEX };
-            return next();
-        }
+		if (req.session.connected) {
+			req.viewProperties = { redirect : urls.INDEX };
+			return next();
+		}
 
-        req.viewProperties = { name : 'login/login', title : 'Connexion' };
-        return next();
-    },
+		req.viewProperties = { name : 'login/login', title : 'Connexion' };
+		return next();
+	},
 
-    /*
-     * POST login form
-     */
-    this.submitForm = function(req, res, next) {
+	/*
+	 * POST login form
+	 */
+	this.submitForm = function(req, res, next) {
 
-        var loginForm = new LoginForm(forms.mapForm(req.body));
-        var json = forms.validateForm(loginForm);
+		var loginForm = new LoginForm(forms.mapForm(req.body));
+		var json = forms.validateForm(loginForm);
 
-        if (json) {
-            return next(new CustomError(errorTypes.INVALID_FORM, json));
-        }
+		if (json) {
+			return next(new CustomError(errorTypes.INVALID_FORM, json));
+		}
 
-        // find Login
-        User.findById(loginForm.login, function(err, user) {
+		// find Login
+		User.findById(loginForm.login, function(err, user) {
 
-            // Unknown error
-            if (err) {
-                logger.logError('User ' + loginForm.login + ' authentification failure : ' + err);
-                return next(err);
-            }
+			// Unknown error
+			if (err) {
+				logger.logError('User ' + loginForm.login + ' authentification failure : ' + err);
+				return next(err);
+			}
 
-            // User with this login doesn't exist
-            if (!user || user.length === 0) {
-                logger.logDebug('User ' + loginForm.login + ' authentification failure : bad login');
-                return next(new CustomError(errorTypes.INVALID_FORM, i18n.get('login_connexion_failed')));
-            }
+			// User with this login doesn't exist
+			if (!user || user.length === 0) {
+				logger.logDebug('User ' + loginForm.login + ' authentification failure : bad login');
+				return next(new CustomError(errorTypes.INVALID_FORM, i18n.get('login_connexion_failed')));
+			}
 
-            // Bad password
-            if (user.hash != Utils.hash(loginForm.password, user.salt)) {
-                logger.logDebug('User ' + user._id + ' authentification failure : bad password.');
-                return next(new CustomError(errorTypes.INVALID_FORM, i18n.get('login_connexion_failed')));
-            }
+			// Bad password
+			if (user.hash != Utils.hash(loginForm.password, user.salt)) {
+				logger.logDebug('User ' + user._id + ' authentification failure : bad password.');
+				return next(new CustomError(errorTypes.INVALID_FORM, i18n.get('login_connexion_failed')));
+			}
 
-            logger.logDebug('User ' + user.name + ' authentified successfully.');
+			logger.logDebug('User ' + user.name + ' authentified successfully.');
 
-            // Session storage
-            req.session.connected = true;
-            req.session.userId = user.id;
-            req.session.userName = user.name;
-            req.session.userFirstname = user.firstname;
+			// Session storage
+			req.session.connected = true;
+			req.session.userId = user.id;
+			req.session.userName = user.name;
+			req.session.userFirstname = user.firstname;
 
-            // NEW USER HACK
-            // FIXME : maybe not a good practice ?
-            // password == 'anecdotme', It must be changed
-            if (loginForm.password === 'anecdotme') {
-                // redirect to change password form
-                req.viewProperties = { redirect : Routes.urls.USERS_PASSWORD_POPUP };
-            } else {
-                req.viewProperties = { body : 'OK' };
-            }
+			// NEW USER HACK
+			// FIXME : maybe not a good practice ?
+			// password == 'anecdotme', It must be changed
+			if (loginForm.password === 'anecdotme') {
+				// redirect to change password form
+				req.viewProperties = { redirect : urls.USERS_PASSWORD_POPUP };
+			} else {
+				req.viewProperties = { body : 'OK' };
+			}
 
-            return next();
-        });
-    },
+			return next();
+		});
+	},
 
-    /*
-     * Logout controller
-     */
-    this.logout = function(req, res, next) {
+	/*
+	 * Logout controller
+	 */
+	this.logout = function(req, res, next) {
 
-        req.session.destroy(function() {
+		req.session.destroy(function() {
 
-            req.viewProperties = { redirect : Routes.urls.ROOT };
-            return next();
-        });
-    };
+			req.viewProperties = { redirect : urls.ROOT };
+			return next();
+		});
+	};
 }
 
 // MODULE EXPORTS

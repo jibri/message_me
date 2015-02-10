@@ -14,7 +14,7 @@ block javascript
         
         if (result == 'OK'){
           // connection OK
-        location.reload();
+          location.reload();
         }else{
           // Need to change password
           popupContent(result);
@@ -23,8 +23,8 @@ block javascript
       
       $(document).on("form.succes", "form#password-form", function(event, result){
         
-          // connection OK
-          location.reload();
+        // connection OK
+        location.reload();
       });
     });
 

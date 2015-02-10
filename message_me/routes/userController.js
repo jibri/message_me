@@ -1,56 +1,53 @@
 /**
- *        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
- *                    Version 2, December 2004
- *
+ * DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE Version 2, December 2004
+ * 
  * Copyright (C) 2004 Jeremie Briand <jeremie.briand@outlook.fr>
- *
- * Everyone is permitted to copy and distribute verbatim or modified
- * copies of this license document, and changing it is allowed as long
- * as the name is changed.
- *
- *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
- *   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
- *
- *  0. You just DO WHAT THE FUCK YOU WANT TO.
+ * 
+ * Everyone is permitted to copy and distribute verbatim or modified copies of
+ * this license document, and changing it is allowed as long as the name is
+ * changed.
+ * 
+ * DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE TERMS AND CONDITIONS FOR COPYING,
+ * DISTRIBUTION AND MODIFICATION
+ * 
+ * 0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
 var User = require(__root + 'model/user');
+
 var UserForm = require(__root + 'form/userForm');
 var PasswordForm = require(__root + 'form/passwordForm');
 var forms = require(__root + 'form/formValidation');
+
 var Logger = require(__root + 'utils/logger').Logger;
 
 function UserController() {
 
 	// LOGGER
-	var logger = new Logger();
+	var logger = new Logger('UserController');
 
 	/**
 	 * GET users listing.
 	 */
-	this.userForm = function(req, res) {
+	this.userForm = function(req, res, next) {
 
-		// res.render('', args) render jade, ejs ... template
-		// res.send( code_status i.e. 200,404, '') render a string to send.
-		// res.send('Hello-world');
-		// res.status(404).render('', args) render template with given status
-
-		dao.findAll(new User(), function(err, users) {
+		User.find({}, function(err, users) {
 
 			if (err) {
-				logger.logError('error while finding users' + err);
-				return errors.throwServerError(req, res, err);
+				logger.logError('error while finding users ' + err);
+				return next(err);
 			}
 
-			viewHandler.render(req, res, 'user/user-form', 'Utilisateurs', { users : users });
+			req.viewProperties = { name : 'user/user-form', title : 'Utilisateurs', users : users };
+			return next();
 		});
 	},
 
 	/**
 	 * POST user form
 	 */
-	this.submitForm = function(req, res) {
-
+	this.submitForm = function(req, res, next) {
+		// TODO
 		// validate form
 		var userForm = new UserForm(forms.mapForm(req.body));
 		var json = forms.validateForm(userForm);
@@ -90,9 +87,10 @@ function UserController() {
 	 * @param req
 	 * @param res
 	 */
-	this.passwordForm = function(req, res) {
+	this.passwordForm = function(req, res, next) {
 
-		viewHandler.render(req, res, 'user/password-form', 'Password');
+		req.viewProperties = { name : 'user/password-form', title : 'Password' };
+		return next();
 	},
 
 	/**
@@ -101,8 +99,8 @@ function UserController() {
 	 * @param res
 	 * @returns
 	 */
-	this.submitPasswordForm = function(req, res) {
-
+	this.submitPasswordForm = function(req, res, next) {
+		// TODO
 		var passwordForm = new PasswordForm(forms.mapForm(req.body));
 		var json = forms.validateForm(passwordForm);
 

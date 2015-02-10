@@ -34,6 +34,28 @@ var Logger = require(__root + 'utils/logger').Logger;
  */
 function connectMongoose(callback) {
 	mongoose.connect(db_conString, callback);
+
+	var db = mongoose.connection;
+
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.on('connecting', function() {
+		console.log('connecting:');
+	});
+	db.on('connected', function() {
+		console.log('connected:');
+	});
+	db.on('disconnecting', function() {
+		console.log('disconnecting...');
+	});
+	db.on('disconnected', function() {
+		console.log('disconnected:');
+	});
+	db.on('open', function() {
+		console.log('connection opened');
+	});
+	db.on('close', function() {
+		console.log('connection closed');
+	});
 }
 
 /**

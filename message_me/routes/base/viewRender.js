@@ -20,7 +20,7 @@
  * @constructor
  */
 function ViewRender() {
-    // Nothing;
+	// Nothing;
 }
 
 /**
@@ -42,37 +42,41 @@ function ViewRender() {
  * </pre>
  * 
  * @param req
- *            The http request
+ *          The http request
  * @param res
- *            The http response
+ *          The http response
  * @param next
- *            The next middleware
+ *          The next middleware
  */
+
+var Logger = require(__root + 'utils/logger').Logger;
+var logger = new Logger('ViewRender');
+
 function render(req, res, next) {
-    
-    // viewName, title, args
-    var properties = req.viewProperties || {};
 
-    // We only handle a res.send(message)
-    if (properties.body) {
-        
-        res.send(properties.body);
-        return;
-    }
+	// viewName, title, args
+	var properties = req.viewProperties || {};
 
-    // We only handle a res.redirect(url)
-    if (properties.redirect) {
-        
-        res.redirect(properties.redirect);
-        return;
-    }
-    
-    properties.lang = req.app.get('lang');
-    properties.title = properties.title || 'Message_Me';
-    properties.connected = req.session ? req.session.connected : false;
-    properties.firstname = req.session.userFirstname || 'anonymous';
+	// We only handle a res.send(message)
+	if (properties.body) {
 
-    res.render(properties.name, properties);
+		res.send(properties.body);
+		return;
+	}
+
+	// We only handle a res.redirect(url)
+	if (properties.redirect) {
+
+		res.redirect(properties.redirect);
+		return;
+	}
+
+	properties.lang = req.app.get('lang');
+	properties.title = properties.title || 'Message_Me';
+	properties.connected = req.session ? req.session.connected : false;
+	properties.firstname = req.session.userFirstname || 'anonymous';
+
+	res.render(properties.name, properties);
 }
 
 // STATIC METHODS
