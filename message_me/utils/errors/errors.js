@@ -20,13 +20,24 @@
  * @constructor
  * @author Jeremie BRIAND
  * @param message
- *            A string message for the error
+ *          A string message for the error
  */
 function CustomError(name, message) {
-    this.name = name, this.message = message;
+	this.name = name, this.message = message;
 }
 
-CustomError.types = { INVALID_FORM : 'invalidForm', NOT_ALLOWED : 'notAllowed' };
+// TODO : Create differents Error object instead of unsing types ? or as
+// shortcup ?
+/**
+ * i.e. :
+ * 
+ * <pre>
+ * function InvalidFormError(message) {
+ * 	this = new CustomError(CustomError.types.INVALID_FORM, message);
+ * }
+ * </pre>
+ */
+CustomError.types = { INVALID_FORM : 'invalidForm', NOT_ALLOWED : 'notAllowed', NOT_FOUND_404 : 'notFound404' };
 
 // MODULE EXPORTS
 module.exports = CustomError;

@@ -19,6 +19,9 @@ var UserController = require(__root + 'routes/userController').UserController;
 var ConversationController = require(__root + 'routes/conversationController').ConversationController;
 var ErrorController = require(__root + 'routes/errorController').ErrorController;
 
+var CustomError = require(__root + 'utils/errors/errors');
+var errorTypes = require(__root + 'utils/errors/errors').types;
+
 var urls = require(__root + 'routes/base/urls').urls;
 
 var Logger = require(__root + 'utils/logger').Logger;
@@ -71,12 +74,13 @@ function initControllers(app) {
 	app.post(urls.GET_MESSAGES, conversation.getMessages);
 	app.get(urls.GET_USERS_AUTOCOMPLETE, conversation.getUsersAutocomplete);
 
-	// Page does not exists
-	// TODO 404
-	// app.all('*', function(req, res, next) {
-	//
-	// res.redirect(urls.ROOT);
-	// });
+	// Page does not exists : 404
+	app.use(function(req, res, next) {
+		if (!req.viewProperties) {
+			return next(new CustomError(errorTypes.NOT_FOUND_404));
+		}
+		return next();
+	});
 
 	app.use(error.errorHandler);
 }

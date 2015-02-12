@@ -23,6 +23,9 @@ function ViewRender() {
 	// Nothing;
 }
 
+var Logger = require(__root + 'utils/logger').Logger;
+var logger = new Logger('ViewRender');
+
 /**
  * Render the view, using the {@code viewProperties} property in the request
  * req.<br>
@@ -48,10 +51,6 @@ function ViewRender() {
  * @param next
  *          The next middleware
  */
-
-var Logger = require(__root + 'utils/logger').Logger;
-var logger = new Logger('ViewRender');
-
 function render(req, res, next) {
 
 	// viewName, title, args

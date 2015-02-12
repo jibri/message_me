@@ -38,6 +38,8 @@ function LoginController() {
 	 */
 	this.form = function(req, res, next) {
 
+		logger.logDebug('access to LoginController form display.');
+
 		if (req.session.connected) {
 			req.viewProperties = { redirect : urls.INDEX };
 			return next();
@@ -51,6 +53,8 @@ function LoginController() {
 	 * POST login form
 	 */
 	this.submitForm = function(req, res, next) {
+
+		logger.logDebug('access to LoginController form POST.');
 
 		var loginForm = new LoginForm(forms.mapForm(req.body));
 		var json = forms.validateForm(loginForm);
@@ -106,6 +110,8 @@ function LoginController() {
 	 * Logout controller
 	 */
 	this.logout = function(req, res, next) {
+
+		logger.logDebug('access to LoginController logout.');
 
 		req.session.destroy(function() {
 

@@ -4,6 +4,7 @@
 var messages = {
 
 	// Server messages
+	server_404 : "Perdu ! C'est pas par là.",
 	server_not_allowed : "Vous n'êtes pas autorisé à accéder à cette ressource.",
 	server_generic_error : "Une erreur s'est produite. Veuillez réessayer plus tard, ou bien contacter un administrateur.",
 

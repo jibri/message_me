@@ -25,7 +25,9 @@ function IndexController() {
 
 	var logger = new Logger('IndexController');
 
-	this.index = function(req, res) {
+	this.index = function(req, res, next) {
+
+		logger.logDebug('access to IndexController.');
 
 		req.viewProperties = { name : 'index', title : 'Bienvenue' };
 		return next();

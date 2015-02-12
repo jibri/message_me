@@ -36,25 +36,26 @@ function connectMongoose(callback) {
 	mongoose.connect(db_conString, callback);
 
 	var db = mongoose.connection;
+	var msg = 'Mongoose database connexion state : ';
 
 	db.on('error', console.error.bind(console, 'connection error:'));
 	db.on('connecting', function() {
-		console.log('connecting:');
+		console.log(msg + 'connecting...');
 	});
 	db.on('connected', function() {
-		console.log('connected:');
+		console.log(msg + 'connected');
 	});
 	db.on('disconnecting', function() {
-		console.log('disconnecting...');
+		console.log(msg + 'disconnecting...');
 	});
 	db.on('disconnected', function() {
-		console.log('disconnected:');
+		console.log(msg + 'disconnected');
 	});
 	db.on('open', function() {
-		console.log('connection opened');
+		console.log(msg + 'connection opened');
 	});
 	db.on('close', function() {
-		console.log('connection closed');
+		console.log(msg + 'connection closed');
 	});
 }
 

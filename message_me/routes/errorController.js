@@ -49,6 +49,9 @@ function ErrorController() {
 			case errorTypes.NOT_ALLOWED:
 				throwNotAllowedError(err, req, res, next);
 				break;
+			case errorTypes.NOT_FOUND_404:
+				throw404Error(err, req, res, next);
+				break;
 			default:
 				// Unknown
 				throwServerError(err, req, res, next);
@@ -98,7 +101,19 @@ function ErrorController() {
 		var NOT_ALLOWED_MESSAGE = i18n.get('server_not_allowed');
 
 		res.status(405);
-		err.message |= NOT_ALLOWED_MESSAGE;
+		err.message = err.message || NOT_ALLOWED_MESSAGE;
+		redirectError(err, req, res, next);
+	}
+
+	/**
+	 * Return 404 Not found error to the client. Code 404.
+	 */
+	function throw404Error(err, req, res, next) {
+
+		var ERROR_404_MESSAGE = i18n.get('server_404');
+
+		res.status(404);
+		err.message = err.message || ERROR_404_MESSAGE;
 		redirectError(err, req, res, next);
 	}
 
